@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Multiple hypothesis testing: false positives across many tests, FWER, FDP, FDR, and Bonferroni, Holm, BH, BY, and FDP-StepM methods.">
+  <meta name="order" content="6">
+  <title>Multiple Hypothesis Testing | Statistical Inference</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html#statistics/statistical-inference">← Back to Statistical Inference</a>
+      <span class="nav-tag">Statistical Inference</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Statistical Inference</div>
+        <h1>Multiple hypothesis testing</h1>
+        <p class="article-lead">The more hypotheses we test, the easier it is to mistake chance for a discovery. Different procedures control different kinds of error across the whole family of tests.</p>
+      </header>
+
+      <section>
+        <h2>Why one $p$-value is not enough</h2>
+        <p>Imagine screening 100 investment strategies and testing whether each has a positive return beyond chance. Even if none has a real effect, a test at level $\alpha=0.05$ can falsely reject its null. If all 100 nulls are true <em>and the tests are independent</em>, the number of false rejections $V$ follows a binomial distribution:</p>
+        <div class="math-block">$$V\sim\operatorname{Binomial}(M,\alpha),\qquad \Pr(V\geq1)=1-(1-\alpha)^M.$$</div>
+        <p>With $M=100$, this probability is $1-0.95^{100}\approx99.4\%$. The calculation is an illustration, not a general formula for dependent tests or a mixture of true and false nulls. Financial strategies often share data and exposures, so their test statistics may be correlated. We still need to ask which <em>family</em> of strategies was searched, including unsuccessful ones.</p>
+      </section>
+
+      <section>
+        <h2>Three ways to define the error</h2>
+        <p>Let $R$ be the number of rejected hypotheses, and $V$ the number of those rejections whose null hypotheses were actually true. We cannot directly observe $V$ in real data, but can design procedures that control its behavior over repeated studies.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Target</th><th scope="col">Definition</th><th scope="col">Question it answers</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Family-wise error rate (FWER)</th><td>$\Pr(V\geq1)$</td><td>How likely is even one false discovery?</td></tr>
+              <tr><th scope="row">False discovery proportion (FDP)</th><td>$V/\max(R,1)$</td><td>What fraction of the reported discoveries is false in this run?</td></tr>
+              <tr><th scope="row">False discovery rate (FDR)</th><td>$\mathbb{E}[\mathrm{FDP}]$</td><td>What is the average false-discovery proportion over repeated runs?</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>FWER control targets $\Pr(V\geq1)\leq\alpha$. A high-probability FDP guarantee instead targets $\Pr(\mathrm{FDP}&gt;\gamma)\leq\alpha$: the chance that the false fraction exceeds $\gamma$ is at most $\alpha$. FDR control targets $\mathbb{E}[\mathrm{FDP}]\leq q$. An FDR of 5% is an <em>average over repeated analyses</em>, not a promise that each individual list contains at most 5% false discoveries.</p>
+      </section>
+
+      <section>
+        <h2>FWER: Bonferroni and Holm</h2>
+        <p><strong>Bonferroni</strong> rejects hypothesis $i$ only when $p_i\leq\alpha/M$. For ten tests at $\alpha=0.05$, every p-value must be at most 0.005. The guarantee follows from the union bound and does not require independent tests, provided each individual p-value is valid.</p>
+        <p><strong>Holm</strong> first sorts the p-values $p_{(1)}\leq\cdots\leq p_{(M)}$. It compares the smallest with $\alpha/M$, the next with $\alpha/(M-1)$, and so on. It stops at the first failure; only earlier hypotheses are rejected:</p>
+        <div class="math-block">$$p_{(j)}\leq\frac{\alpha}{M-j+1}\quad\text{at each step up to the last rejection.}$$</div>
+        <p>Holm also controls FWER under arbitrary dependence and is never less powerful than Bonferroni for the same set of valid p-values.</p>
+      </section>
+
+      <section>
+        <h2>FDR: Benjamini–Hochberg and Benjamini–Yekutieli</h2>
+        <p><strong>Benjamini–Hochberg (BH)</strong> is a <em>step-up</em> rule. For ordered p-values, find the <em>largest</em> rank $j^*$ satisfying $p_{(j)}\leq jq/M$, then reject ranks $1$ through $j^*$. Do not stop at an earlier failed rank: the rule searches for the largest qualifying one. BH controls FDR under independent tests and certain positive-dependence conditions, but not arbitrary dependence.</p>
+        <div class="math-block">$$j^*=\max\left\{j:p_{(j)}\leq\frac{jq}{M}\right\}.$$</div>
+        <p><strong>Benjamini–Yekutieli (BY)</strong> uses the same step-up logic, but divides the BH cutoff by the harmonic sum $H_M=\sum_{r=1}^{M}1/r$. Its stricter cutoff controls FDR under arbitrary dependence:</p>
+        <div class="math-block">$$p_{(j)}\leq\frac{jq}{M H_M}.$$</div>
+
+        <h3>One set of p-values, four answers</h3>
+        <p>Suppose the ten ordered p-values are 0.001, 0.004, 0.006, 0.012, 0.018, 0.026, 0.041, 0.090, 0.300, and 0.700. At 5%, the methods make different choices:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Method</th><th scope="col">Rejections</th><th scope="col">Reason at the boundary</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Bonferroni</th><td>2</td><td>Third p-value, 0.006, exceeds 0.005.</td></tr>
+              <tr><th scope="row">Holm</th><td>3</td><td>Third passes 0.05/8 = 0.00625; fourth fails 0.05/7.</td></tr>
+              <tr><th scope="row">BH</th><td>6</td><td>Sixth passes 6 × 0.05/10 = 0.030; no higher rank passes.</td></tr>
+              <tr><th scope="row">BY</th><td>1</td><td>With $H_{10}\approx2.929$, second fails its cutoff of about 0.00341.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure class="figure-card">
+          <img src="../../assets/plots/statistics-multiple-testing-thresholds.svg" alt="Chart comparing the first seven sorted p-values with Bonferroni, Holm, Benjamini-Hochberg, and Benjamini-Yekutieli cutoffs. The first p-value passes all methods; Bonferroni passes two, Holm three, BH six, and BY one for the complete ten-test example." loading="lazy" width="880" height="530">
+          <figcaption>The chart zooms in on the first seven of ten tests; the remaining p-values are larger than every relevant cutoff. Black points are observed p-values, while lines show rank-specific decision thresholds. The procedures answer different error-control questions, so more rejections do not automatically mean a better method.</figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h2>Controlling the realized fraction: FDP-StepM</h2>
+        <p>The FDP-StepM approach targets a <em>tail probability</em>, such as $\Pr(\mathrm{FDP}&gt;0.10)\leq0.05$, rather than only the expected FDP. It builds on $k$-FWER procedures, where $k$-FWER is $\Pr(V\geq k)$. A $k$-StepM stage allows more rejections as $k$ increases while controlling the chance of at least $k$ false ones.</p>
+        <p>Start with $k_1=1$. At stage $j$, run $k_j$-StepM and let $R_j$ be its number of rejections. Stop when $R_j&lt;k_j/\gamma-1$; otherwise increase $k_j$ by one and run the next stage. For $\gamma=0.10$, the first stopping threshold is 9: if the first stage finds 12 discoveries, the procedure continues. The actual rejection set needs the underlying $k$-StepM calculations, often based on resampling the joint test statistics. It cannot be reconstructed from the threshold rule alone or from a list of marginal p-values.</p>
+      </section>
+
+      <section>
+        <h2>Choosing a procedure</h2>
+        <p>If even one false claim is costly, FWER control is a natural target. If screening many possible signals is the goal, an FDR target may allow more discoveries, with a different guarantee. High-probability FDP control directly limits the chance that the realized false fraction is too large, but can require more elaborate modeling of dependence.</p>
+        <p>Define the family of tests and error target before looking at results. In finance, testing many strategy variants and then reporting only the winner hides the size of the search. The same issue appears after <a href="anova.html">ANOVA</a> if many post-hoc group comparisons are made.</p>
+      </section>
+    </article>
+  </main>
+  <footer class="shell"><p>Probability &amp; Statistics Notes</p></footer>
+</body>
+</html>

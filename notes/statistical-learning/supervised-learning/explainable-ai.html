@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explainable artificial intelligence: local and global explanations, LIME, SHAP, integrated gradients, partial dependence, ICE, ALE, and counterfactuals.">
+  <meta name="order" content="5">
+  <title>Explainable AI (XAI) | Supervised Learning</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+  <style>
+    .xai-plus { color: #0f766e; font-weight: 650; }
+    .xai-minus { color: #a16207; font-weight: 650; }
+  </style>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../../index.html#learning/supervised-learning">← Back to Supervised Learning</a>
+      <span class="nav-tag">Supervised Learning</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Supervised Learning</div>
+        <h1>Explainable Artificial Intelligence (XAI)</h1>
+        <p class="article-lead">A guide to explaining what a trained model predicts: which inputs matter for one case, how predictions vary across cases, and what changes might alter a decision.</p>
+      </header>
+
+      <section>
+        <h2>What does an explanation answer?</h2>
+        <p><strong>Intrinsic interpretability</strong> means the fitted model itself is understandable, as with a small decision tree or a sparse linear model. <strong>Post-hoc explainability</strong> studies a model after training, often by probing its outputs. A local explanation concerns one prediction; a global explanation summarizes behavior over many observations.</p>
+        <p>These are explanations of <em>model behavior</em>. They do not, on their own, show that an input causes an outcome, that a decision is fair, or that the model predicts well on new data. Check predictive performance first; then choose an explanation method for the question and audience. In high-stakes settings, an inherently interpretable model is also worth testing against a black box before relying on a post-hoc account.</p>
+        <div class="callout">
+          <div class="callout-title">Three useful questions</div>
+          <ul>
+            <li><strong>Local:</strong> Why did this applicant receive this model score?</li>
+            <li><strong>Global:</strong> How does the model's score tend to vary as debt burden changes?</li>
+            <li><strong>Alternative decision:</strong> Which feasible changes would cross the model's decision threshold?</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Explaining one decision</h2>
+        <p>Suppose a toy model predicts approval with probability 45%, below its 50% decision threshold. LIME, SHAP, and a counterfactual answer different questions about this one application. The numbers below are constructed examples, not output from a fitted credit model.</p>
+
+        <h3>LIME · imitate the model nearby</h3>
+        <p><strong>LIME</strong> stands for <em>Local Interpretable Model-agnostic Explanations</em>. It makes many slight variations of this application, asks the original model to score them, and fits a simple surrogate model to those scores. Variations closer to the applicant receive more weight. If the surrogate gives debt burden a large negative coefficient, that describes the model's behavior <em>near this applicant</em>; it is not a rule for every applicant. The surrogate should reproduce the original model's nearby predictions, and its result depends on how realistic the generated variations are.</p>
+
+        <h3>SHAP · divide the difference from a reference</h3>
+        <p><strong>SHAP</strong> stands for <em>SHapley Additive exPlanations</em>. It starts with a reference prediction and allocates the difference between that and this prediction among the features. It averages each feature's added contribution over different groups of other features. The contributions add up on the <em>chosen output scale</em>. For this illustration, that scale is approval log-odds:</p>
+        <div class="math-block">$$f(x)=\phi_0+\sum_{j=1}^{p}\phi_j$$</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Part of the explanation</th><th scope="col">Contribution to approval log-odds</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Reference score $\phi_0$</th><td>0.00</td></tr>
+              <tr><th scope="row">Income</th><td class="xai-plus">+0.60</td></tr>
+              <tr><th scope="row">Employment history</th><td class="xai-plus">+0.40</td></tr>
+              <tr><th scope="row">Debt burden</th><td class="xai-minus">−0.70</td></tr>
+              <tr><th scope="row">Missed payment</th><td class="xai-minus">−0.50</td></tr>
+              <tr><th scope="row">Final model score</th><td><strong>−0.20</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="math-block">$$0+0.60+0.40-0.70-0.50=-0.20,\qquad \operatorname{sigmoid}(-0.20)\approx 0.450$$</div>
+        <p>Income and employment push the score above the reference; debt burden and a missed payment pull it down. The final log-odds of −0.20 convert to an approval probability of about 45%. These are illustrative contributions, not SHAP values computed from a real model. The reference data and treatment of related features affect actual SHAP values; a contribution is not a causal effect.</p>
+
+        <h3>Counterfactual · find a feasible alternative</h3>
+        <p>A counterfactual asks which small, plausible changes to this application would move the model's approval probability from 45% to at least 50%. It searches for an alternative $x'$ that crosses the threshold while staying close to the original $x$:</p>
+        <div class="math-block">$$\min_{x'} d(x,x')\quad\text{subject to}\quad \hat p(x')\geq 0.50\quad\text{and }x'\text{ is feasible}.$$</div>
+        <p>The result might say “a lower debt burden would change this model's decision.” The search must exclude immutable traits and implausible combinations of inputs. It describes the model's boundary, not a guaranteed route to approval or proof that lowering debt alone would cause approval.</p>
+      </section>
+
+      <section>
+        <h2>How a feature changes model predictions</h2>
+        <p>Consider the model's predicted default risk as debt-to-income ratio changes. A partial dependence plot (PDP) and individual conditional expectation (ICE) curves use the same prediction sweep but summarize it differently. Accumulated local effects (ALE) instead uses short changes near observed applicants.</p>
+
+        <h3>PDP · average over applicants</h3>
+        <p>Set the debt ratio to 40% for <em>every</em> applicant, leaving their other recorded features as they are. Average the model's resulting risk predictions; then repeat at 20%, 30%, and other ratios. The purple PDP curve shows that average at each ratio, even if no real applicant has exactly that combination of inputs.</p>
+
+        <h3>ICE · keep each applicant's curve</h3>
+        <p>ICE performs the same sweep but draws a separate curve for each applicant instead of averaging immediately. In the plot, five teal lines reveal that risk rises much faster for some applicants than for others. The purple PDP is their pointwise average, so it can hide those differences.</p>
+        <div class="math-block">$$\operatorname{ICE}_i(z)=f(z,x_{i,-j}),\qquad \operatorname{PDP}_j(z)=\frac{1}{n}\sum_{i=1}^{n}\operatorname{ICE}_i(z).$$</div>
+        <figure class="figure-card">
+          <img src="../../../assets/plots/learning-xai-pdp-ice.svg" alt="Two plots of synthetic predicted default risk versus debt-to-income ratio. The upper plot shows one average PDP curve. The lower plot shows five individual ICE curves with different levels and slopes, plus their same average in purple." loading="lazy" width="850" height="570">
+          <figcaption>Constructed predictions for five hypothetical applicants, not fitted credit data. The purple PDP is exactly the mean of the five teal ICE curves at each debt-to-income value. The average hides how much the individual predictions differ.</figcaption>
+        </figure>
+        <p>PDP and ICE may create unrealistic applications when related inputs are changed independently. For example, fixing debt ratio across its full range while holding income and other debt measures constant may produce combinations absent from the data.</p>
+
+        <h3>ALE · accumulate local changes</h3>
+        <p><strong>ALE</strong> means <em>Accumulated Local Effects</em>. First, divide debt ratio into short intervals. In the 40–45% interval, use only applicants whose <em>observed</em> ratio falls there. For each one, score the same applicant twice: once at 40% and once at 45%, with other inputs unchanged. Average the differences. If the mean change in predicted default risk is +3 percentage points, that is this interval's local effect.</p>
+        <p>Repeat in each interval, then add the local effects from left to right. Finally, shift the whole curve vertically so its average effect is zero. Thus an ALE value is a <em>change relative to the average prediction effect</em>, not an applicant's predicted risk. Unlike PDP, the model is only probed near combinations represented in the data; intervals with few applicants still need caution.</p>
+        <figure class="figure-card">
+          <img src="../../../assets/plots/learning-xai-ale.svg" alt="Schematic ALE construction. The upper panel shows average local increases in predicted default risk in five debt-to-income intervals, highlighting a 3 percentage point increase in the 40–45% interval. The lower panel adds those increases and centers the resulting curve around zero." loading="lazy" width="850" height="580">
+          <figcaption>Illustrative values, not fitted credit data. Bars show changes within observed intervals; the curve accumulates those changes and is centered at zero. Its height is an effect on the model output, not a predicted probability.</figcaption>
+        </figure>
+        <p>ALE describes how this model behaves where data were observed. It does not show that changing debt ratio would <em>cause</em> the same change in real-world default risk.</p>
+      </section>
+
+      <section>
+        <h2>Neural networks and robustness</h2>
+        <h3>Integrated gradients (IG) · trace a path from a baseline</h3>
+        <p>For a differentiable neural network, start with a chosen baseline $x'$ and move toward the actual input $x$ in small steps. At each step, measure how sensitive the model's score is to each feature, then add those sensitivities along the path. The resulting attributions divide the score difference between input and baseline:</p>
+        <div class="math-block">$$\operatorname{IG}_j(x;x')=(x_j-x'_j)\int_0^1\frac{\partial f(x'+\alpha(x-x'))}{\partial x_j}\,d\alpha.$$</div>
+        <p>For an image classifier, move from a blank image to a handwritten “8”; pixels in the digit's strokes may receive strong attribution for the “8” score. A blank image can be a useful baseline for some images, but a zero-valued credit record may be meaningless. The baseline and intermediate inputs need scrutiny.</p>
+
+        <h3>Adversarial examples · test a fragile boundary</h3>
+        <p>An adversarial example is an input deliberately changed to make the model err. Imagine changing a few stop-sign pixels so subtly that a person still sees a stop sign, while a classifier predicts another sign. The perturbation exposes a fragile decision boundary. It tests robustness; unlike a feasible credit counterfactual, it is not advice for changing a real-world decision, and the attack alone does not explain the model's reasoning.</p>
+        <div class="callout">
+          <div class="callout-title">Before trusting an explanation</div>
+          <ul>
+            <li>State whether it is local or global, and whether it explains a score, probability, or class decision.</li>
+            <li>Test whether a surrogate reproduces the original model nearby and whether results are stable under reasonable choices.</li>
+            <li>Check the reference data, baseline, correlated inputs, and feasibility of suggested changes.</li>
+            <li>Keep predictive performance and fairness audits separate from explanation quality.</li>
+          </ul>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <footer class="shell"><p>Statistical Learning Notes</p></footer>
+</body>
+</html>

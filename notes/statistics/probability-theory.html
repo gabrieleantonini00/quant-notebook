@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Basic Probability Theory and Event Calculus: Set operations, De Morgan's laws, Kolmogorov's axiomatic framework, fundamental properties and proofs, conditional probability, and Bayes' theorem.">
+  <meta name="order" content="1">
+  <title>Basic Probability Theory & Event Calculus | Statistics & Data Science</title>
+  
+  <!-- KaTeX Math Formula Rendering -->
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  
+  <style>
+    :root {
+      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
+      --green:#1f6f52; --green-soft:#dfece4; --green-border:#c2e5d5;
+      --blue:#246d9b; --blue-soft:#eaf3f9; --blue-border:#cce1f0;
+      --amber:#b67a19; --amber-soft:#fcf5e8; --amber-border:#fae6af;
+      --coral:#cb4343; --coral-soft:#fdf0f0; --coral-border:#f7cfcf;
+      --purple:#5c4ca8; --purple-soft:#f2eef9; --purple-border:#d8cdf0;
+      --radius:8px; --content:880px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    a { color:inherit; }
+    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
+    .topbar {
+      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
+    }
+    .topbar-inner {
+      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
+    }
+    .nav-back {
+      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
+      text-decoration:none; color:var(--muted); transition:color 150ms ease;
+    }
+    .nav-back:hover { color:var(--ink); }
+    .nav-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
+    }
+    article { padding:56px 0 84px; }
+    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .meta-eyebrow {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
+    }
+    h1 {
+      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
+    }
+    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+    .meta-info {
+      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    h2 {
+      margin:48px 0 20px; font-family:Georgia,"Times New Roman",serif;
+      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
+    }
+    h3 { margin:30px 0 14px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
+    p, ul, ol { margin:0 0 20px; }
+    ul, ol { padding-left:24px; }
+    li { margin-bottom:8px; }
+
+    .math-block {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px 20px; margin:22px 0; overflow-x:auto; text-align:center;
+    }
+    .callout {
+      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
+      padding:20px 24px; margin:26px 0; border-radius:0 var(--radius) var(--radius) 0;
+    }
+    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
+
+    .proof-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:22px 24px; margin:24px 0;
+    }
+    .proof-title {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem; font-weight:750;
+      text-transform:uppercase; letter-spacing:.06em; color:var(--blue); margin-bottom:8px;
+    }
+
+    .axiom-grid {
+      display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px; margin:26px 0;
+    }
+    .axiom-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:20px 18px; position:relative; overflow:hidden;
+    }
+    .axiom-card::before {
+      content:""; position:absolute; top:0; left:0; right:0; height:4px; background:var(--green);
+    }
+    .axiom-num {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem; font-weight:750;
+      color:var(--green); text-transform:uppercase; margin-bottom:6px;
+    }
+    .axiom-name { font-family:Georgia,serif; font-size:1.15rem; font-weight:700; margin:0 0 8px; }
+    .axiom-body { font-size:.85rem; color:var(--muted); line-height:1.45; margin:0; }
+
+    .comp-table {
+      width:100%; border-collapse:collapse; margin:24px 0; font-size:.88rem;
+    }
+    .comp-table th, .comp-table td { padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); }
+    .comp-table th { font-weight:650; background:var(--paper); font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; }
+
+    .page-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
+    }
+    .page-nav-link {
+      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
+      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
+      transition:background 150ms ease, border-color 150ms ease;
+    }
+    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
+    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
+    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
+    footer {
+      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
+    }
+    @media (max-width:768px) {
+      .axiom-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:680px) {
+      .shell { width:min(calc(100% - 28px),var(--content)); }
+      .page-nav { grid-template-columns:1fr; }
+    }
+  </style>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html">← Back to Overview</a>
+      <span class="nav-tag">Statistics Notes</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Statistics</div>
+        <h1>Basic Probability Theory & Event Calculus</h1>
+        <p class="article-lead">Set-theoretic foundations of probability: Boolean event calculus, De Morgan's laws, Kolmogorov's axiomatic probability spaces, rigorous property proofs, conditional probability, and Bayes' theorem.</p>
+      </header>
+
+      <!-- Section 1: Set Operations and Event Calculus -->
+      <section>
+        <h2>Operations on Sets and Events</h2>
+        <p>
+          Let $\Omega$ denote the <strong>sample space</strong>, the exhaustive set of all mutually exclusive elementary outcomes $\omega$. An <strong>event</strong> $A$ is a measurable subset of $\Omega$ ($A \subseteq \Omega$). The algebra of events is governed by set operations:
+        </p>
+
+        <ul>
+          <li><strong>Union ($A \cup B$):</strong> The event that occurs if <em>at least one</em> of the events occurs:
+            $$A \cup B = \{\omega \in \Omega : \omega \in A \lor \omega \in B\}$$
+          </li>
+          <li><strong>Intersection ($A \cap B$ or $AB$):</strong> The event that occurs if <em>both</em> events occur simultaneously:
+            $$A \cap B = \{\omega \in \Omega : \omega \in A \land \omega \in B\}$$
+          </li>
+          <li><strong>Complement ($A^c$ or $\bar{A}$):</strong> The event that $A$ does not occur:
+            $$A^c = \{\omega \in \Omega : \omega \notin A\} = \Omega \setminus A$$
+          </li>
+          <li><strong>Set Difference ($A \setminus B$):</strong> The occurrence of $A$ without the occurrence of $B$:
+            $$A \setminus B = A \cap B^c = \{\omega \in \Omega : \omega \in A \land \omega \notin B\}$$
+          </li>
+          <li><strong>Disjoint / Mutually Exclusive Events:</strong> Two events $A$ and $B$ cannot co-occur if:
+            $$A \cap B = \emptyset$$
+          </li>
+        </ul>
+
+        <h3>De Morgan's Laws</h3>
+        <p>
+          De Morgan's duality laws state that the complement of a union is the intersection of the complements, and vice versa. As set identities, for an arbitrary collection of events $\{A_i\}_{i \in I}$:
+        </p>
+
+        <div class="math-block">
+          $$\left( \bigcup_{i \in I} A_i \right)^c = \bigcap_{i \in I} A_i^c \qquad \text{and} \qquad \left( \bigcap_{i \in I} A_i \right)^c = \bigcup_{i \in I} A_i^c$$
+        </div>
+      </section>
+
+      <!-- Section 2: Kolmogorov's Axioms -->
+      <section>
+        <h2>Kolmogorov's Axiomatic Framework</h2>
+        <p>
+          A formal probability space is defined by the measurable triplet $(\Omega, \mathcal{F}, \mathbb{P})$, where $\mathcal{F}$ is a $\sigma$-algebra of events (subsets of $\Omega$ closed under complements and countable unions) and $\mathbb{P}: \mathcal{F} \to [0, 1]$ is a probability measure satisfying <strong>Kolmogorov's Three Axioms</strong>:
+        </p>
+
+        <div class="axiom-grid">
+          <div class="axiom-card">
+            <div class="axiom-num">Axiom 1</div>
+            <h4 class="axiom-name">Non-Negativity</h4>
+            <p class="axiom-body">For every event $A \in \mathcal{F}$:<br>$$\mathbb{P}(A) \ge 0$$</p>
+          </div>
+
+          <div class="axiom-card">
+            <div class="axiom-num">Axiom 2</div>
+            <h4 class="axiom-name">Normalization</h4>
+            <p class="axiom-body">The certain event has unit mass:<br>$$\mathbb{P}(\Omega) = 1$$</p>
+          </div>
+
+          <div class="axiom-card">
+            <div class="axiom-num">Axiom 3</div>
+            <h4 class="axiom-name">Countable Additivity</h4>
+            <p class="axiom-body">For any sequence of pairwise disjoint events ($A_i \cap A_j = \emptyset, \forall i \ne j$):<br>$$\mathbb{P}\left(\bigcup_{i=1}^\infty A_i\right) = \sum_{i=1}^\infty \mathbb{P}(A_i)$$</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Fundamental Properties & Proofs -->
+      <section>
+        <h2>Fundamental Properties & Analytical Proofs</h2>
+
+        <div class="proof-card">
+          <div class="proof-title">Property 1 • Probability of the Complement</div>
+          <p>$$\mathbb{P}(A^c) = 1 - \mathbb{P}(A)$$</p>
+          <p style="font-size:.85rem; color:var(--muted); margin:0;">
+            <strong>Proof:</strong> Notice that $\Omega = A \cup A^c$ and $A \cap A^c = \emptyset$. By Axiom 3 (finite additivity), $\mathbb{P}(\Omega) = \mathbb{P}(A) + \mathbb{P}(A^c)$. Applying Axiom 2 ($\mathbb{P}(\Omega) = 1$), we obtain $1 = \mathbb{P}(A) + \mathbb{P}(A^c)$, which rearranges to $\mathbb{P}(A^c) = 1 - \mathbb{P}(A)$. $\blacksquare$
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <div class="proof-title">Property 2 • Probability of the Impossible Event</div>
+          <p>$$\mathbb{P}(\emptyset) = 0$$</p>
+          <p style="font-size:.85rem; color:var(--muted); margin:0;">
+            <strong>Proof:</strong> Since $\emptyset = \Omega^c$, by Property 1 we have $\mathbb{P}(\emptyset) = 1 - \mathbb{P}(\Omega)$. Substituting Axiom 2 yields $\mathbb{P}(\emptyset) = 1 - 1 = 0$. $\blacksquare$
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <div class="proof-title">Property 3 • Monotonicity</div>
+          <p>$$\text{If } A \subseteq B \implies \mathbb{P}(A) \le \mathbb{P}(B)$$</p>
+          <p style="font-size:.85rem; color:var(--muted); margin:0;">
+            <strong>Proof:</strong> Any set $B$ containing $A$ can be decomposed into disjoint subsets $B = A \cup (B \setminus A) = A \cup (B \cap A^c)$, where $A \cap (B \cap A^c) = \emptyset$. By additivity, $\mathbb{P}(B) = \mathbb{P}(A) + \mathbb{P}(B \cap A^c)$. By Axiom 1, $\mathbb{P}(B \cap A^c) \ge 0$, therefore $\mathbb{P}(B) \ge \mathbb{P}(A)$. $\blacksquare$
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <div class="proof-title">Property 4 • Boundedness</div>
+          <p>$$0 \le \mathbb{P}(A) \le 1, \quad \forall A \in \mathcal{F}$$</p>
+          <p style="font-size:.85rem; color:var(--muted); margin:0;">
+            <strong>Proof:</strong> For any event $A$, $\emptyset \subseteq A \subseteq \Omega$. Applying monotonicity (Property 3) along with Axiom 2 and Property 2 yields $\mathbb{P}(\emptyset) \le \mathbb{P}(A) \le \mathbb{P}(\Omega) \implies 0 \le \mathbb{P}(A) \le 1$. $\blacksquare$
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <div class="proof-title">Property 5 • General Addition Rule (Inclusion-Exclusion)</div>
+          <p>$$\mathbb{P}(A \cup B) = \mathbb{P}(A) + \mathbb{P}(B) - \mathbb{P}(A \cap B)$$</p>
+          <p style="font-size:.85rem; color:var(--muted); margin:0;">
+            <strong>Proof:</strong> Decompose $A \cup B$ into disjoint components: $A \cup B = A \cup (B \cap A^c)$. Hence $\mathbb{P}(A \cup B) = \mathbb{P}(A) + \mathbb{P}(B \cap A^c)$. Furthermore, $B = (A \cap B) \cup (B \cap A^c)$, so $\mathbb{P}(B \cap A^c) = \mathbb{P}(B) - \mathbb{P}(A \cap B)$. Substituting yields the identity. $\blacksquare$
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 4: Conditional Probability and Independence -->
+      <section>
+        <h2>Conditional Probability & Event Independence</h2>
+        <p>
+          Let $B$ be a conditioning event with $\mathbb{P}(B) > 0$. The <strong>conditional probability</strong> of event $A$ given that event $B$ has occurred is formally defined as:
+        </p>
+
+        <div class="math-block">
+          $$\mathbb{P}(A \mid B) = \frac{\mathbb{P}(A \cap B)}{\mathbb{P}(B)}$$
+        </div>
+
+        <p>
+          From this definition follows the fundamental <strong>multiplication rule</strong>:
+        </p>
+        <div class="math-block">
+          $$\mathbb{P}(A \cap B) = \mathbb{P}(B) \cdot \mathbb{P}(A \mid B) = \mathbb{P}(A) \cdot \mathbb{P}(B \mid A)$$
+        </div>
+
+        <h3>Statistical Independence of Events</h3>
+        <p>
+          Two events $A$ and $B$ are defined as <strong>statistically independent</strong> (denoted $A \perp\!\!\!\perp B$) if and only if:
+        </p>
+        <div class="math-block">
+          $$\mathbb{P}(A \cap B) = \mathbb{P}(A) \cdot \mathbb{P}(B)$$
+        </div>
+
+        <p>
+          Equivalently, assuming $\mathbb{P}(B) > 0$, independence implies that conditioning on $B$ provides zero informational update regarding $A$:
+        </p>
+        <div class="math-block">
+          $$\mathbb{P}(A \mid B) = \mathbb{P}(A)$$
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Independence vs. Mutual Exclusivity</div>
+          <p>
+            Students frequently confuse independent events with mutually exclusive events:
+          </p>
+          <ul>
+            <li><strong>Mutually Exclusive ($A \cap B = \emptyset$):</strong> If $A$ happens, $B$ <em>cannot</em> happen ($\mathbb{P}(A \cap B) = 0$). For non-trivial events ($\mathbb{P}(A), \mathbb{P}(B) > 0$), mutually exclusive events are <em>dependent</em>.</li>
+            <li><strong>Independent ($\mathbb{P}(A \cap B) = \mathbb{P}(A)\mathbb{P}(B)$):</strong> The occurrence of $B$ gives no information about the occurrence of $A$.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section 5: Law of Total Probability & Bayes' Theorem -->
+      <section>
+        <h2>Law of Total Probability & Bayes' Theorem</h2>
+
+        <h3>The Law of Total Probability</h3>
+        <p>
+          Let $\{B_1, B_2, \dots, B_k\}$ form a <strong>partition</strong> of the sample space $\Omega$, meaning:
+        </p>
+        <ol>
+          <li>$B_i \cap B_j = \emptyset, \quad \forall i \ne j$ (mutually disjoint)</li>
+          <li>$\bigcup_{i=1}^k B_i = \Omega$ (collectively exhaustive)</li>
+          <li>$\mathbb{P}(B_i) > 0, \quad \forall i$</li>
+        </ol>
+
+        <p>Then for any event $A \subseteq \Omega$:</p>
+        <div class="math-block">
+          $$\mathbb{P}(A) = \sum_{i=1}^k \mathbb{P}(A \cap B_i) = \sum_{i=1}^k \mathbb{P}(B_i) \cdot \mathbb{P}(A \mid B_i)$$
+        </div>
+
+        <h3>Bayes' Theorem (Inverse Probability)</h3>
+        <p>
+          Bayes' Theorem inverts conditioning, allowing the calculation of the <strong>posterior probability</strong> of a partition event $B_j$ given observed evidence $A$:
+        </p>
+
+        <div class="math-block">
+          $$\mathbb{P}(B_j \mid A) = \frac{\mathbb{P}(A \mid B_j) \cdot \mathbb{P}(B_j)}{\mathbb{P}(A)} = \frac{\mathbb{P}(A \mid B_j) \cdot \mathbb{P}(B_j)}{\sum_{i=1}^k \mathbb{P}(A \mid B_i) \cdot \mathbb{P}(B_i)}$$
+        </div>
+
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Mathematical Notation</th>
+              <th>Probabilistic Interpretation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Prior Probability</strong></td>
+              <td>$\mathbb{P}(B_j)$</td>
+              <td>Initial belief in hypothesis $B_j$ prior to observing evidence $A$.</td>
+            </tr>
+            <tr>
+              <td><strong>Likelihood</strong></td>
+              <td>$\mathbb{P}(A \mid B_j)$</td>
+              <td>Probability of observing evidence $A$ assuming hypothesis $B_j$ holds true.</td>
+            </tr>
+            <tr>
+              <td><strong>Evidence / Marginal</strong></td>
+              <td>$\mathbb{P}(A)$</td>
+              <td>Total probability of observing evidence $A$ averaged across all states.</td>
+            </tr>
+            <tr>
+              <td><strong>Posterior Probability</strong></td>
+              <td>$\mathbb{P}(B_j \mid A)$</td>
+              <td>Updated belief in hypothesis $B_j$ incorporating the observed evidence $A$.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+
+      <section class="worked-example" aria-labelledby="bayes-example">
+        <p class="example-label">Worked example · Think in counts</p>
+        <h2 id="bayes-example">What does a spam flag actually mean?</h2>
+        <p>Suppose 20% of incoming messages are spam. A filter flags 90% of spam, but also flags 5% of legitimate messages. These are invented rates for learning Bayes' rule. Imagine 1,000 messages with exactly these proportions:</p>
+        <div class="table-wrap">
+          <table>
+            <caption>A hypothetical inbox of 1,000 messages</caption>
+            <thead><tr><th scope="col">Actual message</th><th scope="col">Flagged</th><th scope="col">Not flagged</th><th scope="col">Total</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Spam</th><td>180</td><td>20</td><td>200</td></tr>
+              <tr><th scope="row">Legitimate</th><td>40</td><td>760</td><td>800</td></tr>
+              <tr><th scope="row">Total</th><td>220</td><td>780</td><td>1,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Once a message is flagged, the relevant group is the <strong>220 flagged messages</strong>. Of these, 180 are spam. Let $S$ mean spam and $F$ mean flagged:</p>
+        <div class="math-block">$$\mathbb{P}(S\mid F)=\frac{0.90\times0.20}{0.90\times0.20+0.05\times0.80}=\frac{180}{220}\approx81.8\%.$$</div>
+        <p class="takeaway"><strong>Remember:</strong> $\mathbb{P}(F\mid S)=90\%$ and $\mathbb{P}(S\mid F)=81.8\%$ answer different questions. The original prevalence of spam changes the second answer.</p>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="../../index.html">
+          <span class="page-nav-sub">← Back</span>
+          <span class="page-nav-title">Homepage Overview</span>
+        </a>
+        <a class="page-nav-link next" href="random-variables.html">
+          <span class="page-nav-sub">Next Topic →</span>
+          <span class="page-nav-title">Random Variables & Transformations</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell">
+    <p>Gabriele Antonini / Statistics Notes / 2026</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How large language models generate tokens, how parameter counts compare across 2019–2026 models, how assistants are trained, and what agent harnesses add.">
+  <meta name="order" content="5">
+  <title>Large Language Models (LLMs) | Natural Language Processing</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <style>
+    .llm-chart-scroll { overflow-x: auto; }
+    .note-page .llm-chart-scroll img { min-width: 700px; max-width: none; }
+  </style>
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html#nlp">← Back to Natural Language Processing</a>
+      <span class="nav-tag">Natural Language Processing</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Natural Language Processing</div>
+        <h1>Large Language Models (LLMs)</h1>
+        <p class="article-lead">From predicting the next token to building a useful assistant: what the model learns, what prompting and retrieval add, and what an agent harness does around the model.</p>
+      </header>
+
+      <section>
+        <h2>From text to the next token</h2>
+        <p>A tokenizer turns text into token IDs. A token may be a word, part of a word, punctuation, or another fragment; it is not always a whole word. The model converts those IDs into vectors and uses Transformer attention to build context-sensitive representations. It then produces a score, or <em>logit</em>, for every possible next token.</p>
+        <p>Why learn a model instead of counting word sequences? The number of possible long contexts grows too quickly to observe each one often enough. Shared model parameters let it estimate plausible continuations even for sequences it has not seen verbatim. A token's representation also changes with its context: “bank” in a loan application is used differently from “bank” beside a river.</p>
+        <p>For a causal language model, generation repeats one step at a time: use the preceding tokens to predict a distribution for the next token, choose one token, append it to the context, and repeat. The model does not write an entire answer in a single step.</p>
+        <div class="math-block">$$p_\theta(x_t\mid x_{1:t-1})\qquad\text{next-token distribution given earlier tokens}$$</div>
+        <p>Sampling turns logits $z_v$ into probabilities. With a positive temperature $T$, the probability of token $w$ is:</p>
+        <div class="math-block">$$p_T(w\mid x_{1:t-1})=\frac{\exp(z_w/T)}{\sum_{v\in V}\exp(z_v/T)},\qquad T\gt 0.$$</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Control</th><th scope="col">What it changes</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Temperature</th><td>Lower positive values concentrate probability on the highest-scoring tokens; higher values spread it out. A setting of zero is a special decoding rule, not division by zero.</td></tr>
+              <tr><th scope="row">Top-p</th><td>Samples only from the smallest set of tokens whose cumulative probability reaches a chosen threshold $p$.</td></tr>
+              <tr><th scope="row">Output limit</th><td>Caps the number of tokens generated. It controls length and cost, not factual accuracy.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>How many parameters do LLMs have?</h2>
+        <p>A <strong>parameter</strong> is a learned numerical weight; B below means <em>billion</em>. The chart compares selected models with publicly disclosed sizes, not the average model in each year. In a <strong>dense</strong> model, most weights participate in each token's computation. A <strong>Mixture-of-Experts (MoE)</strong> model stores many expert weights but routes each token through only some of them, so its <em>total</em> and <em>active per token</em> counts differ.</p>
+        <figure class="figure-card">
+          <div class="llm-chart-scroll">
+            <img src="../../assets/plots/nlp-llm-parameters.svg" alt="Log-scale chart of selected language models from 2019 to 2026, in billions of parameters. Dense models: GPT-2 1.5, GPT-3 175, Llama 2 70, Llama 3.1 405, and Gemma 4 31. Mixture-of-Experts models show active versus total parameters per token: gpt-oss-120b 5.1 versus 117, Llama 4 Maverick 17 versus 400, Gemma 4 26B 3.8 versus 26, and Qwen3.5 17 versus 397." loading="lazy" width="920" height="635">
+          </div>
+          <figcaption>Selected manufacturer-reported examples, not an industry average or a claim that bigger always means better. For MoE models, the smaller number is active per token; all parameters still need to be stored or made available. Counts may be defined differently across model families. Training data, architecture, and evaluation matter too.</figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h2>How a language model becomes an assistant</h2>
+        <p>These are distinct kinds of training, not a fixed recipe used identically for every model.</p>
+        <h3>Pretraining</h3>
+        <p>Text and code are collected, cleaned, filtered, and tokenized. The model learns to predict tokens across many contexts by reducing next-token loss. Data quality, mixture, compute, architecture, and training objective matter alongside parameter count.</p>
+        <div class="math-block">$$\mathcal{L}_{\mathrm{pre}}(\theta)=-\sum_{t=1}^{N}\log p_\theta(x_t\mid x_{1:t-1}).$$</div>
+        <p>This yields a <strong>base model</strong> that can continue text. The equation describes the training objective, not proof that every statement the model generates is true.</p>
+
+        <h3>Instruction tuning</h3>
+        <p>Supervised fine-tuning (SFT) trains on examples of prompts and desired responses. It can teach the model to follow instructions, use conversational roles, and produce a requested format. The weights change during this step.</p>
+
+        <h3>Preference and outcome feedback</h3>
+        <p>Further post-training may favor responses that humans prefer or answers that pass a verifiable check. In reinforcement learning from human feedback (RLHF), people compare candidate responses, a reward model learns from those comparisons, and the assistant is optimized against that signal. Other approaches use AI feedback or directly verifiable rewards. A high reward is still not a guarantee of truth or safety.</p>
+      </section>
+
+      <section>
+        <h2>Adapting a model to a task</h2>
+        <p>The first decision is whether the task needs new model weights, or whether the existing model can work with better context and tools.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Approach</th><th scope="col">What changes</th><th scope="col">Useful when</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Prompting and examples</th><td>Only the input context; model weights stay fixed.</td><td>You need instructions, a format, or a few demonstrations.</td></tr>
+              <tr><th scope="row">Retrieval-augmented generation (RAG)</th><td>Relevant documents are retrieved and inserted into the context at question time.</td><td>Answers should use a changing collection of notes or records.</td></tr>
+              <tr><th scope="row">Fine-tuning</th><td>Model weights are updated using task examples.</td><td>You need a learned behavior that prompting alone does not provide reliably.</td></tr>
+              <tr><th scope="row">Feature extraction</th><td>A frozen model supplies embeddings to a separate classifier or regressor.</td><td>You need predictions from text with a smaller downstream model.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Example:</strong> A study assistant asked about a fact in your notes can retrieve the relevant passage and answer from it. Fine-tuning may improve its response style, but does not keep changing notes automatically up to date. Retrieval also needs evaluation: finding a passage does not prove that it is correct or that the answer faithfully uses it.</p>
+
+        <h3>When updating weights: LoRA</h3>
+        <p>Full fine-tuning updates many parameters. Low-rank adaptation (LoRA) instead freezes an existing weight matrix $W_0$ and learns two smaller matrices. For $W_0\in\mathbb{R}^{d\times k}$ and rank $r$:</p>
+        <div class="math-block">$$W=W_0+\frac{\alpha}{r}BA,\qquad A\in\mathbb{R}^{r\times k},\quad B\in\mathbb{R}^{d\times r}.$$</div>
+        <p>The adapted matrix adds $r(d+k)$ trainable entries rather than updating all $dk$ entries of $W_0$. Savings depend on the chosen rank and which matrices are adapted.</p>
+      </section>
+
+      <section>
+        <h2>Agents and their harnesses</h2>
+        <p>A language model produces responses and may request a tool call. An <strong>agent harness</strong> is the surrounding software that turns this into a controlled, multi-step workflow. It supplies instructions and context, presents available tools, executes permitted calls, returns their results to the model, manages session state, and decides when to stop or ask for help. The harness is not another set of learned model weights.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Part</th><th scope="col">Role</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Model</th><td>Interprets the current context, generates text, and can choose a tool to request.</td></tr>
+              <tr><th scope="row">Tools</th><td>Perform concrete actions such as searching notes, running code, or reading a file.</td></tr>
+              <tr><th scope="row">Skills</th><td>Reusable instructions or resources for a particular workflow; they guide behavior but do not execute actions by themselves.</td></tr>
+              <tr><th scope="row">Harness</th><td>Runs the model–tool loop, passes observations back, tracks context and permissions, and records or checks the outcome.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>One loop, step by step</h3>
+        <ol>
+          <li>A user asks: “Compare my notes on BERT and LLMs.” The harness gives the model the request, relevant instructions, and a notes-search tool.</li>
+          <li>The model requests a search. The harness runs it and returns the matching passages; the model has not searched the files on its own.</li>
+          <li>The model compares the passages and either asks for another tool call or produces an answer. The harness can enforce permissions, limits, and checks along the way.</li>
+        </ol>
+        <p>This distinction matters: a stronger model can still fail with missing context or unreliable tools, while a good harness cannot make an unsupported claim true. Evaluate both the model's answers and the surrounding workflow.</p>
+      </section>
+
+      <section>
+        <h2>Limits and checks</h2>
+        <p>Fluent text is not evidence. For factual tasks, inspect whether the answer follows the supplied source; for exact calculations, use a calculator or code and check the result. For tool-using tasks, inspect whether the tool result supports the claimed action. Test representative and difficult cases, including missing information, ambiguous instructions, and incorrect retrieval. Longer reasoning traces or more tool calls can help in some cases but do not guarantee a correct result.</p>
+      </section>
+
+      <section>
+        <h2>Reading</h2>
+        <p>Stephen Wolfram, <a href="https://www.wolfram-media.com/products/what-is-chatgpt-doing-and-why-does-it-work/" target="_blank" rel="noopener noreferrer"><cite>What Is ChatGPT Doing ... and Why Does It Work?</cite></a> (2023). The discussion of next-token generation draws on this book; the sections on adaptation and agent harnesses cover later practical extensions.</p>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="transformers.html">
+          <span class="page-nav-sub">← Previous Topic</span>
+          <span class="page-nav-title">Transformers &amp; BERT</span>
+        </a>
+        <a class="page-nav-link next" href="../../index.html#nlp">
+          <span class="page-nav-sub">Return to</span>
+          <span class="page-nav-title">Natural Language Processing</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell"><p>Natural Language Processing Notes</p></footer>
+</body>
+</html>

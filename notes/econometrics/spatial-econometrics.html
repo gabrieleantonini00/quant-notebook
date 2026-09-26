@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Spatial econometrics: spatial weights, SAR feedback and spillovers, estimation, and the SEM, SLX, and SDM models.">
+  <meta name="order" content="1">
+  <title>Spatial Econometrics | Econometrics</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html#econometrics">← Back to Econometrics</a>
+      <span class="nav-tag">Econometrics</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Econometrics</div>
+        <h1>Spatial econometrics</h1>
+        <p class="article-lead">Places are connected. Spatial models describe how an outcome in one place can depend on nearby outcomes, nearby characteristics, or shared spatial shocks.</p>
+      </header>
+
+      <section>
+        <h2>Why location matters</h2>
+        <p>Imagine studying house prices across districts. A price in one district may respond to prices in neighboring districts; nearby amenities may matter too. Unobserved local conditions can also make neighboring errors similar. A regression that treats all districts as unrelated can miss these patterns.</p>
+        <p>These mechanisms are different: <strong>outcome interaction</strong> links the dependent variables, <strong>covariate spillover</strong> links characteristics across places, and <strong>correlated shocks</strong> link the errors. SAR, SLX, and SEM model these three channels respectively; SDM combines the first two.</p>
+      </section>
+
+      <section>
+        <h2>Define neighbors with $W$</h2>
+        <p>A spatial weights matrix $W$ records which of the $n$ places influence which others. Its entry $w_{ij}$ is the weight from place $j$ to place $i$, usually with $w_{ii}=0$. Neighbors can be defined by a shared border, distance, or a substantive network. The choice is part of the model, so results should be checked against plausible alternatives.</p>
+        <p>Consider four districts in a two-by-two grid. If only districts sharing an edge count as neighbors, each district has two neighbors. Dividing each nonzero row weight by two gives the row-standardized matrix below. The <em>spatial lag</em> $Wy$ then averages neighboring outcomes:</p>
+        <div class="math-block">$$W=\begin{pmatrix}0 &amp; 1/2 &amp; 1/2 &amp; 0\\1/2 &amp; 0 &amp; 0 &amp; 1/2\\1/2 &amp; 0 &amp; 0 &amp; 1/2\\0 &amp; 1/2 &amp; 1/2 &amp; 0\end{pmatrix},\qquad (Wy)_A=\tfrac12 y_B+\tfrac12 y_C.$$</div>
+        <figure class="figure-card">
+          <img src="../../assets/plots/econometrics-spatial-weights.svg" alt="Four districts A, B, C, D in a two-by-two grid. A is adjacent to B and C, B to A and D, C to A and D, and D to B and C. The matching weights matrix has one-half for each neighbor and zero elsewhere." loading="lazy" width="920" height="430">
+          <figcaption>Rook adjacency: only shared edges count. With illustrative outcomes $y_A=10$, $y_B=40$, $y_C=20$, and $y_D=30$, the spatial lag for A is $(Wy)_A=(40+20)/2=30$.</figcaption>
+        </figure>
+        <p>Rows sum to one for places with neighbors. An isolated place has no neighbors and needs an explicit convention, often a zero row. Even though $w_{AA}=0$, the diagonal of $W^2$ need not be zero: a path can leave A for B and return to A.</p>
+      </section>
+
+      <section>
+        <h2>SAR: outcomes feed back across places</h2>
+        <p>The <strong>spatial autoregressive model</strong> (SAR) adds the neighboring outcome $Wy$ to a regression. Here $X$ contains each place's covariates, $\beta$ their coefficients, $u$ the disturbances, and $\rho$ the strength of outcome interaction:</p>
+        <div class="math-block">$$y=\rho Wy+X\beta+u,\qquad y=(I-\rho W)^{-1}(X\beta+u).$$</div>
+        <p>The second expression makes the feedback visible. When the inverse exists and the expansion converges,</p>
+        <div class="math-block">$$(I-\rho W)^{-1}=I+\rho W+\rho^2W^2+\rho^3W^3+\cdots.$$</div>
+        <p>$I$ is the effect within the original district; $W$ transmits it to immediate neighbors; $W^2$ includes two-step routes, including a route back home. For a nonnegative row-standardized $W$, $|\rho|&lt;1$ is a convenient sufficient condition for this expansion. It is not a universal requirement for every possible $W$.</p>
+      </section>
+
+      <section>
+        <h2>Direct effects and spillovers</h2>
+        <p>In SAR, a coefficient $\beta_k$ is not generally the full effect of increasing covariate $k$ in one district. For one-unit changes in $x_k$, the matrix of marginal effects is</p>
+        <div class="math-block">$$S_k=\frac{\partial y}{\partial x_k^{\mathsf T}}=(I-\rho W)^{-1}\beta_k.$$</div>
+        <p>The <strong>diagonal</strong> of $S_k$ measures each district's own response, including effects that leave and return. The <strong>off-diagonal</strong> entries measure spillovers to other districts. Average direct effect is $\operatorname{tr}(S_k)/n$; average total effect is $\boldsymbol{1}^{\mathsf T}S_k\boldsymbol{1}/n$; average indirect effect is their difference.</p>
+        <figure class="figure-card">
+          <img src="../../assets/plots/econometrics-spatial-spillovers.svg" alt="Bar chart for a one-unit covariate increase in district A, with rho 0.4 and beta 1. A responds by 1.095, B and C by 0.238 each, and D by 0.095. A contains a feedback effect above the direct coefficient of one; the other bars are spillovers." loading="lazy" width="920" height="470">
+          <figcaption>Illustrative SAR calculation using the four-district $W$ above, $\rho=0.4$, and $\beta_k=1$. Changing $x_{Ak}$ by one unit raises A by about 1.095, its immediate neighbors B and C by 0.238 each, and D by 0.095. These are model-implied changes, not estimated data.</figcaption>
+        </figure>
+        <p>For this symmetric grid, the average direct, indirect, and total effects are approximately 1.095, 0.571, and 1.667. The extra 0.095 in A's response above $\beta_k=1$ comes from feedback through its neighbors.</p>
+      </section>
+
+      <section>
+        <h2>Estimation: why $Wy$ is special</h2>
+        <p>In SAR, $Wy$ contains neighbors' outcomes, and those outcomes respond to shocks elsewhere in the same connected system. Consequently $Wy$ is generally correlated with the disturbance $u$; ordinary least squares on the displayed SAR equation is generally inconsistent. Maximum likelihood is one route to estimation. Instrumental variables are another: $WX$ and $W^2X$ can be candidate instruments if $X$ and the chosen $W$ are exogenous, and the instruments are relevant and sufficiently strong.</p>
+        <p>A distance-based $W$ can be more defensible than a network built from the outcome being explained, but geographical weights are not automatically exogenous. Examine how the definition of neighbors, row standardization, isolated places, and alternative specifications affect the result.</p>
+      </section>
+
+      <section>
+        <h2>Other ways to model spatial dependence</h2>
+        <p>The position of $W$ in an equation tells you which mechanism is being modeled. $\varepsilon$ below denotes an innovation before any spatial error propagation.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Model</th><th scope="col">Equation</th><th scope="col">Where dependence enters</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">SAR</th><td>$y=\rho Wy+X\beta+u$</td><td>Neighbors' outcomes</td></tr>
+              <tr><th scope="row">SEM</th><td>$y=X\beta+u$, $u=\lambda Wu+\varepsilon$</td><td>Unobserved shocks</td></tr>
+              <tr><th scope="row">SLX</th><td>$y=X\beta+WX\theta+u$</td><td>Neighbors' characteristics</td></tr>
+              <tr><th scope="row">SDM</th><td>$y=\rho Wy+X\beta+WX\theta+u$</td><td>Outcomes and characteristics</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>SEM</strong> (spatial error model) allows nearby places to share unobserved disturbances. With exogenous $X$, OLS coefficients in $y=X\beta+u$ can remain consistent, but ordinary OLS standard errors ignore the spatial error correlation and OLS is generally inefficient. Spatial-error ML or GMM estimation addresses that structure.</p>
+        <p><strong>SLX</strong> (spatially lagged X) puts the neighboring covariates $WX$ directly into the regression. With exogenous $X$ and $W$, OLS can estimate $\beta$ and $\theta$: a change in district A's characteristic has a local effect through $X\beta$ and a spillover through $WX\theta$, without outcome feedback.</p>
+        <p><strong>SDM</strong> (spatial Durbin model) combines $Wy$ and $WX$. Its effect matrix for covariate $k$ is $S_k=(I-\rho W)^{-1}(\beta_k I+\theta_k W)$, so both channels and their feedback enter direct and indirect effects. Setting $\theta=0$ yields SAR; setting $\rho=0$ yields SLX. Under the common-factor restriction $\theta=-\rho\beta$ and suitable assumptions, SDM also corresponds to an SEM representation. Adding $WX$ can help describe omitted spatial patterns, but it does not automatically remove endogeneity or identify causal effects.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="shell"><p>Econometrics Notes</p></footer>
+</body>
+</html>

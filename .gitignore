@@ -1,0 +1,17 @@
+# Machine-local history and temporary output
+.local-backup/
+.qa/
+__pycache__/
+*.py[cod]
+*.log
+preview*.png
+.venv/
+node_modules/
+.env
+.env.*
+!.env.example
+Thumbs.db
+.DS_Store
+
+# Original research PDFs stay local; HTML notes contain the reviewed material.
+/Notes*.pdf

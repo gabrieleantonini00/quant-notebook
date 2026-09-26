@@ -1,0 +1,334 @@
+{
+  "statistics": {
+    "title": "Statistics",
+    "description": "Probability, distributions, inference, ANOVA, and multiple testing.",
+    "sections": [
+      {
+        "title": "Basic Probability Theory & Event Calculus",
+        "summary": "Basic Probability Theory and Event Calculus: Set operations, De Morgan's laws, Kolmogorov's axiomatic framework, fundamental properties and proofs, conditional probability, and Bayes' theorem.",
+        "topics": [
+          "Operations on Sets and Events",
+          "Kolmogorov's Axiomatic Framework",
+          "Fundamental Properties & Analytical Proofs",
+          "Conditional Probability & Event Independence",
+          "Law of Total Probability & Bayes' Theorem",
+          "What does a spam flag actually mean?"
+        ],
+        "link": "notes/statistics/probability-theory.html",
+        "reading_minutes": 6,
+        "order": 1,
+        "category_path": []
+      },
+      {
+        "title": "Random Variables & Distribution Transformations",
+        "summary": "Random Variables, Distributions & Transformations: CDF, PMF, PDF, quantiles, discrete/continuous families, Poisson approximation, and Jacobian transformations including the Gumbel derivation.",
+        "topics": [
+          "CDF, PDF & PMF Foundations",
+          "Main Discrete Probability Distributions",
+          "Main Continuous Probability Distributions",
+          "Random Variable Transformations & The Jacobian Method",
+          "How long until the next arrival?"
+        ],
+        "link": "notes/statistics/random-variables.html",
+        "reading_minutes": 6,
+        "order": 2,
+        "category_path": []
+      },
+      {
+        "title": "Statistical Operators: Expectation, Variance & Covariance",
+        "summary": "Statistical Operators: Expectation, Variance, Covariance, Correlation, Independence vs. Uncorrelatedness in Bivariate Normal distributions, and Quantitative Finance Two-Asset Portfolios.",
+        "topics": [
+          "The Expectation Operator",
+          "Variance Operator & Dispersion Calculus",
+          "Covariance, Correlation & The Independence Disconnect",
+          "Quantitative Finance Application: Two-Asset Portfolios & Shortfall Risk",
+          "Does averaging two measurements help?"
+        ],
+        "link": "notes/statistics/statistical-operators.html",
+        "reading_minutes": 6,
+        "order": 3,
+        "category_path": []
+      },
+      {
+        "title": "Parametric Inference & Hypothesis Testing",
+        "summary": "Parametric Inference and Hypothesis Testing: Estimator properties, Bessel's correction, consistency, Chebyshev inequality, Method of Moments, Maximum Likelihood, CLT asymptotics, and Wald testing.",
+        "topics": [
+          "Properties of Estimators: Bias, Consistency & Efficiency",
+          "Estimation Methods: Moments & Maximum Likelihood",
+          "Central Limit Theorem (CLT) & Asymptotics",
+          "Hypothesis Testing & Confidence Intervals",
+          "Is a mean reading different from 100?"
+        ],
+        "link": "notes/statistics/parametric-inference.html",
+        "reading_minutes": 7,
+        "order": 4,
+        "category_path": [
+          "Statistical Inference"
+        ]
+      },
+      {
+        "title": "Analysis of variance (ANOVA)",
+        "summary": "One-way ANOVA: compare several group means through between- and within-group variation, an F test, assumptions, and follow-up comparisons.",
+        "topics": [
+          "One question for several means",
+          "Why compare two variances?",
+          "A small worked example",
+          "What the result does and does not say"
+        ],
+        "link": "notes/statistics/anova.html",
+        "reading_minutes": 3,
+        "order": 5,
+        "category_path": [
+          "Statistical Inference"
+        ]
+      },
+      {
+        "title": "Multiple hypothesis testing",
+        "summary": "Multiple hypothesis testing: false positives across many tests, FWER, FDP, FDR, and Bonferroni, Holm, BH, BY, and FDP-StepM methods.",
+        "topics": [
+          "Why one $p$-value is not enough",
+          "Three ways to define the error",
+          "FWER: Bonferroni and Holm",
+          "FDR: Benjamini–Hochberg and Benjamini–Yekutieli",
+          "Controlling the realized fraction: FDP-StepM",
+          "Choosing a procedure"
+        ],
+        "link": "notes/statistics/multiple-hypothesis-testing.html",
+        "reading_minutes": 5,
+        "order": 6,
+        "category_path": [
+          "Statistical Inference"
+        ]
+      }
+    ],
+    "has_notes": true,
+    "planned_topics": []
+  },
+  "econometrics": {
+    "title": "Econometrics",
+    "description": "Dependence across places, spatial models, and spillover effects.",
+    "sections": [
+      {
+        "title": "Spatial econometrics",
+        "summary": "Spatial econometrics: spatial weights, SAR feedback and spillovers, estimation, and the SEM, SLX, and SDM models.",
+        "topics": [
+          "Why location matters",
+          "Define neighbors with $W$",
+          "SAR: outcomes feed back across places",
+          "Direct effects and spillovers",
+          "Estimation: why $Wy$ is special",
+          "Other ways to model spatial dependence"
+        ],
+        "link": "notes/econometrics/spatial-econometrics.html",
+        "reading_minutes": 5,
+        "order": 1,
+        "category_path": []
+      }
+    ],
+    "has_notes": true,
+    "planned_topics": [
+      "Cross-sectional data",
+      "Pooled data",
+      "Panel models",
+      "Time series"
+    ]
+  },
+  "learning": {
+    "title": "Statistical Learning",
+    "description": "Learning from data and evaluating predictions.",
+    "sections": [
+      {
+        "title": "Model Evaluation & Performance Metrics",
+        "summary": "Evaluating classification models: Confusion Matrix, Accuracy, Precision, Recall, F1-Score, the class imbalance paradox, and trade-off optimization.",
+        "topics": [
+          "The Confusion Matrix",
+          "Accuracy & The Class Imbalance Paradox",
+          "Precision vs. Recall: The Asymmetric Error Trade-Off",
+          "The F1-Score & Harmonic Optimization",
+          "Multi-Class Extensions & Averaging Strategies",
+          "Why 94% accuracy needs more context",
+          "A reliable evaluation workflow"
+        ],
+        "link": "notes/statistical-learning/classification/model-evaluation.html",
+        "reading_minutes": 7,
+        "order": 4,
+        "category_path": [
+          "Supervised Learning",
+          "Classification"
+        ]
+      },
+      {
+        "title": "Explainable Artificial Intelligence (XAI)",
+        "summary": "Explainable artificial intelligence: local and global explanations, LIME, SHAP, integrated gradients, partial dependence, ICE, ALE, and counterfactuals.",
+        "topics": [
+          "What does an explanation answer?",
+          "Explaining one decision",
+          "How a feature changes model predictions",
+          "Neural networks and robustness"
+        ],
+        "link": "notes/statistical-learning/supervised-learning/explainable-ai.html",
+        "reading_minutes": 7,
+        "order": 5,
+        "category_path": [
+          "Supervised Learning"
+        ]
+      }
+    ],
+    "has_notes": true,
+    "planned_topics": [
+      "Supervised learning foundations",
+      "Regression and regularization",
+      "Classification models",
+      "Unsupervised learning",
+      "Reinforcement learning"
+    ]
+  },
+  "nlp": {
+    "title": "Natural Language Processing",
+    "description": "Text representations, topic models, and language models.",
+    "sections": [
+      {
+        "title": "Bag of Words (BoW)",
+        "summary": "Bag of Words (BoW), Term-Document Matrices, TF-IDF, and Vector Space Models in Natural Language Processing.",
+        "topics": [
+          "Core Concept & Formal Definition",
+          "The Term-Document Matrix ($A$)",
+          "Weighting Schemes: Raw Counts vs. TF-IDF",
+          "Fundamental Limitations of Bag of Words"
+        ],
+        "link": "notes/nlp/bag-of-words.html",
+        "reading_minutes": 3,
+        "order": 1,
+        "category_path": []
+      },
+      {
+        "title": "LSA & LDA",
+        "summary": "Latent Semantic Analysis (LSA) via SVD and Latent Dirichlet Allocation (LDA) via Bayesian Inference and Dirichlet Priors.",
+        "topics": [
+          "Latent Semantic Analysis (LSA)",
+          "Latent Dirichlet Allocation (LDA)"
+        ],
+        "link": "notes/nlp/lsa-lda.html",
+        "reading_minutes": 4,
+        "order": 2,
+        "category_path": []
+      },
+      {
+        "title": "Embeddings & Word2Vec",
+        "summary": "Word Embeddings and Word2Vec: Continuous Bag of Words (CBOW), Skip-Gram, Weight Matrices, and Softmax Prediction.",
+        "topics": [
+          "From Discrete to Distributed Representations",
+          "Continuous Bag of Words (CBOW) Architecture",
+          "CBOW vs. Skip-Gram",
+          "Semantic Geometry & Vector Arithmetic"
+        ],
+        "link": "notes/nlp/embeddings-word2vec.html",
+        "reading_minutes": 4,
+        "order": 3,
+        "category_path": []
+      },
+      {
+        "title": "Transformers & BERT",
+        "summary": "Transformers and BERT Architecture: Self-Attention, Scaled Dot-Product, Positional Encodings, Cross-Attention, and Bidirectional Pre-training.",
+        "topics": [
+          "The Transformer Architecture (Vaswani et al., 2017)",
+          "The Encoder Block",
+          "The Decoder Block & Model Head",
+          "BERT (Devlin et al., 2018)"
+        ],
+        "link": "notes/nlp/transformers.html",
+        "reading_minutes": 4,
+        "order": 4,
+        "category_path": []
+      },
+      {
+        "title": "Large Language Models (LLMs)",
+        "summary": "How large language models generate tokens, how parameter counts compare across 2019–2026 models, how assistants are trained, and what agent harnesses add.",
+        "topics": [
+          "From text to the next token",
+          "How many parameters do LLMs have?",
+          "How a language model becomes an assistant",
+          "Adapting a model to a task",
+          "Agents and their harnesses",
+          "Limits and checks",
+          "Reading"
+        ],
+        "link": "notes/nlp/llms.html",
+        "reading_minutes": 6,
+        "order": 5,
+        "category_path": []
+      }
+    ],
+    "has_notes": true,
+    "planned_topics": []
+  },
+  "finance": {
+    "title": "Quantitative Finance",
+    "description": "Risk estimation and risk-adjusted performance.",
+    "sections": [
+      {
+        "title": "Value-at-Risk (VaR) Estimation",
+        "summary": "Value-at-Risk (VaR): Formal definition, parametric location-scale models, GARCH & EWMA volatility, Historical Simulation, CAViaR, and out-of-sample backtesting with Kupiec, Christoffersen, and Basel Traffic Light frameworks.",
+        "topics": [
+          "Formal Definition of Value-at-Risk",
+          "From a return quantile to a euro amount",
+          "Parametric Models: The Location-Scale Framework",
+          "Non-Parametric Approaches",
+          "Semi-Parametric Quantile Regression: CAViaR",
+          "Out-of-Sample Backtesting & Statistical Validation",
+          "Connecting volatility models and machine learning"
+        ],
+        "link": "notes/finance/value-at-risk.html",
+        "reading_minutes": 6,
+        "order": 1,
+        "category_path": []
+      },
+      {
+        "title": "Expected Shortfall (ES) Estimation",
+        "summary": "Expected Shortfall (ES): Coherent risk measures, Artzner axioms of coherence, conditional tail expectation, and graphical intuition vs. Value-at-Risk (VaR).",
+        "topics": [
+          "From VaR to Coherent Risk Measures",
+          "How bad are the worst 5% of days?",
+          "Joint estimation: learning VaR and ES together",
+          "The asymmetric Laplace connection",
+          "Validating ES forecasts"
+        ],
+        "link": "notes/finance/expected-shortfall.html",
+        "reading_minutes": 5,
+        "order": 2,
+        "category_path": []
+      },
+      {
+        "title": "Sharpe & Sortino Ratios",
+        "summary": "Risk-adjusted performance metrics: Sharpe Ratio (total volatility) vs. Sortino Ratio (downside risk), mathematical formulations, and comparative intuition.",
+        "topics": [
+          "The Sharpe Ratio",
+          "The Sortino Ratio",
+          "Comparative Summary",
+          "Same returns, two definitions of risk",
+          "Reading a reported ratio carefully"
+        ],
+        "link": "notes/finance/sharpe-ratio.html",
+        "reading_minutes": 3,
+        "order": 3,
+        "category_path": []
+      }
+    ],
+    "has_notes": true,
+    "planned_topics": []
+  },
+  "bayesian": {
+    "title": "Bayesian Statistics",
+    "description": "Prior beliefs, probabilistic models, and posterior inference.",
+    "sections": [],
+    "has_notes": false,
+    "planned_topics": []
+  },
+  "setup": {
+    "title": "Machine Setup",
+    "description": "Development environments and computing workflows.",
+    "sections": [],
+    "has_notes": false,
+    "planned_topics": []
+  }
+}

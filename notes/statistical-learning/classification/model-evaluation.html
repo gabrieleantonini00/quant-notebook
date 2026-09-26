@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Evaluating classification models: Confusion Matrix, Accuracy, Precision, Recall, F1-Score, the class imbalance paradox, and trade-off optimization.">
+  <meta name="order" content="4">
+  <title>Model Evaluation & Performance Metrics | Statistics & Data Science</title>
+  
+  <!-- KaTeX Math Formula Rendering -->
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  
+  <style>
+    :root {
+      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
+      --green:#1f6f52; --green-soft:#edf7f2; --green-border:#c2e5d5;
+      --blue:#246d9b; --blue-soft:#eaf3f9; --blue-border:#cce1f0;
+      --amber:#b67a19; --amber-soft:#fcf5e8; --amber-border:#fae6af;
+      --coral:#cb4343; --coral-soft:#fdf0f0; --coral-border:#f7cfcf;
+      --purple:#5c4ca8; --purple-soft:#f2eef9; --purple-border:#d8cdf0;
+      --radius:8px; --content:880px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    a { color:inherit; }
+    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
+    .topbar {
+      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
+    }
+    .topbar-inner {
+      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
+    }
+    .nav-back {
+      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
+      text-decoration:none; color:var(--muted); transition:color 150ms ease;
+    }
+    .nav-back:hover { color:var(--ink); }
+    .nav-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      background:var(--purple-soft); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:600;
+    }
+    article { padding:56px 0 84px; }
+    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .meta-eyebrow {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--purple); margin-bottom:12px;
+    }
+    h1 {
+      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
+    }
+    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+    .meta-info {
+      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    h2 {
+      margin:48px 0 20px; font-family:Georgia,"Times New Roman",serif;
+      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
+    }
+    h3 { margin:30px 0 14px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
+    p, ul, ol { margin:0 0 20px; }
+    ul, ol { padding-left:24px; }
+    li { margin-bottom:8px; }
+
+    /* Colorful 2x2 Confusion Matrix */
+    .matrix-wrapper {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:28px 24px; margin:28px 0;
+    }
+    .matrix-title-bar { text-align:center; margin-bottom:20px; }
+    .matrix-title-bar h3 { margin:0 0 6px; font-size:1.35rem; }
+    .matrix-title-bar p { font-size:.85rem; color:var(--muted); margin:0; }
+
+    .matrix-grid {
+      display:grid; grid-template-columns:160px 1fr 1fr; grid-template-rows:auto 1fr 1fr;
+      gap:14px; align-items:stretch; margin-top:16px;
+    }
+    .matrix-header {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem; font-weight:750;
+      text-transform:uppercase; letter-spacing:.05em; display:flex; flex-direction:column; gap:4px; align-items:center; justify-content:center;
+      color:var(--muted); text-align:center; padding:8px;
+    }
+    .matrix-lbl, .matrix-sub { white-space:nowrap; }
+    .matrix-sub { font-size:.82em; font-weight:600; }
+    .matrix-corner { grid-column:1; grid-row:1; }
+    .col-header-1 { grid-column:2; grid-row:1; color:var(--ink); }
+    .col-header-2 { grid-column:3; grid-row:1; color:var(--ink); }
+    .row-header-1 { grid-column:1; grid-row:2; color:var(--ink); }
+    .row-header-2 { grid-column:1; grid-row:3; color:var(--ink); }
+
+    .cell-card {
+      border-radius:8px; padding:20px 18px; border:1.5px solid transparent;
+      transition:transform 150ms ease, box-shadow 150ms ease; position:relative; overflow:hidden;
+    }
+    .cell-card:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.06); }
+    
+    .cell-tp { background:var(--green-soft); border-color:var(--green-border); }
+    .cell-fp { background:var(--coral-soft); border-color:var(--coral-border); }
+    .cell-fn { background:var(--amber-soft); border-color:var(--amber-border); }
+    .cell-tn { background:var(--blue-soft); border-color:var(--blue-border); }
+
+    .cell-badge {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem; font-weight:800;
+      text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; display:inline-block;
+    }
+    .cell-tp .cell-badge { color:#15803d; }
+    .cell-fp .cell-badge { color:#b91c1c; }
+    .cell-fn .cell-badge { color:#a16207; }
+    .cell-tn .cell-badge { color:#1d4ed8; }
+
+    .cell-name {
+      font-family:Georgia,serif; font-size:1.2rem; font-weight:700; margin:0 0 6px; color:var(--ink);
+    }
+    .cell-tp .cell-name { color:#15803d; }
+    .cell-fp .cell-name { color:#b91c1c; }
+    .cell-fn .cell-name { color:#a16207; }
+    .cell-tn .cell-name { color:#1d4ed8; }
+    .f1-accent { color:var(--purple); }
+    .cell-desc { font-size:.84rem; margin:0; line-height:1.45; color:var(--ink); }
+    .cell-formula {
+      margin-top:12px; padding-top:8px; border-top:1px dashed var(--line);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem; font-weight:650; color:var(--muted);
+    }
+
+    /* Metric Cards Grid */
+    .metric-grid-2 {
+      display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;
+    }
+    .metric-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:24px 20px; position:relative; overflow:hidden;
+    }
+    .metric-card::before { content:""; position:absolute; top:0; left:0; right:0; height:4px; }
+    .metric-acc::before { background:var(--green); }
+    .metric-prec::before { background:var(--blue); }
+    .metric-rec::before { background:var(--amber); }
+    .metric-f1::before { background:var(--purple); }
+
+    .metric-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem; font-weight:750;
+      text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;
+    }
+    .metric-acc .metric-tag { color:var(--green); }
+    .metric-prec .metric-tag { color:var(--blue); }
+    .metric-rec .metric-tag { color:var(--amber); }
+    .metric-f1 .metric-tag { color:var(--purple); }
+
+    .metric-name { font-family:Georgia,serif; font-size:1.35rem; margin:0 0 10px; }
+    .metric-question {
+      font-size:.88rem; font-weight:650; color:var(--ink); margin-bottom:12px; line-height:1.4;
+      background:var(--paper); padding:8px 12px; border-radius:6px; border-left:3px solid currentColor;
+    }
+    .metric-acc .metric-question { border-left-color:var(--green); }
+    .metric-prec .metric-question { border-left-color:var(--blue); }
+    .metric-rec .metric-question { border-left-color:var(--amber); }
+    .metric-f1 .metric-question { border-left-color:var(--purple); }
+
+    /* Harmonic Box */
+    .harmonic-box {
+      background:var(--purple-soft); border:1px solid var(--purple-border); border-radius:var(--radius);
+      padding:24px 22px; margin:24px 0;
+    }
+    .harmonic-title { font-family:Georgia,serif; font-size:1.2rem; font-weight:700; color:var(--purple); margin:0 0 8px; }
+    .harmonic-desc { font-size:.86rem; color:var(--ink); line-height:1.55; margin:0; }
+
+    /* Callouts */
+    .callout {
+      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
+      padding:20px 24px; margin:24px 0; border-radius:0 var(--radius) var(--radius) 0;
+    }
+    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
+    .callout.alert { border-left-color:var(--coral); }
+    .callout.alert .callout-title { color:var(--coral); }
+
+    .math-block {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px 20px; margin:20px 0; overflow-x:auto; text-align:center;
+    }
+    
+    .comp-table {
+      width:100%; border-collapse:collapse; margin:22px 0; font-size:.88rem;
+    }
+    .comp-table th, .comp-table td { padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); }
+    .comp-table th { font-weight:650; background:var(--paper); font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; }
+
+    .page-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
+    }
+    .page-nav-link {
+      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
+      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
+      transition:background 150ms ease, border-color 150ms ease;
+    }
+    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
+    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
+    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
+    footer {
+      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
+    }
+    @media (max-width:768px) {
+      .metric-grid-2 { grid-template-columns:1fr; }
+      .matrix-grid { grid-template-columns:1fr; grid-template-rows:auto; }
+      .matrix-header { display:none; }
+    }
+    @media (max-width:680px) {
+      .shell { width:min(calc(100% - 28px),var(--content)); }
+      .page-nav { grid-template-columns:1fr; }
+    }
+  </style>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../../index.html#learning/supervised-learning/classification">← Back to Classification</a>
+      <span class="nav-tag">Classification Evaluation</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Supervised Learning • Classification</div>
+        <h1>Model Evaluation & Performance Metrics</h1>
+        <p class="article-lead">Evaluating classification models: the anatomy of the Confusion Matrix, the class imbalance paradox, Precision vs. Recall trade-offs, and the harmonic optimization of the F1-Score.</p>
+      </header>
+
+      <!-- Section 1: The Confusion Matrix -->
+      <section>
+        <h2>The Confusion Matrix</h2>
+        <p>
+          The <strong>Confusion Matrix</strong> is the foundational contingency table for assessing classifier performance. It cross-classifies the ground-truth target states ($y \in \{0, 1\}$) against the model's predicted decisions ($\hat{y} \in \{0, 1\}$):
+        </p>
+
+        <!-- 2x2 Contingency Matrix -->
+        <div class="matrix-wrapper">
+          <div class="matrix-title-bar">
+            <h3>2 × 2 Contingency Grid</h3>
+            <p>Decomposing actual states vs. predicted decisions</p>
+          </div>
+
+          <div class="matrix-grid">
+            <div class="matrix-corner"></div>
+            <div class="matrix-header col-header-1"><span class="matrix-lbl">Actual Positive</span><span class="matrix-sub">($y = 1$)</span></div>
+            <div class="matrix-header col-header-2"><span class="matrix-lbl">Actual Negative</span><span class="matrix-sub">($y = 0$)</span></div>
+
+            <div class="matrix-header row-header-1"><span class="matrix-lbl">Predicted Positive</span><span class="matrix-sub">($\hat{y} = 1$)</span></div>
+            <div class="matrix-header row-header-2"><span class="matrix-lbl">Predicted Negative</span><span class="matrix-sub">($\hat{y} = 0$)</span></div>
+
+            <!-- TP -->
+            <div class="cell-card cell-tp">
+              <span class="cell-badge">Hit / Success</span>
+              <h4 class="cell-name">True Positive (TP)</h4>
+              <p class="cell-desc">The model predicted positive, and the ground-truth state is indeed positive.</p>
+              <div class="cell-formula">$y = 1 \;\land\; \hat{y} = 1$</div>
+            </div>
+
+            <!-- FP -->
+            <div class="cell-card cell-fp">
+              <span class="cell-badge">Type I Error</span>
+              <h4 class="cell-name">False Positive (FP)</h4>
+              <p class="cell-desc"><strong>False Alarm:</strong> The model predicted positive, but the actual state was negative.</p>
+              <div class="cell-formula">$y = 0 \;\land\; \hat{y} = 1$</div>
+            </div>
+
+            <!-- FN -->
+            <div class="cell-card cell-fn">
+              <span class="cell-badge">Type II Error</span>
+              <h4 class="cell-name">False Negative (FN)</h4>
+              <p class="cell-desc"><strong>Missed Detection:</strong> The model predicted negative, failing to catch a true positive event.</p>
+              <div class="cell-formula">$y = 1 \;\land\; \hat{y} = 0$</div>
+            </div>
+
+            <!-- TN -->
+            <div class="cell-card cell-tn">
+              <span class="cell-badge">Correct Rejection</span>
+              <h4 class="cell-name">True Negative (TN)</h4>
+              <p class="cell-desc">The model predicted negative, and the ground-truth state is indeed negative.</p>
+              <div class="cell-formula">$y = 0 \;\land\; \hat{y} = 0$</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Accuracy & The Paradox -->
+      <section>
+        <h2>Accuracy & The Class Imbalance Paradox</h2>
+        
+        <div class="metric-card metric-acc" style="margin-bottom:20px;">
+          <div class="metric-tag">Global Ratio</div>
+          <h3 class="metric-name">Accuracy</h3>
+          <div class="metric-question">"What fraction of all predictions was correct?"</div>
+          <div class="math-block">
+            $$\text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}$$
+          </div>
+          <p style="font-size:.88rem; color:var(--muted); margin:0;">
+            Measures the overall proportion of correct classifications across the entire population.
+          </p>
+        </div>
+
+        <div class="callout alert">
+          <div class="callout-title">The Accuracy Paradox in Skewed Datasets</div>
+          <p>
+            In highly imbalanced domains (e.g. rare disease diagnosis, financial fraud detection, or cyber-intrusion), the positive minority class may represent only <strong>$0.1\%$</strong> of the data.
+          </p>
+          <p>
+            A trivial, uninformative dummy model that permanently predicts negative ($\hat{y} = 0$) achieves an apparently stellar <strong>$99.9\%$ Accuracy</strong>, yet fails to detect a single actual fraud or illness case. <strong>Accuracy alone can conceal failure on the minority class.</strong>
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 3: Precision & Recall -->
+      <section>
+        <h2>Precision vs. Recall: The Asymmetric Error Trade-Off</h2>
+        <p>
+          To diagnose specific failure modes, we decompose performance into two complementary perspectives:
+        </p>
+
+        <div class="metric-grid-2">
+          <!-- Precision -->
+          <div class="metric-card metric-prec">
+            <div class="metric-tag">Positive Predictive Value</div>
+            <h3 class="metric-name">Precision</h3>
+            <div class="metric-question">"When the model predicts positive, how often is it right?"</div>
+            <div class="math-block">
+              $$\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}$$
+            </div>
+            <p style="font-size:.85rem; color:var(--muted); line-height:1.45; margin:0;">
+              <strong>Focus:</strong> Measures how many positive predictions are correct; useful when false alarms are costly.<br>
+              <strong>Use Case:</strong> Spam filtering or recommendation. A false positive can hide a useful email or generate an irrelevant suggestion.
+            </p>
+          </div>
+
+          <!-- Recall -->
+          <div class="metric-card metric-rec">
+            <div class="metric-tag">Sensitivity / True Positive Rate</div>
+            <h3 class="metric-name">Recall</h3>
+            <div class="metric-question">"Of all actual positive cases in reality, how many did we find?"</div>
+            <div class="math-block">
+              $$\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}$$
+            </div>
+            <p style="font-size:.85rem; color:var(--muted); line-height:1.45; margin:0;">
+              <strong>Focus:</strong> Measures how many positives are found; useful when missed cases are costly.<br>
+              <strong>Use Case:</strong> Screening or fraud alerts. A false negative may delay further investigation of a true case.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">The Decision Threshold Trade-off ($\theta$)</div>
+          <p>
+            For any probabilistic classifier $P(y = 1 \mid x)$, tuning the classification threshold $\theta$:
+          </p>
+          <ul>
+            <li><strong>Raising $\theta$ (e.g. 0.8):</strong> Fewer cases are predicted positive. Recall cannot increase on a fixed dataset; precision often improves but can move either way.</li>
+            <li><strong>Lowering $\theta$ (e.g. 0.2):</strong> More cases are predicted positive. Recall cannot decrease on a fixed dataset; precision often falls but is not guaranteed to do so.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section 4: The F1-Score -->
+      <section>
+        <h2>The <span class="f1-accent">F1-Score</span> & Harmonic Optimization</h2>
+        <p>
+          The <strong>F1-Score</strong> is the <strong>harmonic mean</strong> of Precision and Recall, providing a single balanced metric:
+        </p>
+
+        <div class="math-block">
+          $$\text{F1-Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}} = \frac{2}{\frac{1}{\text{Precision}} + \frac{1}{\text{Recall}}}$$
+        </div>
+
+        <div class="harmonic-box">
+          <div class="harmonic-title">Why the Harmonic Mean instead of the Arithmetic Mean?</div>
+          <p class="harmonic-desc">
+            The arithmetic mean allows an extreme score in one metric to mask total failure in the other (e.g. a model with $\text{Precision} = 1.0$ and $\text{Recall} = 0.01$ has an arithmetic average of $0.505$).<br><br>
+            The harmonic mean heavily penalizes extreme imbalances: perfect precision with very low recall still gives a small score:
+          </p>
+          <div class="math-block" style="background:var(--paper); margin:14px 0 0;">
+            $$\text{Precision} = 1.0,\quad \text{Recall} = 0.01 \implies \text{F1} = 2 \cdot \frac{1.0 \times 0.01}{1.0 + 0.01} \approx 0.0198$$
+          </div>
+        </div>
+
+        <h3>The Parameterized $F_\beta$ Score</h3>
+        <p>The $F_\beta$ score adjusts the emphasis on precision and recall. It is not generally equivalent to minimizing a specified monetary cost:</p>
+
+        <div class="math-block">
+          $$F_\beta = (1 + \beta^2) \cdot \frac{\text{Precision} \cdot \text{Recall}}{(\beta^2 \cdot \text{Precision}) + \text{Recall}}$$
+        </div>
+
+        <ul>
+          <li><strong>$\beta = 0.5$ ($F_{0.5}$):</strong> Weighs Precision higher than Recall (emphasizes fewer false alarms).</li>
+          <li><strong>$\beta = 1.0$ ($F_1$):</strong> Balanced weight between Precision and Recall.</li>
+          <li><strong>$\beta = 2.0$ ($F_2$):</strong> Weighs Recall higher than Precision (emphasizes fewer missed positives).</li>
+        </ul>
+      </section>
+
+      <!-- Section 5: Multi-Class Averaging -->
+      <section>
+        <h2>Multi-Class Extensions & Averaging Strategies</h2>
+        <p>
+          When classifying across $K > 2$ categories, binary metrics are calculated per class on a one-vs-rest basis and combined via:
+        </p>
+
+        <div class="table-wrap"><table class="comp-table">
+          <thead>
+            <tr>
+              <th>Averaging Mode</th>
+              <th>Mathematical Formulation</th>
+              <th>Properties & Best Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Macro Average</strong></td>
+              <td>$$\frac{1}{K} \sum_{k=1}^K \text{Score}_k$$</td>
+              <td>Unweighted arithmetic mean across all classes. Gives equal weight to rare and frequent classes.</td>
+            </tr>
+            <tr>
+              <td><strong>Weighted Average</strong></td>
+              <td>$$\sum_{k=1}^K \frac{N_k}{N} \text{Score}_k$$</td>
+              <td>Weights each class score by its true support $N_k$. Frequent classes dominate; minority-class failure can be hidden.</td>
+            </tr>
+            <tr>
+              <td><strong>Micro Average</strong></td>
+              <td>$$\text{Calculated globally from } \sum \text{TP}_k, \sum \text{FP}_k, \sum \text{FN}_k$$</td>
+              <td>Pools counts. Micro precision, recall, and F1 equal accuracy for single-label multiclass prediction when all classes are included; this does not generally hold for multilabel tasks.</td>
+            </tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="worked-example" id="classification-example">
+        <p class="example-label">Worked example · 1,000 labeled messages</p>
+        <h2>Why 94% accuracy needs more context</h2>
+        <p>A hypothetical spam detector evaluates 100 spam messages and 900 legitimate messages. Treat spam as the positive class. At threshold 0.5, the model raises 120 spam alerts:</p>
+        <div class="table-wrap"><table class="comp-table"><caption>Confusion matrix at threshold 0.5</caption><thead><tr><th scope="col">Prediction</th><th scope="col">Actually spam</th><th scope="col">Actually legitimate</th><th scope="col">Total</th></tr></thead><tbody>
+          <tr><th scope="row">Spam</th><td>TP = 80</td><td>FP = 40</td><td>120</td></tr>
+          <tr><th scope="row">Legitimate</th><td>FN = 20</td><td>TN = 860</td><td>880</td></tr>
+        </tbody></table></div>
+        <div class="math-block">$$\text{Accuracy}=\frac{80+860}{1000}=94\%,\quad\text{Precision}=\frac{80}{120}=66.7\%,\quad\text{Recall}=\frac{80}{100}=80\%$$</div>
+        <div class="math-block">$$F_1=\frac{2\mathrm{TP}}{2\mathrm{TP}+\mathrm{FP}+\mathrm{FN}}=\frac{160}{220}=72.7\%$$</div>
+        <p>One in three alerts is a false alarm, even though 94% of all predictions are correct. A model that always predicts legitimate would reach 90% accuracy while finding no spam.</p>
+        <h3>Changing only the decision threshold</h3>
+        <p>The model assigns each message an estimated positive-class probability $\hat p(x)$. We turn it into a decision by flagging the message when $\hat p(x)\geq\theta$, where $\theta$ is the chosen threshold. A cutoff of 0.5 is a convention, not a universal optimum. Here the model and the 1,000 messages stay the same: only the cutoff changes. A lower cutoff flags more messages, including more true spam and more legitimate messages; a higher cutoff flags fewer and may miss more spam.</p>
+        <div class="table-wrap"><table class="comp-table"><caption>Illustrative counts for the same model and 1,000 messages; only the threshold changes</caption><thead><tr><th scope="col">Threshold</th><th scope="col">Alerts (TP + FP)</th><th scope="col">TP / FP</th><th scope="col">FN / TN</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th></tr></thead><tbody>
+          <tr><td>0.3</td><td>270</td><td>90 / 180</td><td>10 / 720</td><td>33.3%</td><td>90%</td><td>48.6%</td></tr>
+          <tr><td>0.5</td><td>120</td><td>80 / 40</td><td>20 / 860</td><td>66.7%</td><td>80%</td><td>72.7%</td></tr>
+          <tr><td>0.8</td><td>60</td><td>50 / 10</td><td>50 / 890</td><td>83.3%</td><td>50%</td><td>62.5%</td></tr>
+        </tbody></table></div>
+        <p>Suppose a review team has the budget to inspect at most 100 alerts from this batch. Thresholds 0.3 and 0.5 produce 270 and 120 alerts, so both exceed capacity. Threshold 0.8 produces only 60 alerts, but misses 50 of the 100 spam messages. A cutoff between 0.5 and 0.8 might use more of the available capacity while catching more spam; these three rows alone cannot identify the best one. Similar limits arise when each alert requires a paid test, an investigator, or time from a specialist.</p>
+        <p class="takeaway"><strong>Takeaway:</strong> threshold 0.5 has the highest F1 of these three examples, but it is infeasible under the 100-alert budget. Choose the cutoff on validation data using the real cost of false alarms, missed cases, and limited review capacity; then evaluate the chosen rule on untouched test data.</p>
+      </section>
+
+      <section id="evaluation-checks">
+        <h2>A reliable evaluation workflow</h2>
+        <ol>
+          <li><strong>Define the positive class and decision cost.</strong> Pair precision with recall rather than reporting either alone.</li>
+          <li><strong>Choose thresholds on validation data.</strong> Freeze the model and threshold before reporting final test performance; fitting preprocessing on the test set also leaks information.</li>
+          <li><strong>Report support and uncertainty.</strong> A metric based on ten positives is much less stable than one based on thousands. Use time-aware splits for temporal data.</li>
+          <li><strong>Handle zero denominators explicitly.</strong> Precision is undefined with no predicted positives, and recall is undefined with no actual positives. State how the implementation reports these cases. F1 ignores true negatives.</li>
+        </ol>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="../../../index.html#learning/supervised-learning/classification">
+          <span class="page-nav-sub">← Back to Classification</span>
+          <span class="page-nav-title">Classification</span>
+        </a>
+        <a class="page-nav-link next" href="../../../index.html">
+          <span class="page-nav-sub">Return Home →</span>
+          <span class="page-nav-title">Homepage Overview</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell">
+    <p>Gabriele Antonini / Statistical Learning Notes / 2026</p>
+  </footer>
+</body>
+</html>

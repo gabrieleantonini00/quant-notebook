@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Risk-adjusted performance metrics: Sharpe Ratio (total volatility) vs. Sortino Ratio (downside risk), mathematical formulations, and comparative intuition.">
+  <meta name="order" content="3">
+  <title>Sharpe & Sortino Ratios | Statistics & Data Science</title>
+  
+  <!-- KaTeX Math Formula Rendering -->
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  
+  <style>
+    :root {
+      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
+      --green:#1f6f52; --green-soft:#dfece4; --blue:#39749b; --blue-soft:#e6f0f7;
+      --indigo:#625f9b; --indigo-soft:#f0edf9; --coral:#d05e49; --coral-soft:#fdf0ed;
+      --amber:#b67a19; --amber-soft:#fcf5e8; --radius:8px; --content:880px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    a { color:inherit; }
+    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
+    .topbar {
+      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
+    }
+    .topbar-inner {
+      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
+    }
+    .nav-back {
+      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
+      text-decoration:none; color:var(--muted); transition:color 150ms ease;
+    }
+    .nav-back:hover { color:var(--ink); }
+    .nav-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
+    }
+    article { padding:56px 0 84px; }
+    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .meta-eyebrow {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
+    }
+    h1 {
+      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
+    }
+    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+    .meta-info {
+      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    h2 {
+      margin:42px 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:1.65rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
+    }
+    h3 { margin:26px 0 12px; font-family:Georgia,"Times New Roman",serif; font-size:1.25rem; font-weight:400; }
+    p, ul, ol { margin:0 0 18px; }
+    ul, ol { padding-left:24px; }
+    li { margin-bottom:8px; }
+
+    .math-block {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px 20px; margin:20px 0; overflow-x:auto; text-align:center;
+    }
+    .schema-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:22px; margin:24px 0;
+    }
+    .schema-card h4 { margin:0 0 12px; font-size:1.1rem; font-family:Georgia,"Times New Roman",serif; }
+    
+    .callout {
+      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
+      padding:18px 22px; margin:22px 0; border-radius:0 var(--radius) var(--radius) 0;
+    }
+    .callout-title { font-weight:700; margin-bottom:6px; font-size:.9rem; color:var(--ink); }
+
+    .ratio-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;
+    }
+    .ratio-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:20px;
+    }
+    .ratio-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem; font-weight:700;
+      text-transform:uppercase; margin-bottom:6px;
+    }
+    .ratio-tag.sharpe { color:var(--blue); }
+    .ratio-tag.sortino { color:var(--green); }
+    .ratio-name { font-family:Georgia,serif; font-size:1.2rem; margin:0 0 8px; }
+    .ratio-desc { font-size:.84rem; color:var(--muted); line-height:1.45; margin:0; }
+
+    .comp-table {
+      width:100%; border-collapse:collapse; margin:22px 0; font-size:.88rem;
+    }
+    .comp-table th, .comp-table td { padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); }
+    .comp-table th { font-weight:650; background:var(--paper); font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; }
+
+    .page-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
+    }
+    .page-nav-link {
+      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
+      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
+      transition:background 150ms ease, border-color 150ms ease;
+    }
+    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
+    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
+    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
+    footer {
+      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
+    }
+    @media (max-width:768px) {
+      .ratio-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:680px) {
+      .shell { width:min(calc(100% - 28px),var(--content)); }
+      .page-nav { grid-template-columns:1fr; }
+    }
+  </style>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html">← Back to Overview</a>
+      <span class="nav-tag">Quantitative Finance</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Quantitative Finance</div>
+        <h1>Sharpe & Sortino Ratios</h1>
+        <p class="article-lead">Risk-adjusted performance metrics: quantifying excess return per unit of total volatility versus downside risk.</p>
+      </header>
+
+      <!-- Overview Grid -->
+      <div class="ratio-grid">
+        <div class="ratio-card">
+          <div class="ratio-tag sharpe">Total Volatility Risk</div>
+          <h3 class="ratio-name">Sharpe Ratio</h3>
+          <p class="ratio-desc">Measures excess portfolio return per unit of total standard deviation ($\sigma_p$), treating upside and downside deviations symmetrically.</p>
+        </div>
+
+        <div class="ratio-card">
+          <div class="ratio-tag sortino">Downside Risk Only</div>
+          <h3 class="ratio-name">Sortino Ratio</h3>
+          <p class="ratio-desc">Measures excess return over a benchmark target per unit of downside deviation ($\sigma_d$), penalizing only harmful losses.</p>
+        </div>
+      </div>
+
+      <!-- Section 1: Sharpe Ratio -->
+      <section>
+        <h2>The Sharpe Ratio</h2>
+        <p>
+          The <strong>Sharpe Ratio</strong> evaluates the risk-adjusted return of an investment portfolio by comparing its expected excess return over the risk-free rate to its overall volatility:
+        </p>
+
+        <div class="math-block">
+          $$\text{Sharpe Ratio} = \frac{\mathbb{E}[R_p - R_f]}{\sigma_p}$$
+        </div>
+
+        <p>where:</p>
+        <ul>
+          <li>$R_p$: Portfolio return.</li>
+          <li>$R_f$: Risk-free benchmark rate (e.g. Treasury bill yield).</li>
+          <li>$\sigma_p = \sqrt{\text{Var}(R_p)}$: Portfolio-return standard deviation when the benchmark is constant. With a varying benchmark, use $\operatorname{sd}(R_p-R_f)$ in the denominator.</li>
+        </ul>
+
+        <div class="callout">
+          <div class="callout-title">Limitation of the Sharpe Ratio</div>
+          <p>
+            Standard deviation penalizes both harmful losses and beneficial large positive returns equally. For investment strategies with asymmetric or positively skewed return profiles (such as trend following or long-option strategies), large upside moves can increase the denominator too. Whether that is a useful risk summary depends on the question; Sharpe does not describe tail losses or the full return distribution.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 2: Sortino Ratio -->
+      <section>
+        <h2>The Sortino Ratio</h2>
+        <p>
+          The <strong>Sortino Ratio</strong> modifies the Sharpe Ratio by replacing total standard deviation with <strong>Downside Deviation (Semi-Standard Deviation)</strong>, measuring excess return relative to a Minimum Acceptable Return ($\text{MAR}$ or $\tau$):
+        </p>
+
+        <div class="math-block">
+          $$\text{Sortino Ratio} = \frac{\mathbb{E}[R_p - \tau]}{\sigma_d}$$
+        </div>
+
+        <h3>Downside Deviation ($\sigma_d$)</h3>
+        <p>
+          Downside deviation isolates only returns that fall below the target threshold $\tau$:
+        </p>
+
+        <div class="math-block">
+          $$\sigma_d = \sqrt{\frac{1}{T} \sum_{t=1}^T \min(0,\, R_{p,t} - \tau)^2}$$
+        </div>
+
+        <p>
+          Any return $R_{p,t} \ge \tau$ yields a deviation of zero, ensuring that upside volatility never penalizes the strategy score.
+        </p>
+      </section>
+
+      <!-- Section 3: Comparative Summary -->
+      <section>
+        <h2>Comparative Summary</h2>
+
+        <div class="table-wrap"><table class="comp-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Sharpe Ratio</th>
+              <th>Sortino Ratio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Risk Measure</strong></td>
+              <td>Total Standard Deviation ($\sigma_p$).</td>
+              <td>Downside Semi-Deviation ($\sigma_d$).</td>
+            </tr>
+            <tr>
+              <td><strong>Benchmark Threshold</strong></td>
+              <td>Risk-free rate ($R_f$).</td>
+              <td>Minimum Acceptable Return ($\tau$ / MAR).</td>
+            </tr>
+            <tr>
+              <td><strong>Upside Volatility</strong></td>
+              <td>Penalized as risk.</td>
+              <td>Ignored (Treated as favorable).</td>
+            </tr>
+            <tr>
+              <td><strong>Interpretation</strong></td>
+              <td>A summary using mean excess return and total variability.</td>
+              <td>A summary focused on shortfalls below a stated target.</td>
+            </tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="worked-example" id="ratios-example">
+        <p class="example-label">Worked example · six hypothetical months</p>
+        <h2>Same returns, two definitions of risk</h2>
+        <p>Consider monthly returns of <strong>2%, −1%, 3%, −2%, 1%, 3%</strong>. Set the monthly risk-free benchmark and the minimum acceptable return to zero for this arithmetic example. The mean is $\bar R=1\%$.</p>
+        <div class="table-wrap"><table class="comp-table"><caption>Downside deviation counts every month in its denominator</caption><thead><tr><th scope="col">Month</th><th scope="col">Return</th><th scope="col">Shortfall below 0%</th><th scope="col">Squared shortfall (percentage points squared)</th></tr></thead><tbody>
+          <tr><td>1</td><td>2%</td><td>0%</td><td>0</td></tr><tr><td>2</td><td>−1%</td><td>−1%</td><td>1</td></tr>
+          <tr><td>3</td><td>3%</td><td>0%</td><td>0</td></tr><tr><td>4</td><td>−2%</td><td>−2%</td><td>4</td></tr>
+          <tr><td>5</td><td>1%</td><td>0%</td><td>0</td></tr><tr><td>6</td><td>3%</td><td>0%</td><td>0</td></tr>
+        </tbody></table></div>
+        <div class="math-block">$$s_R=\sqrt{\frac{(2-1)^2+(-1-1)^2+(3-1)^2+(-2-1)^2+(1-1)^2+(3-1)^2}{6-1}}=2.098\%$$</div>
+        <div class="math-block">$$\sigma_d=\sqrt{\frac{1+4}{6}}=0.913\%,\qquad \widehat S=\frac{1}{2.098}=0.477,\qquad \widehat{\text{Sortino}}=\frac{1}{0.913}=1.095$$</div>
+        <p>We used the sample standard deviation ($T-1$) for Sharpe and the full-sample downside second moment ($T$) for Sortino. Dividing downside losses only by the two negative months would estimate a different quantity.</p>
+        <p class="takeaway"><strong>Takeaway:</strong> the higher Sortino value reflects a different denominator. It does not mean the portfolio performed better when measured a second time.</p>
+      </section>
+
+      <section id="ratio-checks">
+        <h2>Reading a reported ratio carefully</h2>
+        <p>State the observation period, return frequency, benchmark, fees, and denominator convention. Keep returns and benchmark rates at the same frequency. Neither ratio is finite when its denominator is zero, and a short history can make either estimate unstable.</p>
+        <p>For approximately additive excess returns with stable moments and no serial correlation, the common annualization is $S_{\mathrm{annual}}\approx\sqrt{m}\,S_{\mathrm{period}}$, where $m$ is the number of periods per year. Compounding and serial correlation can invalidate this shortcut.</p>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="expected-shortfall.html">
+          <span class="page-nav-sub">← Previous Topic</span>
+          <span class="page-nav-title">Expected Shortfall (ES)</span>
+        </a>
+        <a class="page-nav-link next" href="../../index.html">
+          <span class="page-nav-sub">Return Home →</span>
+          <span class="page-nav-title">Statistics & Data Science</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell">
+    <p>Gabriele Antonini / Quantitative Finance Notes / 2026</p>
+  </footer>
+</body>
+</html>

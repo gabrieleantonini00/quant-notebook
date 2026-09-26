@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Statistical Operators: Expectation, Variance, Covariance, Correlation, Independence vs. Uncorrelatedness in Bivariate Normal distributions, and Quantitative Finance Two-Asset Portfolios.">
+  <meta name="order" content="3">
+  <title>Statistical Operators: Expectation, Variance & Covariance | Statistics & Data Science</title>
+  
+  <!-- KaTeX Math Formula Rendering -->
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  
+  <style>
+    :root {
+      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
+      --green:#1f6f52; --green-soft:#dfece4; --green-border:#c2e5d5;
+      --blue:#246d9b; --blue-soft:#eaf3f9; --blue-border:#cce1f0;
+      --amber:#b67a19; --amber-soft:#fcf5e8; --amber-border:#fae6af;
+      --coral:#cb4343; --coral-soft:#fdf0f0; --coral-border:#f7cfcf;
+      --purple:#5c4ca8; --purple-soft:#f2eef9; --purple-border:#d8cdf0;
+      --radius:8px; --content:880px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    a { color:inherit; }
+    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
+    .topbar {
+      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
+    }
+    .topbar-inner {
+      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
+    }
+    .nav-back {
+      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
+      text-decoration:none; color:var(--muted); transition:color 150ms ease;
+    }
+    .nav-back:hover { color:var(--ink); }
+    .nav-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
+    }
+    article { padding:56px 0 84px; }
+    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .meta-eyebrow {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
+    }
+    h1 {
+      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
+    }
+    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+    .meta-info {
+      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    h2 {
+      margin:48px 0 20px; font-family:Georgia,"Times New Roman",serif;
+      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
+    }
+    h3 { margin:30px 0 14px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
+    p, ul, ol { margin:0 0 20px; }
+    ul, ol { padding-left:24px; }
+    li { margin-bottom:8px; }
+
+    .math-block {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px 20px; margin:22px 0; overflow-x:auto; text-align:center;
+    }
+    .callout {
+      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
+      padding:20px 24px; margin:26px 0; border-radius:0 var(--radius) var(--radius) 0;
+    }
+    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
+
+    .proof-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:22px 24px; margin:24px 0;
+    }
+    .proof-title {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem; font-weight:750;
+      text-transform:uppercase; letter-spacing:.06em; color:var(--blue); margin-bottom:8px;
+    }
+
+    .finance-box {
+      background:var(--surface); border:1px solid var(--blue-border); border-left:4px solid var(--blue);
+      border-radius:var(--radius); padding:24px; margin:28px 0;
+    }
+    .finance-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem; font-weight:750;
+      color:var(--blue); text-transform:uppercase; margin-bottom:8px;
+    }
+
+    .page-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
+    }
+    .page-nav-link {
+      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
+      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
+      transition:background 150ms ease, border-color 150ms ease;
+    }
+    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
+    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
+    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
+    footer {
+      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
+    }
+    @media (max-width:680px) {
+      .shell { width:min(calc(100% - 28px),var(--content)); }
+      .page-nav { grid-template-columns:1fr; }
+    }
+  </style>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html">← Back to Overview</a>
+      <span class="nav-tag">Statistics Notes</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Statistics</div>
+        <h1>Statistical Operators: Expectation, Variance & Covariance</h1>
+        <p class="article-lead">Linearity of expectation, variance propagation across sums, sample mean asymptotics, covariance and Pearson correlation, the independence vs. uncorrelation disconnect, and portfolio risk calculus.</p>
+      </header>
+
+      <!-- Section 1: Expectation Operator -->
+      <section>
+        <h2>The Expectation Operator</h2>
+        <p>
+          The <strong>mathematical expectation</strong> (or population mean) of a random variable $X$ represents its probability-weighted central tendency:
+        </p>
+
+        <div class="math-block">
+          $$\mathbb{E}[X] = \begin{cases} 
+            \displaystyle \sum_{x \in \text{supp}(X)} x \cdot p_X(x), & \text{if } X \text{ is discrete} \\[12pt]
+            \displaystyle \int_{-\infty}^\infty x \cdot f_X(x) \, dx, & \text{if } X \text{ is continuous}
+          \end{cases}$$
+        </div>
+
+        <h3>Linearity of Expectation</h3>
+        <p>
+          Expectation is a strictly <strong>linear operator</strong>. For random variables $X$ and $Y$ with finite expectations, and constants $a, b, c \in \mathbb{R}$:
+        </p>
+        <div class="math-block">
+          $$\mathbb{E}[aX + bY + c] = a\mathbb{E}[X] + b\mathbb{E}[Y] + c$$
+        </div>
+        <p>
+          Crucially, linearity holds <strong>regardless of whether $X$ and $Y$ are independent, correlated, or non-linearly dependent</strong>.
+        </p>
+
+        <h3>Expectation of the Sample Mean</h3>
+        <p>
+          Let $X_1, X_2, \dots, X_n$ be independent and identically distributed (i.i.d.) random variables with common mean $\mathbb{E}[X_i] = \mu$. The sample mean $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$ is an unbiased estimator of $\mu$:
+        </p>
+        <div class="math-block">
+          $$\mathbb{E}[\bar{X}_n] = \mathbb{E}\left[ \frac{1}{n} \sum_{i=1}^n X_i \right] = \frac{1}{n} \sum_{i=1}^n \mathbb{E}[X_i] = \frac{1}{n} (n\mu) = \mu$$
+        </div>
+      </section>
+
+      <!-- Section 2: Variance Operator -->
+      <section>
+        <h2>Variance Operator & Dispersion Calculus</h2>
+        <p>
+          The <strong>variance</strong> $\text{Var}(X) = \sigma_X^2$ measures the expected squared deviation of $X$ from its mean $\mu = \mathbb{E}[X]$:
+        </p>
+        <div class="math-block">
+          $$\text{Var}(X) = \mathbb{E}\left[(X - \mathbb{E}[X])^2\right] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2$$
+        </div>
+
+        <h3>Properties of Variance</h3>
+        <ul>
+          <li><strong>Non-negativity:</strong> $\text{Var}(X) \ge 0$, with $\text{Var}(X) = 0 \iff \mathbb{P}(X = c) = 1$ (constant).</li>
+          <li><strong>Affine Shifts:</strong> Adding a constant does not alter dispersion: $\text{Var}(X + c) = \text{Var}(X)$.</li>
+          <li><strong>Quadratic Scaling:</strong> $\text{Var}(aX) = a^2 \text{Var}(X)$.</li>
+          <li><strong>Variance of Sums:</strong>
+            $$\text{Var}(aX + bY) = a^2 \text{Var}(X) + b^2 \text{Var}(Y) + 2ab \, \text{Cov}(X, Y)$$
+            If $X$ and $Y$ are uncorrelated ($\text{Cov}(X, Y) = 0$), variance is additive: $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)$.
+          </li>
+        </ul>
+
+        <h3>Variance of the Sample Mean</h3>
+        <p>
+          For i.i.d. random variables with common variance $\text{Var}(X_i) = \sigma^2$:
+        </p>
+        <div class="math-block">
+          $$\text{Var}(\bar{X}_n) = \text{Var}\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac{1}{n^2} \sum_{i=1}^n \text{Var}(X_i) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}$$
+        </div>
+        <p>
+          The standard error of the mean is therefore $\text{SE}(\bar{X}_n) = \frac{\sigma}{\sqrt{n}}$, decaying with the square root of sample size.
+        </p>
+      </section>
+
+      <!-- Section 3: Covariance and Correlation -->
+      <section>
+        <h2>Covariance, Correlation & The Independence Disconnect</h2>
+        <p>
+          <strong>Covariance</strong> evaluates the linear co-movement between two random variables:
+        </p>
+        <div class="math-block">
+          $$\text{Cov}(X, Y) = \mathbb{E}\left[(X - \mathbb{E}[X])(Y - \mathbb{E}[Y])\right] = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$$
+        </div>
+
+        <p>
+          The <strong>Pearson Correlation Coefficient</strong> $\rho_{XY}$ normalizes covariance by the product of standard deviations, assuming both variances are finite and strictly positive:
+        </p>
+        <div class="math-block">
+          $$\rho_{XY} = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y} \in [-1, 1]$$
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Uncorrelatedness vs. Statistical Independence</div>
+          <p>
+            A fundamental distinction in probability theory (assume finite, nonzero variances):
+          </p>
+          <ul>
+            <li><strong>Independence $\implies$ Uncorrelated:</strong> If $X \perp\!\!\!\perp Y$, then $\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]$, so $\text{Cov}(X, Y) = 0$ and $\rho_{XY} = 0$.</li>
+            <li><strong>Uncorrelated $\centernot\implies$ Independent:</strong> Zero covariance only establishes the absence of a <em>linear</em> relationship. Non-linear relationships can exhibit $\rho = 0$ despite deterministic dependence.</li>
+          </ul>
+          <p style="font-size:.85rem; color:var(--muted); margin:0;">
+            <em>Classic Counterexample:</em> Let $X \sim \mathcal{U}(-1, 1)$ and define $Y = X^2$. Clearly $Y$ is completely determined by $X$ (not independent). However, by symmetry $\mathbb{E}[X] = 0$ and $\mathbb{E}[XY] = \mathbb{E}[X^3] = 0$. Thus $\text{Cov}(X, Y) = 0 - 0 = 0$ and $\rho = 0$!
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <div class="proof-title">Special Case • The Bivariate Normal Distribution</div>
+          <p>
+            For jointly Gaussian variables with $\sigma_X,\sigma_Y>0$ and $|\rho|<1$, $(X, Y) \sim \mathcal{N}_2(\boldsymbol{\mu}, \boldsymbol{\Sigma})$, the joint density is:
+          </p>
+          <div class="math-block">
+            $$f_{X,Y}(x, y) = \frac{1}{2\pi \sigma_X \sigma_Y \sqrt{1 - \rho^2}} \exp\left( -\frac{1}{2(1 - \rho^2)} \left[ \frac{(x - \mu_X)^2}{\sigma_X^2} - 2\rho \frac{(x - \mu_X)(y - \mu_Y)}{\sigma_X \sigma_Y} + \frac{(y - \mu_Y)^2}{\sigma_Y^2} \right] \right)$$
+          </div>
+          <p style="font-size:.85rem; color:var(--muted); line-height:1.5; margin:0;">
+            When $\rho = 0$, the cross-term vanishes completely:
+            $$f_{X,Y}(x, y) = \frac{1}{\sqrt{2\pi}\sigma_X} \exp\left(-\frac{(x - \mu_X)^2}{2\sigma_X^2}\right) \cdot \frac{1}{\sqrt{2\pi}\sigma_Y} \exp\left(-\frac{(y - \mu_Y)^2}{2\sigma_Y^2}\right) = f_X(x) \cdot f_Y(y)$$
+            Hence, <strong>for jointly Gaussian random variables, uncorrelatedness implies statistical independence</strong> ($\rho = 0 \iff X \perp\!\!\!\perp Y$).
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 4: Quantitative Finance & Portfolios -->
+      <section>
+        <h2>Quantitative Finance Application: Two-Asset Portfolios & Shortfall Risk</h2>
+
+        <div class="finance-box">
+          <div class="finance-tag">Portfolio Theory Calculus</div>
+          <h3 style="margin-top:0;">Two-Asset Portfolio Returns & Volatility</h3>
+          <p>
+            Consider a portfolio constructed from two assets with return random variables $R_1, R_2$, expected returns $\mu_1, \mu_2$, volatilities $\sigma_1, \sigma_2$, and correlation $\rho = \text{Corr}(R_1, R_2)$. Let $w_1$ and $w_2 = 1 - w_1$ represent portfolio weights.
+          </p>
+
+          <p><strong>Portfolio Expected Return:</strong></p>
+          <div class="math-block">
+            $$\mu_p = \mathbb{E}[R_p] = w_1 \mu_1 + w_2 \mu_2$$
+          </div>
+
+          <p><strong>Portfolio Volatility (Standard Deviation):</strong></p>
+          <div class="math-block">
+            $$\sigma_p^2 = w_1^2 \sigma_1^2 + w_2^2 \sigma_2^2 + 2 w_1 w_2 \rho \sigma_1 \sigma_2 \implies \sigma_p = \sqrt{w_1^2 \sigma_1^2 + w_2^2 \sigma_2^2 + 2 w_1 w_2 \rho \sigma_1 \sigma_2}$$
+          </div>
+
+          <p>
+            <strong>The Diversification Effect:</strong> When both portfolio weights are strictly between zero and one, both individual volatilities are positive, and the correlation is below one, portfolio volatility is strictly less than the weighted average of the individual volatilities:
+          </p>
+          <div class="math-block">
+            $$\sigma_p \lt w_1\sigma_1 + w_2\sigma_2.$$
+          </div>
+        </div>
+
+        <h3>Estimating Relative Shortfall Risk (Probability of a Negative Return)</h3>
+        <p>
+          Assuming the portfolio return follows a normal distribution $R_p \sim \mathcal{N}(\mu_p, \sigma_p^2)$ with $\sigma_p>0$, the <strong>relative loss risk</strong> (the probability that the portfolio incurs a negative return over the investment horizon) is derived via standard normal standardization:
+        </p>
+
+        <div class="math-block">
+          $$\mathbb{P}(R_p < 0) = \mathbb{P}\left( \frac{R_p - \mu_p}{\sigma_p} < \frac{0 - \mu_p}{\sigma_p} \right) = \Phi\left( -\frac{\mu_p}{\sigma_p} \right) = 1 - \Phi\left( \frac{\mu_p}{\sigma_p} \right)$$
+        </div>
+
+        <p>
+          where $\Phi(\cdot)$ denotes the standard normal CDF. The ratio $\frac{\mu_p}{\sigma_p}$ is the portfolio's <strong>return-to-volatility ratio</strong>. An investor seeking to minimize the risk of a loss must solve for the portfolio weights $w^*$ that maximize this ratio:
+        </p>
+
+        <div class="math-block">
+          $$\min_{\mathbf{w}} \mathbb{P}(R_p < 0) \iff \max_{\mathbf{w}} \left( \frac{\mu_p}{\sigma_p} \right) = \max_{w_1} \left( \frac{w_1 \mu_1 + (1 - w_1) \mu_2}{\sqrt{w_1^2 \sigma_1^2 + (1 - w_1)^2 \sigma_2^2 + 2 w_1 (1 - w_1) \rho \sigma_1 \sigma_2}} \right)$$
+        </div>
+      </section>
+
+
+      <section class="worked-example" aria-labelledby="sensor-example">
+        <p class="example-label">Worked example · Why covariance matters</p>
+        <h2 id="sensor-example">Does averaging two measurements help?</h2>
+        <p>Two sensors measure the same fixed quantity of 100 units. Assume each is unbiased and has a standard deviation of 2 units. Let $M=(X+Y)/2$ be their average and $\rho$ the correlation between their errors.</p>
+        <div class="math-block">$$\mathbb{E}[M]=\tfrac12(100)+\tfrac12(100)=100,\qquad \mathrm{Var}(M)=\tfrac14(4+4+2\rho\cdot2\cdot2)=2+2\rho.$$</div>
+        <div class="table-wrap">
+          <table>
+            <caption>Illustrative error correlations; each individual sensor has SD 2</caption>
+            <thead><tr><th scope="col">Correlation $\rho$</th><th scope="col">Variance of average</th><th scope="col">SD of average</th><th scope="col">Interpretation</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">−0.5</th><td>1</td><td>1.000 units</td><td>Errors partly cancel</td></tr>
+              <tr><th scope="row">0</th><td>2</td><td>1.414 units</td><td>Uncorrelated errors</td></tr>
+              <tr><th scope="row">0.5</th><td>3</td><td>1.732 units</td><td>Shared error reduces the benefit</td></tr>
+              <tr><th scope="row">1</th><td>4</td><td>2.000 units</td><td>No reduction in random error</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The average remains unbiased in every row. Its precision changes because the covariance term changes. Normality is not needed for these mean and variance calculations.</p>
+        <p class="takeaway"><strong>Remember:</strong> Averaging helps most when errors bring different information. Two sensors with a common source of noise do not provide the same precision gain as two independent sensors.</p>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="random-variables.html">
+          <span class="page-nav-sub">← Previous Topic</span>
+          <span class="page-nav-title">Random Variables & Transformations</span>
+        </a>
+        <a class="page-nav-link next" href="parametric-inference.html">
+          <span class="page-nav-sub">Next Topic →</span>
+          <span class="page-nav-title">Parametric Inference & Testing</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell">
+    <p>Gabriele Antonini / Statistics Notes / 2026</p>
+  </footer>
+</body>
+</html>

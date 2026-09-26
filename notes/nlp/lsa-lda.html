@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="order" content="2">
+  <meta name="description" content="Latent Semantic Analysis (LSA) via SVD and Latent Dirichlet Allocation (LDA) via Bayesian Inference and Dirichlet Priors.">
+  <title>LSA & LDA | Statistics & Data Science</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <style>
+    :root {
+      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
+      --green:#1f6f52; --green-soft:#dfece4; --blue:#39749b; --indigo:#625f9b;
+      --coral:#d05e49; --amber:#b67a19; --radius:8px; --content:860px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    a { color:inherit; }
+    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
+    .topbar {
+      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
+    }
+    .topbar-inner {
+      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
+    }
+    .nav-back {
+      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
+      text-decoration:none; color:var(--muted); transition:color 150ms ease;
+    }
+    .nav-back:hover { color:var(--ink); }
+    .nav-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
+    }
+    article { padding:56px 0 84px; }
+    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .meta-eyebrow {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
+    }
+    h1 {
+      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
+    }
+    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+    .meta-info {
+      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    h2 {
+      margin:44px 0 18px; font-family:Georgia,"Times New Roman",serif;
+      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
+    }
+    h3 { margin:28px 0 12px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
+    p, ul, ol { margin:0 0 20px; }
+    ul, ol { padding-left:24px; }
+    li { margin-bottom:8px; }
+    .callout {
+      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
+      padding:20px 24px; margin:28px 0; border-radius:0 var(--radius) var(--radius) 0;
+    }
+    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
+    .math-block {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px 20px; margin:20px 0; overflow-x:auto; text-align:center;
+    }
+    .schema-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:24px; margin:28px 0;
+    }
+    .schema-card h4 { margin:0 0 14px; font-size:1.1rem; font-family:Georgia,"Times New Roman",serif; }
+    .variable-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;
+    }
+    .variable-item {
+      background:var(--paper); padding:12px 16px; border-radius:var(--radius); border:1px solid var(--line);
+    }
+    .variable-symbol { font-weight:700; color:var(--green); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
+    }
+    .page-nav-link {
+      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
+      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
+      transition:background 150ms ease, border-color 150ms ease;
+    }
+    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
+    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
+    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
+    footer {
+      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
+    }
+    @media (max-width:680px) {
+      .shell { width:min(calc(100% - 28px),var(--content)); }
+      .variable-grid { grid-template-columns:1fr; }
+      .page-nav { grid-template-columns:1fr; }
+    }
+  </style>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html">← Back to Overview</a>
+      <span class="nav-tag">NLP Course Notes</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Natural Language Processing</div>
+        <h1>LSA & LDA</h1>
+        <p class="article-lead">Topic modeling and dimensionality reduction: from linear-algebraic Singular Value Decomposition (LSA) to Bayesian generative priors and Markov Chain Monte Carlo inference (LDA).</p>
+      </header>
+
+      <!-- Section 1: LSA -->
+      <section>
+        <h2>Latent Semantic Analysis (LSA)</h2>
+        <p>
+          <strong>Latent Semantic Analysis (LSA)</strong> relies on the mathematical principles of <strong>Singular Value Decomposition (SVD)</strong>, closely related to Principal Component Analysis (PCA) used heavily in econometrics for dimensionality reduction and latent variable extraction.
+        </p>
+
+        <div class="schema-card">
+          <h4>Mathematical Formulation</h4>
+          <p>Given a sparse Term-Document matrix $A \in \mathbb{R}^{N \times M}$ (where entries represent word frequencies or TF-IDF scores), SVD factors $A$ into the product of three matrices:</p>
+          <div class="math-block">
+            $$A \approx U_k \Sigma_k V_k^T$$
+          </div>
+          <p>where rank-$k$ truncation retains the top $k$ principal dimensions:</p>
+          <ul>
+            <li>
+              <strong>$U_k \in \mathbb{R}^{N \times k}$ (Left Singular Vectors):</strong>
+              <div class="callout" style="margin:12px 0;">
+                <div class="callout-title">Crucial Insight: Embeddings vs. Topics</div>
+                <ul>
+                  <li><strong>Rows (Early Embeddings):</strong> Each row provides a dense numeric vector for a single word. This is the direct linear-algebra ancestor of modern word embeddings (like Word2Vec), enabling geometric similarity computation (e.g. Cosine Similarity).</li>
+                  <li><strong>Columns (Latent Directions):</strong> Each column is a latent direction, analogous to a principal component. Because SVD permits negative weights (e.g., $+0.6\,\text{bank} - 0.3\,\text{river}$), a direction can contrast word groups rather than describe a probability distribution. Some directions are interpretable, but that interpretation is not guaranteed.</li>
+                </ul>
+              </div>
+            </li>
+            <li><strong>$\Sigma_k \in \mathbb{R}^{k \times k}$ (Singular Values):</strong> Diagonal matrix with $\sigma_i=\sqrt{\lambda_i}$, where $\lambda_i$ is an eigenvalue of $A^T A$. The squared values quantify matrix energy; interpreting this as centered variance requires centering, which LSA usually does not do.</li>
+            <li><strong>$V_k^T \in \mathbb{R}^{k \times M}$ (Right Singular Vectors):</strong> Describes document directions. A common choice of document coordinates is $\Sigma_k V_k^T=U_k^T A$; word coordinates can similarly use $U_k\Sigma_k$.</li>
+          </ul>
+
+          <h4>Gram Matrices (Covariance Analogues)</h4>
+          <ul>
+            <li>$A A^T$: Contains dot-product similarities between word rows across documents.</li>
+            <li>$A^T A$: Contains dot-product similarities between document columns (weighted overlap, not generally a count of shared words). Using the compact SVD:
+              <div class="math-block">
+                $$A^T A = (U \Sigma V^T)^T (U \Sigma V^T) = V \Sigma U^T U \Sigma V^T = V \Sigma^2 V^T$$
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section 2: LDA -->
+      <section>
+        <h2>Latent Dirichlet Allocation (LDA)</h2>
+        <p>
+          <strong>Latent Dirichlet Allocation (LDA)</strong> is a fully Bayesian, probabilistic generative model. It treats documents as random mixtures over latent topics, and each topic as a discrete distribution over vocabulary words.
+        </p>
+
+        <div class="schema-card">
+          <h4>Core Random Variables & Parameters</h4>
+          <div class="variable-grid">
+            <div class="variable-item">
+              <span class="variable-symbol">$K$</span>: Predefined number of latent topics
+            </div>
+            <div class="variable-item">
+              <span class="variable-symbol">$\theta_d$</span>: Topic distribution for document $d$ (point on simplex)
+            </div>
+            <div class="variable-item">
+              <span class="variable-symbol">$\phi_k$</span>: Word distribution for topic $k$ (point on simplex)
+            </div>
+            <div class="variable-item">
+              <span class="variable-symbol">$\alpha, \beta$</span>: Dirichlet hyperparameter priors (pseudocounts)
+            </div>
+          </div>
+
+          <h4>Generative Process</h4>
+          <p>In the fully Bayesian formulation, the topic-word distributions are shared across the corpus:</p>
+          <ol>
+            <li>Once for each topic $k \in \{1, \dots, K\}$, sample a word distribution:
+              <div class="math-block">$$\phi_k \sim \text{Dir}(\beta)$$</div>
+            </li>
+            <li>For each document $d$, sample its topic distribution:
+              <div class="math-block">$$\theta_d \sim \text{Dir}(\alpha)$$</div>
+            </li>
+            <li>For each word position $n$ in document $d$:
+              <ul>
+                <li>Sample a latent topic assignment:
+                  <div class="math-block">$$z_{d,n} \sim \text{Categorical}(\theta_d)$$</div>
+                </li>
+                <li>Sample the observed word given the chosen topic:
+                  <div class="math-block">$$w_{d,n} \sim \text{Categorical}(\phi_{z_{d,n}})$$</div>
+                </li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+
+        <h3>Statistical Inference & Dirichlet Priors (MLE vs. MAP)</h3>
+        <ul>
+          <li>
+            <strong>The Sparsity Problem:</strong> Given fixed topic assignments, a multinomial MLE gives zero probability to words with zero counts in a topic. This motivates smoothing, especially when topic-specific counts are small.
+          </li>
+          <li>
+            <strong>The Bayesian Smoothing Solution:</strong> Positive Dirichlet hyperparameters act as <em>pseudocounts</em> in posterior means and predictive probabilities. For known topic assignments, a word probability has posterior mean $(n_{k,w}+\beta_w)/(n_k+\sum_v\beta_v)$, which remains positive even when $n_{k,w}=0$.
+          </li>
+          <li>
+            <strong>Posterior Inference vs. MAP:</strong> A prior defines a posterior distribution; MAP is only one possible summary. A Dirichlet prior is not equivalent to the Gaussian prior underlying ridge regression. In particular, sparse Dirichlet priors can have boundary modes, so MAP does not guarantee strictly positive probabilities.
+          </li>
+          <li>
+            <strong>Intractable Posterior & Approximation:</strong> Because the exact denominator of the joint posterior $P(\boldsymbol{\theta}, \boldsymbol{\phi}, \mathbf{z} \mid \mathbf{w}, \alpha, \beta)$ involves summing over all possible topic combinations, exact inference is intractable. Approximation algorithms such as <strong>Collapsed Gibbs Sampling (MCMC)</strong> or <strong>Mean-Field Variational Inference</strong> are employed.
+          </li>
+        </ul>
+
+        <div class="worked-example">
+          <p class="example-label">Worked example · one document, two topics</p>
+          <h3>From latent directions to topic probabilities</h3>
+          <p>Imagine a corpus where “cat” and “dog” often occur together, as do “bond” and “stock”. LSA can compress these co-occurrence patterns into signed directions. LDA represents them as nonnegative word probabilities. For illustration, suppose the fitted topics were:</p>
+          <div class="table-wrap">
+            <table>
+              <caption>Illustrative topic-word probabilities; each row sums to 1.</caption>
+              <thead><tr><th scope="col">Topic</th><th scope="col">cat</th><th scope="col">dog</th><th scope="col">bond</th><th scope="col">stock</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Pets</th><td>0.45</td><td>0.45</td><td>0.05</td><td>0.05</td></tr>
+                <tr><th scope="row">Finance</th><td>0.05</td><td>0.05</td><td>0.45</td><td>0.45</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>For a document with topic mixture $\theta_d=(0.75,0.25)$, marginalize over its two possible topics:</p>
+          <div class="math-block">$$P(\text{cat}\mid d)=0.75(0.45)+0.25(0.05)=0.35$$</div>
+          <p class="takeaway"><strong>Key distinction:</strong> an LDA document can mix topics. Its 75% “Pets” weight is a probability, while an LSA coordinate is not. Topic names are interpretations supplied after fitting.</p>
+        </div>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="bag-of-words.html">
+          <span class="page-nav-sub">← Previous Topic</span>
+          <span class="page-nav-title">Bag of Words</span>
+        </a>
+        <a class="page-nav-link next" href="embeddings-word2vec.html">
+          <span class="page-nav-sub">Next Topic →</span>
+          <span class="page-nav-title">Embeddings & Word2Vec</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell">
+    <p>Gabriele Antonini / NLP Lecture Notes / 2026</p>
+  </footer>
+</body>
+</html>

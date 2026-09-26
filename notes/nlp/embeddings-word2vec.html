@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="order" content="3">
+  <meta name="description" content="Word Embeddings and Word2Vec: Continuous Bag of Words (CBOW), Skip-Gram, Weight Matrices, and Softmax Prediction.">
+  <title>Embeddings & Word2Vec | Statistics & Data Science</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <style>
+    :root {
+      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
+      --green:#1f6f52; --green-soft:#dfece4; --blue:#39749b; --indigo:#625f9b;
+      --coral:#d05e49; --amber:#b67a19; --radius:8px; --content:840px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    a { color:inherit; }
+    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
+    .topbar {
+      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
+    }
+    .topbar-inner {
+      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
+    }
+    .nav-back {
+      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
+      text-decoration:none; color:var(--muted); transition:color 150ms ease;
+    }
+    .nav-back:hover { color:var(--ink); }
+    .nav-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
+    }
+    article { padding:56px 0 84px; }
+    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .meta-eyebrow {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
+    }
+    h1 {
+      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
+    }
+    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+    .meta-info {
+      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    h2 {
+      margin:42px 0 18px; font-family:Georgia,"Times New Roman",serif;
+      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
+    }
+    h3 { margin:28px 0 12px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
+    p, ul, ol { margin:0 0 20px; }
+    ul, ol { padding-left:24px; }
+    li { margin-bottom:8px; }
+    .callout {
+      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
+      padding:20px 24px; margin:28px 0; border-radius:0 var(--radius) var(--radius) 0;
+    }
+    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
+    .math-block {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px 20px; margin:24px 0; overflow-x:auto; text-align:center;
+    }
+    .schema-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:24px; margin:28px 0;
+    }
+    .schema-card h4 { margin:0 0 12px; font-size:1.05rem; font-family:Georgia,"Times New Roman",serif; }
+    .layer-step {
+      display:grid; grid-template-columns:140px 1fr; gap:20px; padding:16px 0;
+      border-top:1px solid var(--line); align-items:baseline;
+    }
+    .layer-step:first-child { border-top:0; }
+    .layer-name { font-weight:700; font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.84rem; color:var(--green); }
+    .vector-arithmetic-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:30px 24px; margin:28px 0;
+    }
+    .vector-equation-chips {
+      display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+      gap:12px; margin-bottom:18px;
+    }
+    .chip {
+      display:inline-flex; align-items:center; gap:8px; padding:8px 18px;
+      border-radius:24px; font-weight:700; font-size:.98rem;
+      box-shadow:0 1px 3px rgba(0,0,0,0.04); transition:transform 150ms ease, box-shadow 150ms ease;
+    }
+    .chip:hover { transform:translateY(-2px); box-shadow:0 4px 8px rgba(0,0,0,0.06); }
+    .chip-dot { width:9px; height:9px; border-radius:50%; }
+    .chip-king { background:#f2eef9; color:#5c4ca8; border:1.5px solid #d8cdf0; }
+    .chip-king .chip-dot { background:#5c4ca8; }
+    .chip-man { background:#eaf3f9; color:#246d9b; border:1.5px solid #cce1f0; }
+    .chip-man .chip-dot { background:#246d9b; }
+    .chip-woman { background:#fdf0f0; color:#cb4343; border:1.5px solid #f7cfcf; }
+    .chip-woman .chip-dot { background:#cb4343; }
+    .chip-queen { background:#edf7f2; color:#1f6f52; border:1.5px solid #c2e5d5; }
+    .chip-queen .chip-dot { background:#1f6f52; }
+    .chip-op { font-size:1.35rem; font-weight:700; color:var(--muted); font-family:Georgia,serif; }
+    .vector-breakdown-grid {
+      display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px;
+      margin-top:22px; padding-top:20px; border-top:1px solid var(--line);
+    }
+    .vector-step-box {
+      background:var(--paper); border:1px solid var(--line); border-radius:6px;
+      padding:12px 14px; font-size:.82rem;
+    }
+    .vector-step-box.step-result { border-color:#c2e5d5; background:#f4faf6; }
+    .step-title {
+      font-weight:750; font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      color:var(--green); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em;
+    }
+    .step-desc { color:var(--ink); line-height:1.45; }
+    .page-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
+    }
+    .page-nav-link {
+      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
+      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
+      transition:background 150ms ease, border-color 150ms ease;
+    }
+    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
+    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
+    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
+    footer {
+      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
+    }
+    @media (max-width:768px) {
+      .vector-breakdown-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:680px) {
+      .shell { width:min(calc(100% - 28px),var(--content)); }
+      .layer-step { grid-template-columns:1fr; gap:6px; }
+      .page-nav { grid-template-columns:1fr; }
+    }
+    @media (max-width:480px) {
+      .vector-breakdown-grid { grid-template-columns:1fr; }
+    }
+  </style>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html">← Back to Overview</a>
+      <span class="nav-tag">NLP Course Notes</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Natural Language Processing</div>
+        <h1>Embeddings & Word2Vec</h1>
+        <p class="article-lead">Dense continuous vector representations: the Continuous Bag of Words (CBOW) architecture, weight projection matrices, softmax prediction, and distributed semantic spaces.</p>
+      </header>
+
+      <section>
+        <h2>From Discrete to Distributed Representations</h2>
+        <p>
+          Unlike traditional discrete Bag-of-Words where words are orthogonal and word order is neglected, <strong>Word2Vec</strong> constructs dense, continuous numeric vectors in a lower-dimensional space $\mathbb{R}^d$ (typically $d \in [100, 300]$).
+        </p>
+        <p>
+          Words that occur in similar linguistic contexts are mapped to nearby geometric locations, operationalizing the distributional hypothesis: <em>"You shall know a word by the company it keeps."</em>
+        </p>
+      </section>
+
+      <section>
+        <h2>Continuous Bag of Words (CBOW) Architecture</h2>
+        <p>
+          In the <strong>Continuous Bag of Words (CBOW)</strong> formulation, the objective is to predict a missing target center word $w_t$ given a window of $C$ surrounding context words $\{w_{t-c}, \dots, w_{t+c}\} \setminus \{w_t\}$.
+        </p>
+
+        <div class="schema-card">
+          <h4>Layer-by-Layer Architectural Breakdown</h4>
+
+          <div class="layer-step">
+            <div class="layer-name">Input Layer ($X$)</div>
+            <div>
+              One-hot encoded vectors of the $C$ context words:
+              <div class="math-block">
+                $$\mathbf{x}_i \in \mathbb{R}^{1 \times D} \quad (D = \text{vocabulary size})$$
+              </div>
+            </div>
+          </div>
+
+          <div class="layer-step">
+            <div class="layer-name">Hidden Layer ($h$)</div>
+            <div>
+              A linear bottleneck projection (typically 100–300 nodes) computing the average of input vectors multiplied by the input weight matrix $W \in \mathbb{R}^{D \times d}$:
+              <div class="math-block">
+                $$h = \frac{1}{C} \sum_{i=1}^C \mathbf{x}_i \cdot W$$
+              </div>
+              <em>Note: The hidden layer uses no non-linear activation function.</em>
+            </div>
+          </div>
+
+          <div class="layer-step">
+            <div class="layer-name">Output Layer ($u$)</div>
+            <div>
+              Projected from the hidden state using a separately learned output weight matrix $W' \in \mathbb{R}^{d \times D}$ (it is not constrained to equal $W^T$):
+              <div class="math-block">
+                $$u = h \cdot W'$$
+              </div>
+            </div>
+          </div>
+
+          <div class="layer-step">
+            <div class="layer-name">Softmax Prediction</div>
+            <div>
+              The conditional probability of a target word $w_c$ given its context is computed using normalized exponentials:
+              <div class="math-block">
+                $$P(w_c \mid \text{context}) = \frac{\exp(u_c)}{\sum_{j=1}^D \exp(u_j)}$$
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>CBOW vs. Skip-Gram</h2>
+        <p>Word2Vec provides two complementary training formulations:</p>
+        <ul>
+          <li><strong>CBOW (Continuous Bag of Words):</strong> Predicts target word $w_t$ given context words. Averaging makes the representation insensitive to order within that context window.</li>
+          <li><strong>Skip-Gram:</strong> Predicts surrounding context words given a single input target word $w_t$. It creates multiple prediction pairs from each window; performance depends on the corpus and training settings.</li>
+        </ul>
+        <p>The full softmax above explains the prediction objective. Practical training often uses hierarchical softmax or negative sampling to avoid scoring the whole vocabulary for every example.</p>
+      </section>
+
+      <section>
+        <h2>Semantic Geometry & Vector Arithmetic</h2>
+        <p>The resulting learned weight matrix $W$ contains dense word vectors in its rows. These continuous representations exhibit remarkable linear compositionality and capture analogical semantic relationships through simple vector algebra:</p>
+
+        <div class="vector-arithmetic-card">
+          <div class="vector-equation-chips">
+            <span class="chip chip-king"><span class="chip-dot"></span>$\vec{v}_{\text{King}}$</span>
+            <span class="chip-op">−</span>
+            <span class="chip chip-man"><span class="chip-dot"></span>$\vec{v}_{\text{Man}}$</span>
+            <span class="chip-op">+</span>
+            <span class="chip chip-woman"><span class="chip-dot"></span>$\vec{v}_{\text{Woman}}$</span>
+            <span class="chip-op">≈</span>
+            <span class="chip chip-queen"><span class="chip-dot"></span>$\vec{v}_{\text{Queen}}$</span>
+          </div>
+
+          <div class="math-block" style="margin:16px 0;">
+            $$\textcolor{#5c4ca8}{\mathbf{v}_{\text{King}}} - \textcolor{#246d9b}{\mathbf{v}_{\text{Man}}} + \textcolor{#cb4343}{\mathbf{v}_{\text{Woman}}} \approx \textcolor{#1f6f52}{\mathbf{v}_{\text{Queen}}}$$
+          </div>
+
+          <div class="vector-breakdown-grid">
+            <div class="vector-step-box">
+              <div class="step-title">1. Base Concept</div>
+              <div class="step-desc">Start at the learned coordinates for $\textcolor{#5c4ca8}{\vec{v}_{\text{King}}}$. Individual dimensions need not have named meanings.</div>
+            </div>
+            <div class="vector-step-box">
+              <div class="step-title">2. Subtract “Man”</div>
+              <div class="step-desc">Subtract $\textcolor{#246d9b}{\vec{v}_{\text{Man}}}$ coordinate by coordinate. The intermediate vector is not a pure “royalty” component.</div>
+            </div>
+            <div class="vector-step-box">
+              <div class="step-title">3. Add “Woman”</div>
+              <div class="step-desc">Add $\textcolor{#cb4343}{\vec{v}_{\text{Woman}}}$. Together, steps 2 and 3 translate by the learned woman-minus-man direction.</div>
+            </div>
+            <div class="vector-step-box step-result">
+              <div class="step-title">4. Nearest Vector</div>
+              <div class="step-desc">Search for a nearby word by cosine similarity, usually excluding the input words. “Queen” is the hoped-for analogy answer.</div>
+            </div>
+          </div>
+        </div>
+
+        <p>Semantic similarity is measured using the cosine of the angle between vectors:</p>
+        <div class="math-block">
+          $$\text{CosineSimilarity}(\mathbf{u}, \mathbf{v}) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|_2 \|\mathbf{v}\|_2}$$
+        </div>
+
+        <div class="worked-example">
+          <p class="example-label">Worked example · compare directions</p>
+          <h3>Calculate cosine similarity by hand</h3>
+          <p>Take two illustrative vectors $\mathbf{u}=(2,1)$ and $\mathbf{v}=(3,2)$. These are invented coordinates, not measured word embeddings.</p>
+          <div class="math-block">$$\mathbf{u}\cdot\mathbf{v}=2(3)+1(2)=8,\qquad \|\mathbf{u}\|=\sqrt{5},\quad \|\mathbf{v}\|=\sqrt{13}$$</div>
+          <div class="math-block">$$\cos(\mathbf{u},\mathbf{v})=\frac{8}{\sqrt{65}}\approx0.992$$</div>
+          <p>The directions are almost identical. In comparison, $\mathbf{w}=(-1,2)$ has $\mathbf{u}\cdot\mathbf{w}=0$, so its cosine with $\mathbf{u}$ is $0$: the vectors are perpendicular.</p>
+          <p class="takeaway"><strong>Interpretation:</strong> cosine compares direction rather than magnitude. It is undefined for a zero vector, and a high score indicates similarity in the learned representation, not a guarantee that two words mean the same thing.</p>
+        </div>
+
+        <p>The king–man+woman analogy is an intuition for relationships learned from a corpus. The dimensions are not labeled “royalty” or “gender”, and the nearest word is not guaranteed to be “queen”.</p>
+
+        <div class="callout">
+          <div class="callout-title">The Limitation: Static vs. Contextual Embeddings</div>
+          <p>Word2Vec assigns one fixed vector to each vocabulary item regardless of its surrounding sentence. For example, <em>"bank"</em> has the same vector in “river bank” and “bank account”. If preprocessing lowercases text, “apple” and “Apple” also become the same item; a case-sensitive vocabulary can keep them separate. Contextual models such as <strong>BERT</strong> instead compute a representation for each occurrence using its context.</p>
+        </div>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="lsa-lda.html">
+          <span class="page-nav-sub">← Previous Topic</span>
+          <span class="page-nav-title">LSA & LDA</span>
+        </a>
+        <a class="page-nav-link next" href="transformers.html">
+          <span class="page-nav-sub">Next Topic →</span>
+          <span class="page-nav-title">Transformers & BERT</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell">
+    <p>Gabriele Antonini / NLP Lecture Notes / 2026</p>
+  </footer>
+</body>
+</html>

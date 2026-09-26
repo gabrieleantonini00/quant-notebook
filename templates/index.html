@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A personal learning notebook covering statistics, statistical learning, natural language processing, quantitative finance, and econometrics.">
+  <title>Statistics &amp; Data Science</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/site.css">
+  <script>/* SITE_DATA */</script>
+  <script src="assets/books.js" defer></script>
+  <script src="assets/library.js" defer></script>
+</head>
+<body class="home-page">
+  <a class="skip-link" href="#topics">Skip to topics</a>
+
+  <main>
+
+    <!-- ─── Hero ───────────────────────────────────────────────────── -->
+    <section class="hero" aria-labelledby="page-title">
+      <div class="shell hero-inner">
+        <div class="hero-topline"><a href="#topics">Browse notes ↗</a></div>
+        <h1 id="page-title" class="hero-title">
+          Statistics &amp;<br><em>Data Science.</em>
+        </h1>
+        <p class="hero-tagline">Made to remain unfinished.</p>
+        <a href="#topics" class="hero-scroll" aria-label="Browse topics">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12l7 7 7-7"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ─── Topics ─────────────────────────────────────────────────── -->
+    <div id="topics">
+      <div class="shell topic-section" aria-label="Study topics">
+
+        <!-- toolbar: hidden on home, shown when inside a subject -->
+        <div class="topic-toolbar" hidden>
+          <div class="toolbar-title-group">
+            <h2 class="library-title library-heading-focus" id="library-title" tabindex="-1"></h2>
+            <p class="result-count" id="result-count" role="status" aria-live="polite"></p>
+          </div>
+          <label class="search-box" id="search-box-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input id="search" type="search" placeholder="Filter topics…" aria-label="Search topics" autocomplete="off">
+            <span class="search-hint" aria-hidden="true">/</span>
+          </label>
+        </div>
+
+        <div id="note-grid" class="subject-list-view"></div>
+        <div class="empty-state" id="empty-state" hidden></div>
+
+        <noscript>
+          <div class="empty-state">
+            <h3>JavaScript is required</h3>
+            <p>Browse the <a href="all-notes.html">complete topic index</a>.</p>
+          </div>
+        </noscript>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <span>Statistics &amp; Data Science · Personal Study Notebook</span>
+      <a href="all-notes.html">All topics ↗</a>
+    </div>
+  </footer>
+</body>
+</html>

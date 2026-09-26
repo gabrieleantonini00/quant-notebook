@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Expected Shortfall (ES): Coherent risk measures, Artzner axioms of coherence, conditional tail expectation, and graphical intuition vs. Value-at-Risk (VaR).">
+  <meta name="order" content="2">
+  <title>Expected Shortfall (ES) Estimation | Statistics & Data Science</title>
+  
+  <!-- KaTeX Math Formula Rendering -->
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  
+  <style>
+    :root {
+      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
+      --green:#1f6f52; --green-soft:#dfece4; --blue:#39749b; --blue-soft:#e6f0f7;
+      --indigo:#625f9b; --indigo-soft:#f0edf9; --coral:#d05e49; --coral-soft:#fdf0ed;
+      --amber:#b67a19; --amber-soft:#fcf5e8; --radius:8px; --content:880px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    a { color:inherit; }
+    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
+    .topbar {
+      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
+    }
+    .topbar-inner {
+      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
+    }
+    .nav-back {
+      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
+      text-decoration:none; color:var(--muted); transition:color 150ms ease;
+    }
+    .nav-back:hover { color:var(--ink); }
+    .nav-tag {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
+      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
+    }
+    article { padding:56px 0 84px; }
+    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
+    .meta-eyebrow {
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
+      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
+    }
+    h1 {
+      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
+    }
+    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
+    .meta-info {
+      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    h2 {
+      margin:46px 0 18px; font-family:Georgia,"Times New Roman",serif;
+      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
+    }
+    h3 { margin:30px 0 14px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
+    p, ul, ol { margin:0 0 20px; }
+    ul, ol { padding-left:24px; }
+    li { margin-bottom:8px; }
+    
+    .axioms-grid {
+      display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; margin:22px 0;
+    }
+    .axiom-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:16px 18px;
+    }
+    .axiom-name { font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-weight:700; font-size:.82rem; color:var(--green); margin-bottom:6px; text-transform:uppercase; }
+    .axiom-math { font-family:Georgia,serif; font-size:.95rem; margin-bottom:6px; }
+    .axiom-desc { font-size:.8rem; color:var(--muted); margin:0; line-height:1.4; }
+
+    /* Visual Distribution Container */
+    .visual-container {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:24px 20px; margin:32px 0;
+    }
+    .visual-header {
+      margin-bottom:16px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px;
+    }
+    .visual-title {
+      font-family:Georgia,serif; font-size:1.2rem; font-weight:700; color:var(--ink); margin:0;
+    }
+    .visual-legend {
+      display:flex; gap:16px; font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.76rem;
+    }
+    .legend-item { display:flex; align-items:center; gap:6px; }
+    .legend-box { width:12px; height:12px; border-radius:3px; }
+    .legend-box.var { background:var(--coral); }
+    .legend-box.es { background:var(--green); }
+    .legend-box.tail { background:#f7cfcf; border:1px solid var(--coral); }
+
+    .distribution-svg {
+      width:100%; height:auto; display:block; margin:10px 0;
+    }
+
+    .diff-table {
+      width:100%; border-collapse:collapse; margin:24px 0; font-size:.88rem;
+    }
+    .diff-table th, .diff-table td { padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); }
+    .diff-table th { font-weight:650; background:var(--paper); font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; }
+
+    .callout {
+      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
+      padding:20px 24px; margin:24px 0; border-radius:0 var(--radius) var(--radius) 0;
+    }
+    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
+    .math-block {
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px 20px; margin:20px 0; overflow-x:auto; text-align:center;
+    }
+    
+    .page-nav {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
+    }
+    .page-nav-link {
+      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
+      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
+      transition:background 150ms ease, border-color 150ms ease;
+    }
+    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
+    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
+    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
+    footer {
+      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
+    }
+    @media (max-width:768px) {
+      .axioms-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:680px) {
+      .shell { width:min(calc(100% - 28px),var(--content)); }
+      .page-nav { grid-template-columns:1fr; }
+    }
+  </style>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script src="../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="nav-back" href="../../index.html">← Back to Overview</a>
+      <span class="nav-tag">Quantitative Finance</span>
+    </div>
+  </header>
+
+  <main class="shell" id="note-content">
+    <article>
+      <header class="article-header">
+        <div class="meta-eyebrow">Quantitative Finance</div>
+        <h1>Expected Shortfall (ES) Estimation</h1>
+        <p class="article-lead">Moving beyond Value-at-Risk: axiomatic coherence, tail risk severity, conditional expectation, and geometric intuition across return distributions.</p>
+      </header>
+
+      <!-- Section 1: From VaR to Coherent Measures & Graphic -->
+      <section>
+        <h2>From VaR to Coherent Risk Measures</h2>
+        <p>
+          While <strong>Value-at-Risk (VaR)</strong> serves as a standard industry benchmark, it possesses fundamental theoretical and practical limitations:
+        </p>
+        <ul>
+          <li><strong>Blindness to Tail Severity:</strong> VaR only identifies the threshold quantile cutoff $\text{VaR}_\alpha$. It provides zero information about how large losses can become once the boundary is breached.</li>
+          <li><strong>Non-Coherence & Diversification Failure:</strong> VaR can violate <em>sub-additivity</em> for some distributions, so the risk of a combined position can exceed the sum of its component VaRs. Non-normality alone does not imply a violation.</li>
+        </ul>
+
+        <figure class="figure-card">
+          <img src="../../assets/plots/finance-var-es-tail.svg" alt="Normal daily return distribution: the lower five percent tail begins at minus 1.59 percent, and its mean return is minus 2.01 percent." loading="lazy" width="1000" height="460">
+          <figcaption>Both markers use signed returns: the tail mean lies to the left of the threshold. Expressed as positive cash losses, ES is larger than VaR. The example below uses the same normal model.</figcaption>
+        </figure>
+
+        <h3>Axioms of Coherent Risk Measures</h3>
+        <p>
+          Let $X$ and $Y$ denote monetary payoffs (larger is better). A capital requirement $\rho$ is <strong>coherent</strong> when it satisfies the following four axioms. The signed tail-return average used below becomes such a risk measure after reversing its sign and expressing it in money.
+        </p>
+
+        <div class="axioms-grid">
+          <div class="axiom-card">
+            <div class="axiom-name">1. Monotonicity</div>
+            <div class="axiom-math">If $X \le Y \implies \rho(X) \ge \rho(Y)$</div>
+            <p class="axiom-desc">If a payoff is no better in every state, its required risk capital is no smaller.</p>
+          </div>
+
+          <div class="axiom-card">
+            <div class="axiom-name">2. Sub-additivity</div>
+            <div class="axiom-math">$\rho(X + Y) \le \rho(X) + \rho(Y)$</div>
+            <p class="axiom-desc">The capital requirement for combined payoffs cannot exceed the sum of their separate requirements.</p>
+          </div>
+
+          <div class="axiom-card">
+            <div class="axiom-name">3. Positive Homogeneity</div>
+            <div class="axiom-math">$\rho(\lambda X) = \lambda \rho(X), \quad \forall \lambda \ge 0$</div>
+            <p class="axiom-desc">Scaling portfolio position size scales the total risk exposure proportionally.</p>
+          </div>
+
+          <div class="axiom-card">
+            <div class="axiom-name">4. Translation Invariance</div>
+            <div class="axiom-math">$\rho(X + k) = \rho(X) - k, \quad \forall k \in \mathbb{R}$</div>
+            <p class="axiom-desc">Adding sure cash capital $k$ directly reduces the required risk capital by exactly $k$.</p>
+          </div>
+        </div>
+
+        <h3>Mathematical Formulation of Expected Shortfall</h3>
+        <p>
+          <strong>Expected Shortfall ($\text{ES}$)</strong>—also referred to as <em>Conditional Value-at-Risk (CVaR)</em> or <em>Tail Value-at-Risk (TVaR)</em>—averages the worst $1-\alpha$ fraction of outcomes. Here we keep the <strong>signed-return convention</strong> from the VaR note. For a continuous return distribution with a finite tail mean:
+        </p>
+
+        <div class="math-block">
+          $$\text{ES}_{\alpha,t} = \mathbb{E}\left[ r_t \,\middle|\, r_t \le \text{VaR}_{\alpha,t} \right] = \frac{1}{1 - \alpha} \int_\alpha^1 \text{VaR}_u(r_t) \, du$$
+        </div>
+
+        <p>For distributions with probability mass at the quantile, use the quantile integral as the definition; conditioning on all observations at or below the threshold can include too much probability. The coherent monetary risk measure is $-V\,\text{ES}_\alpha$ for portfolio value $V>0$.</p>
+
+        <div class="table-wrap"><table class="diff-table">
+          <thead>
+            <tr>
+              <th>Risk Dimension</th>
+              <th>Value-at-Risk ($\text{VaR}_\alpha$)</th>
+              <th>Expected Shortfall ($\text{ES}_\alpha$)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Core Question</strong></td>
+              <td><em>"What is the minimum loss threshold expected on the worst $100(1 - \alpha)\%$ of days?"</em></td>
+              <td><em>"If we exceed the threshold, what is the expected average loss magnitude?"</em></td>
+            </tr>
+            <tr>
+              <td><strong>Mathematical Nature</strong></td>
+              <td>Single point quantile cutoff: $F^{-1}(1 - \alpha)$.</td>
+              <td>Integral average across the full distribution tail: $\frac{1}{1-\alpha}\int_\alpha^1 F^{-1}(1-u)\,du$.</td>
+            </tr>
+            <tr>
+              <td><strong>Sub-additivity</strong></td>
+              <td>May fail for some distributions; not a universal property of VaR.</td>
+              <td>Satisfied by the loss / capital version of ES when finite; equality is possible.</td>
+            </tr>
+            <tr>
+              <td><strong>Sensitivity to Fat Tails</strong></td>
+              <td>Insensitive to tail shape beyond the quantile.</td>
+              <td>Highly sensitive to tail thickness and extreme crash potential.</td>
+            </tr>
+          </tbody>
+        </table></div>
+
+        <div class="callout">
+          <div class="callout-title">Expected Shortfall in the Basel market-risk standard</div>
+          <p>
+            The 2019 Basel market-risk standard specifies <strong>97.5% Expected Shortfall</strong> for its internal models approach, with stress calibration and liquidity-horizon adjustments. VaR still has a role in backtesting; implementation depends on jurisdiction.
+          </p>
+        </div>
+      </section>
+
+      <section class="worked-example" id="es-example">
+        <p class="example-label">Worked example · same portfolio, deeper into the tail</p>
+        <h2>How bad are the worst 5% of days?</h2>
+        <p>Reuse the hypothetical €100,000 portfolio with daily $\mu=0.05\%$, $\sigma=1\%$, and normal returns. With $z=\Phi^{-1}(0.05)=-1.64485$ and standard normal density $\phi(z)\approx0.103136$:</p>
+        <div class="math-block">$$\text{ES}_{0.95}=\mu-\sigma\frac{\phi(z)}{0.05}=0.0005-0.01\frac{0.103136}{0.05}\approx-0.0201271$$</div>
+        <div class="table-wrap"><table class="comp-table"><caption>Two different questions about the same daily distribution</caption><thead><tr><th scope="col">Measure</th><th scope="col">Signed return</th><th scope="col">Cash loss</th><th scope="col">Meaning</th></tr></thead><tbody>
+          <tr><td>95% VaR</td><td>−1.595%</td><td>€1,594.85</td><td>Boundary of the worst 5%</td></tr>
+          <tr><td>95% ES</td><td>−2.013%</td><td>€2,012.71</td><td>Average within the worst 5%</td></tr>
+        </tbody></table></div>
+        <p class="takeaway"><strong>Takeaway:</strong> the conditional average loss is about €417.86 beyond the VaR threshold. ES is an average, so individual tail losses can still be larger.</p>
+      </section>
+
+      <section id="joint-estimation">
+        <h2>Joint estimation: learning VaR and ES together</h2>
+        <p>A quantity is <em>elicitable</em> if it uniquely minimizes an expected scoring loss. Over broad distribution classes, ES alone lacks this property, but the VaR–ES pair is jointly elicitable under suitable regularity conditions. This supports comparing pairs of forecasts with a consistent score.</p>
+        <p>Write $p=1-\alpha$ for the lower-tail probability, $v_t$ for signed-return VaR, and $e_t$ for signed-return ES. A commonly used score, for $e_t&lt;0$ and $e_t\le v_t$, is:</p>
+        <div class="math-block">$$L_{\mathrm{FZ0}}(r_t,v_t,e_t;p)=-\frac{\mathbb{I}(r_t\le v_t)(v_t-r_t)}{p\,e_t}+\frac{v_t}{e_t}+\log(-e_t)-1$$</div>
+        <p>The factor $p$ in the first denominator is essential. Minimize the average score on training data and compare mean scores on unseen data using the same probability and return units. A lower realized average is evidence about relative forecast performance, not proof of calibration.</p>
+      </section>
+
+      <section id="asymmetric-laplace">
+        <h2>The asymmetric Laplace connection</h2>
+        <p>The asymmetric Laplace working density connects quantile regression to likelihood-based estimation. For scale $s_t>0$ and pinball loss $\rho_p(u)=u[p-\mathbb{I}(u&lt;0)]$:</p>
+        <div class="math-block">$$f(r_t\mid v_t,s_t)=\frac{p(1-p)}{s_t}\exp\!\left[-\frac{\rho_p(r_t-v_t)}{s_t}\right]$$</div>
+        <p>At the true conditional quantile, the expected pinball loss satisfies $s_t=p(\mu_t-e_t)$, where $\mu_t$ is the conditional mean. Thus $e_t=\mu_t-s_t/p$; for demeaned returns this becomes $e_t=-s_t/p$. A semiparametric approach can use this connection without requiring actual returns to follow an asymmetric Laplace distribution. The scale is linked to ES; it is not the return standard deviation.</p>
+      </section>
+
+      <section id="es-validation">
+        <h2>Validating ES forecasts</h2>
+        <p>Counting VaR exceptions does not assess their severity. For continuous distributions, correctly specified conditional forecasts satisfy two useful moment conditions:</p>
+        <div class="math-block">$$H_{q,t}=\mathbb{I}(r_t\le v_t)-p,\qquad H_{e,t}=e_t-v_t+\frac{\mathbb{I}(r_t\le v_t)(v_t-r_t)}{p}$$</div>
+        <p>Both have conditional expectation zero. Persistent means or predictability from past information can reveal misspecification. Formal inference must account for estimation uncertainty and time dependence. Regression-based ES backtests require their own assumptions. These residuals are an explanatory diagnostic, not a substitute for implementing a formal test correctly.</p>
+        <h3>Extending the forecast model with an LSTM</h3>
+        <p>A recurrent network can output $(v_t,e_t)$ from historical returns and other past information, then learn by minimizing a joint score. A parameterization such as $v_t=-\operatorname{softplus}(a_t)$ and $e_t=v_t-\operatorname{softplus}(b_t)$ enforces negative, ordered forecasts when that domain is appropriate. Greater flexibility brings more estimation uncertainty, especially with few tail observations. Compare against simple baselines using rolling forecasts and the same scoring rule; an LSTM does not automatically improve tail accuracy.</p>
+        <p class="takeaway"><strong>Study checkpoint:</strong> distinguish confidence $\alpha$ from tail probability $p=1-\alpha$, signed returns from cash losses, and a good average score from a calibrated risk forecast.</p>
+      </section>
+
+      <nav class="page-nav">
+        <a class="page-nav-link" href="value-at-risk.html">
+          <span class="page-nav-sub">← Previous Topic</span>
+          <span class="page-nav-title">Value-at-Risk (VaR)</span>
+        </a>
+        <a class="page-nav-link next" href="sharpe-ratio.html">
+          <span class="page-nav-sub">Next Topic →</span>
+          <span class="page-nav-title">Sharpe & Sortino Ratios</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="shell">
+    <p>Gabriele Antonini / Quantitative Finance Notes / 2026</p>
+  </footer>
+</body>
+</html>
