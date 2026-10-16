@@ -13,8 +13,8 @@
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/site.css?v=bae47c102d77">
-  <link rel="stylesheet" href="../../assets/finance.css?v=74e23632d594">
-  <script src="../../assets/notes.js" defer></script>
+  <link rel="stylesheet" href="../../assets/finance.css?v=62398a6038bd">
+  <script src="../../assets/notes.js?v=9f9084e22bec" defer></script>
 </head>
 <body class="note-page finance-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
@@ -30,27 +30,11 @@
       <header class="article-header">
         <div class="meta-eyebrow">Quantitative Finance</div>
         <h1>Sharpe & Sortino Ratios</h1>
-        <p class="article-lead">Risk-adjusted performance metrics: quantifying excess return per unit of total volatility versus downside risk.</p>
       </header>
-
-      <!-- Overview Grid -->
-      <div class="ratio-grid">
-        <div class="ratio-card">
-          <div class="ratio-tag sharpe">Total Volatility Risk</div>
-          <h3 class="ratio-name">Sharpe Ratio</h3>
-          <p class="ratio-desc">Measures excess portfolio return per unit of total standard deviation ($\sigma_p$), treating upside and downside deviations symmetrically.</p>
-        </div>
-
-        <div class="ratio-card">
-          <div class="ratio-tag sortino">Downside Risk Only</div>
-          <h3 class="ratio-name">Sortino Ratio</h3>
-          <p class="ratio-desc">Measures excess return over a benchmark target per unit of downside deviation ($\sigma_d$), penalizing only harmful losses.</p>
-        </div>
-      </div>
 
       <!-- Section 1: Sharpe Ratio -->
       <section>
-        <h2>The Sharpe Ratio</h2>
+        <h2>Sharpe Ratio</h2>
         <p>
           The <strong>Sharpe Ratio</strong> evaluates the risk-adjusted return of an investment portfolio by comparing its expected excess return over the risk-free rate to its overall volatility:
         </p>
@@ -76,7 +60,7 @@
 
       <!-- Section 2: Sortino Ratio -->
       <section>
-        <h2>The Sortino Ratio</h2>
+        <h2>Sortino Ratio</h2>
         <p>
           The <strong>Sortino Ratio</strong> modifies the Sharpe Ratio by replacing total standard deviation with <strong>Downside Deviation (Semi-Standard Deviation)</strong>, measuring excess return relative to a Minimum Acceptable Return ($\text{MAR}$ or $\tau$):
         </p>
@@ -101,7 +85,7 @@
 
       <!-- Section 3: Comparative Summary -->
       <section>
-        <h2>Comparative Summary</h2>
+        <h2>Comparison</h2>
 
         <div class="table-wrap"><table class="comp-table">
           <thead>
@@ -137,7 +121,7 @@
       </section>
 
 <section id="ratio-checks">
-        <h2>Reading a reported ratio carefully</h2>
+        <h2>Interpretation and Annualization</h2>
         <p>State the observation period, return frequency, benchmark, fees, and denominator convention. Keep returns and benchmark rates at the same frequency. Neither ratio is finite when its denominator is zero, and a short history can make either estimate unstable.</p>
         <p>For approximately additive excess returns with stable moments and no serial correlation, the common annualization is $S_{\mathrm{annual}}\approx\sqrt{m}\,S_{\mathrm{period}}$, where $m$ is the number of periods per year. Compounding and serial correlation can invalidate this shortcut.</p>
       </section>
@@ -145,7 +129,7 @@
       <nav class="page-nav">
         <a class="page-nav-link" href="expected-shortfall.html">
           <span class="page-nav-sub">← Previous Topic</span>
-          <span class="page-nav-title">Expected Shortfall (ES)</span>
+          <span class="page-nav-title">Expected Shortfall</span>
         </a>
         <a class="page-nav-link next" href="../../index.html">
           <span class="page-nav-sub">Return Home →</span>

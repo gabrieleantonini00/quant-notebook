@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Value-at-Risk (VaR): Formal definition, parametric location-scale models, GARCH & EWMA volatility, Historical Simulation, CAViaR, and out-of-sample backtesting with Kupiec, Christoffersen, and Basel Traffic Light frameworks.">
   <meta name="order" content="1">
-  <title>Value-at-Risk (VaR) Estimation | Quant Notebook</title>
+  <title>Value at Risk | Quant Notebook</title>
   
   <!-- KaTeX Math Formula Rendering -->
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
@@ -13,8 +13,8 @@
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/site.css?v=bae47c102d77">
-  <link rel="stylesheet" href="../../assets/finance.css?v=74e23632d594">
-  <script src="../../assets/notes.js" defer></script>
+  <link rel="stylesheet" href="../../assets/finance.css?v=62398a6038bd">
+  <script src="../../assets/notes.js?v=9f9084e22bec" defer></script>
 </head>
 <body class="note-page finance-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
@@ -29,13 +29,12 @@
     <article>
       <header class="article-header">
         <div class="meta-eyebrow">Quantitative Finance</div>
-        <h1>Value-at-Risk (VaR) Estimation</h1>
-        <p class="article-lead">Probabilistic definition, parametric location-scale modeling (GARCH & EWMA), non-parametric historical simulation, CAViaR quantile autoregression, and out-of-sample backtesting frameworks.</p>
+        <h1>Value at Risk</h1>
       </header>
 
       <!-- Section 1: Formal Definition -->
       <section>
-        <h2>Formal Definition of Value-at-Risk</h2>
+        <h2 id="section-1">Definition</h2>
         <p>
           Let $r_{t+1}$ be the future return of a portfolio or asset at time $t + 1$. The <strong>Value-at-Risk ($\text{VaR}$)</strong> at coverage / confidence level $\alpha \in (0, 1)$ (commonly $95\%$ or $99\%$) is written here as a <strong>signed return threshold</strong>. Under a continuous return distribution, returns fall below it with probability $1 - \alpha$:
         </p>
@@ -60,7 +59,7 @@
 
 <!-- Section 2: Parametric Models -->
       <section>
-        <h2>Parametric Models: The Location-Scale Framework</h2>
+        <h2 id="section-2">Parametric Models</h2>
         <p>
           Parametric frameworks express asset returns as a location-scale stochastic process $r_t = \mu_t + \sigma_t \epsilon_t$, where innovations $\epsilon_t \sim f(0, 1)$ are i.i.d. The conditional VaR is given by:
         </p>
@@ -70,7 +69,7 @@
         </div>
         <p>where $q_{1-\alpha}$ represents the $(1 - \alpha)$-th quantile of the assumed standardized distribution $f$.</p>
 
-        <h3>Distributional Assumptions</h3>
+        <h3>Location-Scale Distributions</h3>
         <ul>
           <li>
             <strong>Gaussian (Normal):</strong> Assumes mesokurtic distribution with standard normal quantiles:
@@ -98,7 +97,7 @@
 
       <!-- Section 3: Non-Parametric Approaches -->
       <section>
-        <h2>Non-Parametric Approaches</h2>
+        <h2 id="section-3">Nonparametric Models</h2>
 
         <h3>Standard Historical Simulation (HS)</h3>
         <p>
@@ -119,7 +118,8 @@
 
       <!-- Section 4: Semi-Parametric Quantile Regression -->
       <section>
-        <h2>Semi-Parametric Quantile Regression: CAViaR</h2>
+        <h2 id="section-4">Semiparametric Models</h2>
+        <h3>CAViaR</h3>
         <p>
           Instead of modeling the full conditional density or variance, <strong>CAViaR (Conditional Autoregressive Value at Risk)</strong> models the evolution of the quantile $f_t(\boldsymbol{\beta})$ directly through an autoregressive time-series process. Under the <em>Asymmetric Slope</em> specification:
         </p>
@@ -134,9 +134,17 @@
         </div>
       </section>
 
-      <!-- Section 5: Out-of-Sample Backtesting & Validation -->
+      <!-- Hybrid Models -->
+      <section id="hybrid-models">
+        <h2 id="hybrid-models-title">Hybrid Models</h2>
+        <p>A hybrid approach can combine several volatility forecasts into a positive estimate $\widehat{\sigma}_t$. Filtered historical simulation then maps past standardized shocks to today's scale:</p>
+        <div class="math-block">$$z_s=\frac{r_s-\widehat{\mu}_s}{\widehat{\sigma}_s},\qquad r_s^*=\widehat{\mu}_t+\widehat{\sigma}_t z_s,\qquad \widehat{\text{VaR}}_{\alpha,t}=\text{Quantile}_{1-\alpha}\{r_s^*\}$$</div>
+        <p>Alternatively, a neural network can forecast the quantile directly using the pinball loss above. These are modeling choices, not guarantees of better forecasts. A recurrent model must receive only information available at the forecast time; even a bidirectional network must be restricted to a fully historical input window.</p>
+      </section>
+
+      <!-- Out-of-Sample Backtesting -->
       <section>
-        <h2>Out-of-Sample Backtesting & Statistical Validation</h2>
+        <h2 id="section-5">Backtesting</h2>
         <p>
           A risk model must never be validated solely on in-sample training data. <strong>Out-of-sample backtesting</strong> evaluates the predictive accuracy of the model on a sequence of unseen holdout observations using rolling or expanding estimation windows:
         </p>
@@ -205,20 +213,6 @@
         </div>
       </section>
 
-      <section id="hybrid-models">
-        <h2>Connecting volatility models and machine learning</h2>
-        <p>A hybrid approach can combine several volatility forecasts into a positive estimate $\widehat{\sigma}_t$. Filtered historical simulation then maps past standardized shocks to today's scale:</p>
-        <div class="math-block">$$z_s=\frac{r_s-\widehat{\mu}_s}{\widehat{\sigma}_s},\qquad r_s^*=\widehat{\mu}_t+\widehat{\sigma}_t z_s,\qquad \widehat{\text{VaR}}_{\alpha,t}=\text{Quantile}_{1-\alpha}\{r_s^*\}$$</div>
-        <p>Alternatively, a neural network can forecast the quantile directly using the pinball loss above. These are modeling choices, not guarantees of better forecasts. A recurrent model must receive only information available at the forecast time; even a bidirectional network must be restricted to a fully historical input window.</p>
-        <div class="table-wrap"><table class="comp-table"><thead><tr><th scope="col">Approach</th><th scope="col">What is estimated?</th><th scope="col">Key check</th></tr></thead><tbody>
-          <tr><td>Normal / Student's $t$</td><td>Mean, volatility, and distribution shape</td><td>Does the tail assumption fit unseen returns?</td></tr>
-          <tr><td>Historical simulation</td><td>Empirical return quantile</td><td>Is the window relevant and large enough?</td></tr>
-          <tr><td>CAViaR / quantile network</td><td>The quantile directly</td><td>Coverage, dependence, and out-of-sample pinball loss</td></tr>
-          <tr><td>Hybrid filtered simulation</td><td>Volatility plus an empirical shock distribution</td><td>No future information in features or scaling</td></tr>
-        </tbody></table></div>
-        <p>Use chronological training, validation, and test windows, with all preprocessing fitted on training data.</p>
-      </section>
-
       <nav class="page-nav">
         <a class="page-nav-link" href="../../index.html">
           <span class="page-nav-sub">← Back</span>
@@ -226,7 +220,7 @@
         </a>
         <a class="page-nav-link next" href="expected-shortfall.html">
           <span class="page-nav-sub">Next Topic →</span>
-          <span class="page-nav-title">Expected Shortfall (ES)</span>
+          <span class="page-nav-title">Expected Shortfall</span>
         </a>
       </nav>
     </article>

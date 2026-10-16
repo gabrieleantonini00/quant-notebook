@@ -120,7 +120,7 @@ def style_note(path):
         text = text.replace('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',prefix+'assets/vendor/katex/')
     if path.relative_to(NOTES_DIR).parts[0] == 'finance':
         # Finance styling and its regenerated figure must update cached notebooks.
-        for asset in ('assets/site.css', 'assets/finance.css', 'assets/plots/finance-var-es-tail.svg'):
+        for asset in ('assets/site.css', 'assets/finance.css', 'assets/notes.js', 'assets/plots/finance-var-es-tail.svg'):
             version = hashlib.sha256((BASE_DIR/asset).read_bytes()).hexdigest()[:12]
             url = prefix + asset
             text = re.sub(r'(?<=["\'])' + re.escape(url) + r'(?:\?v=[a-f0-9]+)?(?=["\'])',

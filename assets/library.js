@@ -72,9 +72,9 @@
     'embeddings-word2vec':   'Word embeddings',
     'transformers':          'Transformers',
     'llms':                  'Large language models',
-    'value-at-risk':         'Value at risk',
-    'expected-shortfall':    'Expected shortfall',
-    'sharpe-ratio':          'Sharpe and Sortino ratios',
+    'value-at-risk':         'Value at Risk',
+    'expected-shortfall':    'Expected Shortfall',
+    'sharpe-ratio':          'Sharpe & Sortino Ratios',
     'spatial-econometrics':  'Spatial econometrics'
   };
 

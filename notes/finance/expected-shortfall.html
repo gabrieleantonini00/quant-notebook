@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Expected Shortfall (ES): Coherent risk measures, Artzner axioms of coherence, conditional tail expectation, and graphical intuition vs. Value-at-Risk (VaR).">
   <meta name="order" content="2">
-  <title>Expected Shortfall (ES) Estimation | Quant Notebook</title>
+  <title>Expected Shortfall | Quant Notebook</title>
   
   <!-- KaTeX Math Formula Rendering -->
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
@@ -13,8 +13,8 @@
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/site.css?v=bae47c102d77">
-  <link rel="stylesheet" href="../../assets/finance.css?v=74e23632d594">
-  <script src="../../assets/notes.js" defer></script>
+  <link rel="stylesheet" href="../../assets/finance.css?v=62398a6038bd">
+  <script src="../../assets/notes.js?v=9f9084e22bec" defer></script>
 </head>
 <body class="note-page finance-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
@@ -29,13 +29,12 @@
     <article>
       <header class="article-header">
         <div class="meta-eyebrow">Quantitative Finance</div>
-        <h1>Expected Shortfall (ES) Estimation</h1>
-        <p class="article-lead">Moving beyond Value-at-Risk: axiomatic coherence, tail risk severity, conditional expectation, and geometric intuition across return distributions.</p>
+        <h1>Expected Shortfall</h1>
       </header>
 
       <!-- Section 1: From VaR to Coherent Measures & Graphic -->
       <section>
-        <h2>From VaR to Coherent Risk Measures</h2>
+        <h2>VaR and Tail Risk</h2>
         <p>
           While <strong>Value-at-Risk (VaR)</strong> serves as a standard industry benchmark, it possesses fundamental theoretical and practical limitations:
         </p>
@@ -49,7 +48,10 @@
           <figcaption>Both markers use signed returns: the tail mean lies to the left of the threshold. Expressed as positive cash losses, ES is larger than VaR. The illustration assumes a normal daily return with mean 0.05% and volatility 1%.</figcaption>
         </figure>
 
-        <h3>Axioms of Coherent Risk Measures</h3>
+      </section>
+
+      <section id="coherence">
+        <h2>Coherent Risk Measures</h2>
         <p>
           Let $X$ and $Y$ denote monetary payoffs (larger is better). A capital requirement $\rho$ is <strong>coherent</strong> when it satisfies the following four axioms. The signed tail-return average used below becomes such a risk measure after reversing its sign and expressing it in money.
         </p>
@@ -80,7 +82,10 @@
           </div>
         </div>
 
-        <h3>Mathematical Formulation of Expected Shortfall</h3>
+      </section>
+
+      <section id="definition">
+        <h2>Definition</h2>
         <p>
           <strong>Expected Shortfall ($\text{ES}$)</strong>—also referred to as <em>Conditional Value-at-Risk (CVaR)</em> or <em>Tail Value-at-Risk (TVaR)</em>—averages the worst $1-\alpha$ fraction of outcomes. Here we keep the <strong>signed-return convention</strong> from the VaR note. For a continuous return distribution with a finite tail mean:
         </p>
@@ -132,7 +137,7 @@
       </section>
 
 <section id="joint-estimation">
-        <h2>Joint estimation: learning VaR and ES together</h2>
+        <h2>Joint VaR–ES Estimation</h2>
         <p>A quantity is <em>elicitable</em> if it uniquely minimizes an expected scoring loss. Over broad distribution classes, ES alone lacks this property, but the VaR–ES pair is jointly elicitable under suitable regularity conditions. This supports comparing pairs of forecasts with a consistent score.</p>
         <p>Write $p=1-\alpha$ for the lower-tail probability, $v_t$ for signed-return VaR, and $e_t$ for signed-return ES. A commonly used score, for $e_t&lt;0$ and $e_t\le v_t$, is:</p>
         <div class="math-block">$$L_{\mathrm{FZ0}}(r_t,v_t,e_t;p)=-\frac{\mathbb{I}(r_t\le v_t)(v_t-r_t)}{p\,e_t}+\frac{v_t}{e_t}+\log(-e_t)-1$$</div>
@@ -140,26 +145,30 @@
       </section>
 
       <section id="asymmetric-laplace">
-        <h2>The asymmetric Laplace connection</h2>
+        <h2>Asymmetric Laplace Models</h2>
         <p>The asymmetric Laplace working density connects quantile regression to likelihood-based estimation. For scale $s_t>0$ and pinball loss $\rho_p(u)=u[p-\mathbb{I}(u&lt;0)]$:</p>
         <div class="math-block">$$f(r_t\mid v_t,s_t)=\frac{p(1-p)}{s_t}\exp\!\left[-\frac{\rho_p(r_t-v_t)}{s_t}\right]$$</div>
         <p>At the true conditional quantile, the expected pinball loss satisfies $s_t=p(\mu_t-e_t)$, where $\mu_t$ is the conditional mean. Thus $e_t=\mu_t-s_t/p$; for demeaned returns this becomes $e_t=-s_t/p$. A semiparametric approach can use this connection without requiring actual returns to follow an asymmetric Laplace distribution. The scale is linked to ES; it is not the return standard deviation.</p>
       </section>
 
+      <section id="neural-models">
+        <h2>Neural Models</h2>
+        <h3>LSTM</h3>
+        <p>A recurrent network can output $(v_t,e_t)$ from historical returns and other past information, then learn by minimizing a joint score. A parameterization such as $v_t=-\operatorname{softplus}(a_t)$ and $e_t=v_t-\operatorname{softplus}(b_t)$ enforces negative, ordered forecasts when that domain is appropriate. Greater flexibility brings more estimation uncertainty, especially with few tail observations. Compare against simple baselines using rolling forecasts and the same scoring rule; an LSTM does not automatically improve tail accuracy.</p>
+      </section>
+
       <section id="es-validation">
-        <h2>Validating ES forecasts</h2>
+        <h2>Backtesting</h2>
         <p>Counting VaR exceptions does not assess their severity. For continuous distributions, correctly specified conditional forecasts satisfy two useful moment conditions:</p>
         <div class="math-block">$$H_{q,t}=\mathbb{I}(r_t\le v_t)-p,\qquad H_{e,t}=e_t-v_t+\frac{\mathbb{I}(r_t\le v_t)(v_t-r_t)}{p}$$</div>
         <p>Both have conditional expectation zero. Persistent means or predictability from past information can reveal misspecification. Formal inference must account for estimation uncertainty and time dependence. Regression-based ES backtests require their own assumptions. These residuals are an explanatory diagnostic, not a substitute for implementing a formal test correctly.</p>
-        <h3>Extending the forecast model with an LSTM</h3>
-        <p>A recurrent network can output $(v_t,e_t)$ from historical returns and other past information, then learn by minimizing a joint score. A parameterization such as $v_t=-\operatorname{softplus}(a_t)$ and $e_t=v_t-\operatorname{softplus}(b_t)$ enforces negative, ordered forecasts when that domain is appropriate. Greater flexibility brings more estimation uncertainty, especially with few tail observations. Compare against simple baselines using rolling forecasts and the same scoring rule; an LSTM does not automatically improve tail accuracy.</p>
         <p class="takeaway"><strong>Study checkpoint:</strong> distinguish confidence $\alpha$ from tail probability $p=1-\alpha$, signed returns from cash losses, and a good average score from a calibrated risk forecast.</p>
       </section>
 
       <nav class="page-nav">
         <a class="page-nav-link" href="value-at-risk.html">
           <span class="page-nav-sub">← Previous Topic</span>
-          <span class="page-nav-title">Value-at-Risk (VaR)</span>
+          <span class="page-nav-title">Value at Risk</span>
         </a>
         <a class="page-nav-link next" href="sharpe-ratio.html">
           <span class="page-nav-sub">Next Topic →</span>

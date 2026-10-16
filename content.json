@@ -463,29 +463,32 @@
     "description": "Risk estimation and risk-adjusted performance.",
     "sections": [
       {
-        "title": "Value-at-Risk (VaR) Estimation",
+        "title": "Value at Risk",
         "summary": "Value-at-Risk (VaR): Formal definition, parametric location-scale models, GARCH & EWMA volatility, Historical Simulation, CAViaR, and out-of-sample backtesting with Kupiec, Christoffersen, and Basel Traffic Light frameworks.",
         "topics": [
-          "Formal Definition of Value-at-Risk",
-          "Parametric Models: The Location-Scale Framework",
-          "Non-Parametric Approaches",
-          "Semi-Parametric Quantile Regression: CAViaR",
-          "Out-of-Sample Backtesting & Statistical Validation",
-          "Connecting volatility models and machine learning"
+          "Definition",
+          "Parametric Models",
+          "Nonparametric Models",
+          "Semiparametric Models",
+          "Hybrid Models",
+          "Backtesting"
         ],
         "link": "notes/finance/value-at-risk.html",
-        "reading_minutes": 6,
+        "reading_minutes": 5,
         "order": 1,
         "category_path": []
       },
       {
-        "title": "Expected Shortfall (ES) Estimation",
+        "title": "Expected Shortfall",
         "summary": "Expected Shortfall (ES): Coherent risk measures, Artzner axioms of coherence, conditional tail expectation, and graphical intuition vs. Value-at-Risk (VaR).",
         "topics": [
-          "From VaR to Coherent Risk Measures",
-          "Joint estimation: learning VaR and ES together",
-          "The asymmetric Laplace connection",
-          "Validating ES forecasts"
+          "VaR and Tail Risk",
+          "Coherent Risk Measures",
+          "Definition",
+          "Joint VaR–ES Estimation",
+          "Asymmetric Laplace Models",
+          "Neural Models",
+          "Backtesting"
         ],
         "link": "notes/finance/expected-shortfall.html",
         "reading_minutes": 5,
@@ -496,13 +499,13 @@
         "title": "Sharpe & Sortino Ratios",
         "summary": "Risk-adjusted performance metrics: Sharpe Ratio (total volatility) vs. Sortino Ratio (downside risk), mathematical formulations, and comparative intuition.",
         "topics": [
-          "The Sharpe Ratio",
-          "The Sortino Ratio",
-          "Comparative Summary",
-          "Reading a reported ratio carefully"
+          "Sharpe Ratio",
+          "Sortino Ratio",
+          "Comparison",
+          "Interpretation and Annualization"
         ],
         "link": "notes/finance/sharpe-ratio.html",
-        "reading_minutes": 3,
+        "reading_minutes": 2,
         "order": 3,
         "category_path": []
       }
