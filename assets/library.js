@@ -2,16 +2,10 @@
   const $ = id => document.getElementById(id);
   const data = typeof areaContent !== 'undefined' ? areaContent : (window.areaContent || {});
 
-  /* ── colour palette per subject ─────────────────────────────────── */
-  const colors = {
-    statistics:    '#2563eb',
-    learning:      '#7c3aed',
-    nlp:           '#0d9488',
-    finance:       '#d97706',
-    econometrics:  '#475569',
-    bayesian:      '#db2777',
-    setup:         '#0284c7'
-  };
+  /* One accent unifies the cover, subjects, and topic links. */
+  const colors = Object.fromEntries(
+    Object.keys(data).map(key => [key, 'var(--editorial-accent, #475569)'])
+  );
 
   const shortNames = {
     statistics:    'Probability & Statistics',

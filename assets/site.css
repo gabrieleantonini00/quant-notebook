@@ -61,6 +61,20 @@ html:has(body.home-page) {
   scroll-padding-top: 0;
 }
 
+/* The notebook's cover and library use a quiet editorial palette. */
+body.home-page {
+  --ink: #182b42;
+  --ink-secondary: #3e4e5f;
+  --muted: #626d77;
+  --muted-light: #7b838b;
+  --paper: #f6f2e9;
+  --surface: #fbf8f1;
+  --line: #dcd6ca;
+  --line-strong: #bcb4a5;
+  --editorial-accent: #86623f;
+  --blue: var(--editorial-accent);
+}
+
 body {
   margin: 0;
   background: var(--paper);
@@ -211,7 +225,7 @@ svg {
 
 
 /* ==========================================================================
-   Hero Section — Full-width dark gradient with animated orbs
+   Hero Section — Editorial cover
    ========================================================================== */
 @keyframes orb-drift-1 {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -238,7 +252,8 @@ svg {
 
 .hero {
   position: relative;
-  background: #101b2d;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
   overflow: hidden;
   padding: 0;
 }
@@ -311,36 +326,36 @@ svg {
   text-align: center;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 110px 24px;
+  padding: 128px 24px 104px;
 }
 
-/* Big minimal title */
+/* One serif family and one weight keep the title's two lines coherent. */
 .hero-title {
-  font-family: var(--sans);
-  font-size: clamp(40px, 6.4vw, 88px);
+  font-family: var(--serif);
+  font-size: clamp(34px, 5.2vw, 72px);
   font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.055em;
-  color: #ffffff;
-  margin: 0 0 27px;
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 32px;
+  max-width: 100%;
+  text-wrap: balance;
 }
 
-.hero-title em {
-  font-family: var(--serif);
+.hero-amp {
   font-style: italic;
-  font-weight: 400;
-  color: #b8c8e0;
+  color: var(--editorial-accent);
 }
 
 /* Introductory description */
 .hero-tagline {
   font-family: var(--sans);
-  font-size: clamp(15px, 1.6vw, 18px);
+  font-size: clamp(15px, 1.35vw, 17px);
   font-weight: 400;
-  max-width: 70ch;
-  line-height: 1.75;
-  color: #bec9d9;
-  margin: 0 0 35px;
+  max-width: 66ch;
+  line-height: 1.85;
+  color: var(--ink-secondary);
+  margin: 0 0 38px;
   letter-spacing: 0;
 }
 
@@ -351,39 +366,44 @@ svg {
 }
 
 .hero-scroll {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  color: #d7e2f2;
-  border: 1px solid #5b6b82;
-  border-radius: 50%;
-  transition: color 0.2s ease;
+  gap: 14px;
+  padding: 10px 0;
+  color: var(--editorial-accent);
+  border-bottom: 1px solid var(--editorial-accent);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .hero-scroll:hover {
-  color: #ffffff;
-  border-color: #ffffff;
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
 .hero-topline {
   position: absolute;
-  left: 24px;
-  right: 24px;
+  left: 40px;
+  right: 40px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 20px;
-  color: #b8c8dc;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: .035em;
+  letter-spacing: .04em;
   text-align: left;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 19px;
 }
 .hero-topline { top: 34px; }
-.hero-topline a { color: #e7eef8; border-bottom: 1px solid #8aa1bf; padding-bottom: 3px; }
-.hero-topline a:hover { border-color: #fff; }
+.hero-publication { font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; }
+.hero-topline a { color: var(--ink-secondary); }
+.hero-topline a:hover { color: var(--editorial-accent); }
 
 
 
@@ -1043,6 +1063,18 @@ svg {
   color: var(--muted);
 }
 
+/* Carry the cover's typography and single accent into its subject index. */
+.home-page .topic-section { max-width: 1040px; padding-top: 56px; padding-bottom: 72px; }
+.home-page .subject-row { padding: 29px 0; }
+.home-page .sr-name { font-size: clamp(22px, 2.4vw, 30px); font-weight: 500; letter-spacing: -0.025em; }
+.home-page .subject-row::before { width: 2px; }
+.home-page .back-btn { background: transparent; border-radius: 2px; box-shadow: none; }
+.home-page .back-btn:hover { background: var(--surface); }
+.home-page .search-box { border-radius: 2px; box-shadow: none; }
+.home-page .search-box:focus-within { box-shadow: 0 0 0 2px rgb(134 98 63 / 10%); }
+.home-page .search-hint { background: var(--paper); border-color: var(--line); }
+.home-page .site-footer { background: var(--paper); margin-top: 0; }
+
 .footer-inner {
   display: flex;
   justify-content: space-between;
@@ -1635,10 +1667,15 @@ body.note-page {
     font-size: 12.5px;
   }
   .hero-inner {
-    padding: 64px 16px 56px;
+    padding: 120px 8px 80px;
   }
-  .hero-topline { left: 16px; right: 16px; font-size: 11px; }
-  .hero-topline { top: 24px; }
+  .hero-topline { left: 8px; right: 8px; font-size: 11px; top: 26px; padding-bottom: 16px; gap: 12px; }
+  .hero-publication { font-size: 10px; letter-spacing: .12em; }
+  .hero-title { margin-bottom: 25px; }
+  .hero-tagline { margin-bottom: 27px; line-height: 1.75; }
+  .home-page .subject-row { padding: 25px 0; gap: 12px; }
+  .home-page .sr-count { font-size: 11px; }
+  .home-page .sr-arrow { font-size: 18px; }
   .hero-stats {
     padding: 16px 12px;
     gap: 0;
