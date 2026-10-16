@@ -467,7 +467,6 @@
         "summary": "Value-at-Risk (VaR): Formal definition, parametric location-scale models, GARCH & EWMA volatility, Historical Simulation, CAViaR, and out-of-sample backtesting with Kupiec, Christoffersen, and Basel Traffic Light frameworks.",
         "topics": [
           "Formal Definition of Value-at-Risk",
-          "From a return quantile to a euro amount",
           "Parametric Models: The Location-Scale Framework",
           "Non-Parametric Approaches",
           "Semi-Parametric Quantile Regression: CAViaR",
@@ -484,7 +483,6 @@
         "summary": "Expected Shortfall (ES): Coherent risk measures, Artzner axioms of coherence, conditional tail expectation, and graphical intuition vs. Value-at-Risk (VaR).",
         "topics": [
           "From VaR to Coherent Risk Measures",
-          "How bad are the worst 5% of days?",
           "Joint estimation: learning VaR and ES together",
           "The asymmetric Laplace connection",
           "Validating ES forecasts"
@@ -501,7 +499,6 @@
           "The Sharpe Ratio",
           "The Sortino Ratio",
           "Comparative Summary",
-          "Same returns, two definitions of risk",
           "Reading a reported ratio carefully"
         ],
         "link": "notes/finance/sharpe-ratio.html",

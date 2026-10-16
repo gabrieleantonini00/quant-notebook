@@ -62,7 +62,7 @@ html:has(body.home-page) {
 }
 
 /* The notebook's cover and library use a quiet editorial palette. */
-body.home-page {
+body.home-page, body.finance-note {
   --ink: #182b42;
   --ink-secondary: #3e4e5f;
   --muted: #626d77;

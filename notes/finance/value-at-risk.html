@@ -5,200 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Value-at-Risk (VaR): Formal definition, parametric location-scale models, GARCH & EWMA volatility, Historical Simulation, CAViaR, and out-of-sample backtesting with Kupiec, Christoffersen, and Basel Traffic Light frameworks.">
   <meta name="order" content="1">
-  <title>Value-at-Risk (VaR) Estimation | Statistics & Data Science</title>
+  <title>Value-at-Risk (VaR) Estimation | Quant Notebook</title>
   
   <!-- KaTeX Math Formula Rendering -->
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
   <script defer src="../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
-  
-  <style>
-    :root {
-      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
-      --green:#1f6f52; --green-soft:#dfece4; --blue:#39749b; --blue-soft:#e6f0f7;
-      --indigo:#625f9b; --indigo-soft:#f0edf9; --coral:#d05e49; --coral-soft:#fdf0ed;
-      --amber:#b67a19; --amber-soft:#fcf5e8; --radius:8px; --content:880px;
-    }
-    * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body {
-      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      line-height:1.65; letter-spacing:0;
-    }
-    a { color:inherit; }
-    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
-    .topbar {
-      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
-      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
-    }
-    .topbar-inner {
-      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
-    }
-    .nav-back {
-      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
-      text-decoration:none; color:var(--muted); transition:color 150ms ease;
-    }
-    .nav-back:hover { color:var(--ink); }
-    .nav-tag {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
-      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
-    }
-    article { padding:56px 0 84px; }
-    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
-    .meta-eyebrow {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
-      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
-    }
-    h1 {
-      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
-      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
-    }
-    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
-    .meta-info {
-      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
-    }
-    h2 {
-      margin:46px 0 18px; font-family:Georgia,"Times New Roman",serif;
-      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
-    }
-    h3 { margin:30px 0 14px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
-    p, ul, ol { margin:0 0 20px; }
-    ul, ol { padding-left:24px; }
-    li { margin-bottom:8px; }
-    
-    .callout {
-      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
-      padding:20px 24px; margin:24px 0; border-radius:0 var(--radius) var(--radius) 0;
-    }
-    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
-    .math-block {
-      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-      padding:16px 20px; margin:20px 0; overflow-x:auto; text-align:center;
-    }
-    .schema-card {
-      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-      padding:24px; margin:28px 0;
-    }
-    .schema-card h4 { margin:0 0 14px; font-size:1.1rem; font-family:Georgia,"Times New Roman",serif; }
-    
-    /* Visual Distribution Container */
-    .visual-container {
-      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-      padding:24px 20px; margin:32px 0;
-    }
-    .visual-header {
-      margin-bottom:16px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px;
-    }
-    .visual-title {
-      font-family:Georgia,serif; font-size:1.2rem; font-weight:700; color:var(--ink); margin:0;
-    }
-    .visual-legend {
-      display:flex; gap:16px; font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.76rem;
-    }
-    .legend-item { display:flex; align-items:center; gap:6px; }
-    .legend-box { width:12px; height:12px; border-radius:3px; }
-    .legend-box.safe { background:#e6f0f7; border:1px solid var(--blue); }
-    .legend-box.var { background:var(--coral); }
-    .legend-box.tail { background:#f7cfcf; border:1px solid var(--coral); }
-    .distribution-svg { width:100%; height:auto; display:block; margin:10px 0; }
-
-    /* Modern Attractive Regulatory Traffic Light UI */
-    .traffic-container {
-      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-      padding:24px 20px; margin:26px 0;
-    }
-    .traffic-lights-row {
-      display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px; margin-top:16px;
-    }
-    .traffic-card-v2 {
-      background:var(--paper); border:1px solid var(--line); border-radius:8px;
-      padding:20px 18px; position:relative; overflow:hidden;
-      transition:transform 150ms ease, box-shadow 150ms ease;
-    }
-    .traffic-card-v2:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.05); }
-    .traffic-card-v2::before {
-      content:""; position:absolute; top:0; left:0; right:0; height:4px;
-    }
-    .zone-green::before { background:#22c55e; }
-    .zone-yellow::before { background:#eab308; }
-    .zone-red::before { background:#ef4444; }
-
-    .traffic-header {
-      display:flex; align-items:center; gap:8px; margin-bottom:10px;
-    }
-    .traffic-orb {
-      width:14px; height:14px; border-radius:50%; display:inline-block;
-    }
-    .orb-green { background:#22c55e; box-shadow:0 0 8px rgba(34,197,94,0.6); }
-    .orb-yellow { background:#eab308; box-shadow:0 0 8px rgba(234,179,8,0.6); }
-    .orb-red { background:#ef4444; box-shadow:0 0 8px rgba(239,68,68,0.6); }
-
-    .traffic-title {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-weight:750;
-      font-size:.82rem; text-transform:uppercase; letter-spacing:.04em;
-    }
-    .zone-green .traffic-title { color:#15803d; }
-    .zone-yellow .traffic-title { color:#a16207; }
-    .zone-red .traffic-title { color:#b91c1c; }
-
-    .traffic-pill {
-      font-family:Georgia,serif; font-size:1.15rem; font-weight:700;
-      color:var(--ink); margin-bottom:6px;
-    }
-    .traffic-mult {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.74rem; font-weight:700;
-      padding:3px 8px; border-radius:4px; margin-bottom:10px; display:inline-block;
-    }
-    .zone-green .traffic-mult { background:#dcfce7; color:#166534; }
-    .zone-yellow .traffic-mult { background:#fef9c3; color:#854d0e; }
-    .zone-red .traffic-mult { background:#fee2e2; color:#991b1b; }
-    .traffic-desc { font-size:.82rem; color:var(--muted); line-height:1.45; margin:0; }
-
-    .flow-box {
-      background:var(--surface); border:1px solid var(--line); border-radius:6px;
-      padding:14px 18px; margin:14px 0 18px; font-family:Inter,ui-sans-serif,system-ui,sans-serif;
-      font-size:.82rem; color:var(--ink); overflow-x:auto; line-height:1.6;
-    }
-    .flow-arrow { color:var(--green); font-weight:700; padding:0 4px; }
-    .flow-tag {
-      background:var(--paper); border:1px solid var(--line); border-radius:4px;
-      padding:2px 8px; font-weight:600;
-    }
-
-    .page-nav {
-      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
-    }
-    .page-nav-link {
-      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
-      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
-      transition:background 150ms ease, border-color 150ms ease;
-    }
-    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
-    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
-    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
-    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
-    footer {
-      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
-    }
-    @media (max-width:768px) {
-      .traffic-lights-row { grid-template-columns:1fr; }
-    }
-    @media (max-width:680px) {
-      .shell { width:min(calc(100% - 28px),var(--content)); }
-      .page-nav { grid-template-columns:1fr; }
-    }
-  </style>
-  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../../assets/site.css">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/site.css?v=bae47c102d77">
+  <link rel="stylesheet" href="../../assets/finance.css?v=74e23632d594">
   <script src="../../assets/notes.js" defer></script>
 </head>
-<body class="note-page">
+<body class="note-page finance-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
   <header class="topbar">
     <div class="shell topbar-inner">
-      <a class="nav-back" href="../../index.html">← Back to Overview</a>
+      <a class="nav-back" href="../../index.html#finance">← Quantitative Finance</a>
       <span class="nav-tag">Quantitative Finance</span>
     </div>
   </header>
@@ -231,25 +53,12 @@
         </div>
 
         <figure class="figure-card">
-          <img src="../../assets/plots/finance-var-es-tail.svg" alt="Normal daily returns with the worst five percent shaded: the 95 percent VaR return threshold is minus 1.59 percent and the tail mean is minus 2.01 percent." loading="lazy" width="1000" height="460">
+          <img src="../../assets/plots/finance-var-es-tail.svg?v=78da3ecf8479" alt="Normal daily returns with the worst five percent shaded: the 95 percent VaR return threshold is minus 1.59 percent and the tail mean is minus 2.01 percent." loading="lazy" width="1000" height="540">
           <figcaption>A calculated normal model with daily mean 0.05% and volatility 1%. VaR marks the boundary of the worst 5%; Expected Shortfall measures the average return inside that tail.</figcaption>
         </figure>
       </section>
 
-      <section class="worked-example" id="var-example">
-        <p class="example-label">Worked example · one trading day</p>
-        <h2>From a return quantile to a euro amount</h2>
-        <p>Assume a €100,000 portfolio with normally distributed daily simple returns, mean $\mu=0.0005$ and standard deviation $\sigma=0.01$. These are hypothetical inputs.</p>
-        <div class="math-block">$$\text{VaR}_{0.95}=0.0005+0.01(-1.64485)=-0.0159485$$</div>
-        <p>The signed return threshold is <strong>−1.595%</strong>, corresponding to a <strong>€1,594.85 loss</strong>. Under this model, a larger one-day loss has probability 5%; €1,594.85 is not a worst possible loss.</p>
-        <div class="table-wrap"><table class="comp-table"><caption>Same portfolio, different confidence levels</caption><thead><tr><th scope="col">Confidence</th><th scope="col">Tail probability</th><th scope="col">Signed return VaR</th><th scope="col">Cash-loss VaR</th></tr></thead><tbody>
-          <tr><td>95%</td><td>5%</td><td>−1.595%</td><td>€1,594.85</td></tr>
-          <tr><td>99%</td><td>1%</td><td>−2.276%</td><td>€2,276.35</td></tr>
-        </tbody></table></div>
-        <p class="takeaway"><strong>Check your interpretation:</strong> a calibrated 99% model has an expected 2.5 exceptions over 250 days, not a guarantee of exactly two or three.</p>
-      </section>
-
-      <!-- Section 2: Parametric Models -->
+<!-- Section 2: Parametric Models -->
       <section>
         <h2>Parametric Models: The Location-Scale Framework</h2>
         <p>
@@ -332,11 +141,14 @@
           A risk model must never be validated solely on in-sample training data. <strong>Out-of-sample backtesting</strong> evaluates the predictive accuracy of the model on a sequence of unseen holdout observations using rolling or expanding estimation windows:
         </p>
 
-        <div class="flow-box">
-          <span class="flow-tag">In-Sample Data ($t-T \dots t$)</span> 
-          <span class="flow-arrow">→</span> <span class="flow-tag">Fit Model & Forecast $\widehat{\text{VaR}}_{t+1\mid t}$</span> 
-          <span class="flow-arrow">→</span> <span class="flow-tag">Realized Return $r_{t+1}$</span> 
-          <span class="flow-arrow">→</span> <span class="flow-tag">Record Out-of-Sample Exception $\text{Hit}_{t+1}$</span>
+        <div class="backtest-process" role="group" aria-labelledby="backtest-cycle-title">
+          <p class="process-kicker" id="backtest-cycle-title">Rolling forecast cycle</p>
+          <ol class="backtest-steps">
+            <li><span class="process-number" aria-hidden="true">01</span><strong class="process-label">Estimation window</strong><span class="process-math">$t-T,\ldots,t$</span></li>
+            <li><span class="process-number" aria-hidden="true">02</span><strong class="process-label">Fit &amp; forecast</strong><span class="process-math">$\widehat{\mathrm{VaR}}_{\alpha,t+1\mid t}$</span></li>
+            <li><span class="process-number" aria-hidden="true">03</span><strong class="process-label">Observe return</strong><span class="process-math">$r_{t+1}$</span></li>
+            <li><span class="process-number" aria-hidden="true">04</span><strong class="process-label">Record exception</strong><span class="process-math">$\mathrm{Hit}_{t+1}$</span></li>
+          </ol>
         </div>
 
         <p>
@@ -380,38 +192,16 @@
           The historical 1996 Basel backtesting framework grouped 99% one-day VaR results by exceptions over <strong>250 days</strong>. The multiplier values below describe that framework; they are not a complete statement of current capital rules.
         </p>
         
-        <div class="traffic-container">
-          <div class="traffic-lights-row">
-            <div class="traffic-card-v2 zone-green">
-              <div class="traffic-header">
-                <span class="traffic-orb orb-green"></span>
-                <span class="traffic-title">Green Zone</span>
-              </div>
-              <div class="traffic-pill">0 – 4 Exceptions</div>
-              <div><span class="traffic-mult">Multiplier: 3.00 ×</span></div>
-              <p class="traffic-desc">The exception count does not raise the framework’s usual supervisory concern. It does not establish model accuracy.</p>
-            </div>
-
-            <div class="traffic-card-v2 zone-yellow">
-              <div class="traffic-header">
-                <span class="traffic-orb orb-yellow"></span>
-                <span class="traffic-title">Yellow Zone</span>
-              </div>
-              <div class="traffic-pill">5 – 9 Exceptions</div>
-              <div><span class="traffic-mult">Multiplier: 3.40 × – 3.85 ×</span></div>
-              <p class="traffic-desc">Supervisory monitoring triggered. Capital scaling penalty multiplier increases progressively.</p>
-            </div>
-
-            <div class="traffic-card-v2 zone-red">
-              <div class="traffic-header">
-                <span class="traffic-orb orb-red"></span>
-                <span class="traffic-title">Red Zone</span>
-              </div>
-              <div class="traffic-pill">≥ 10 Exceptions</div>
-              <div><span class="traffic-mult">Multiplier: 4.00 ×</span></div>
-              <p class="traffic-desc">A strong presumption of model problems triggers supervisory action and the maximum listed increase.</p>
-            </div>
-          </div>
+        <div class="table-wrap">
+          <table class="finance-zones">
+            <caption>Historical framework: 99% one-day VaR over 250 days</caption>
+            <thead><tr><th scope="col">Zone</th><th scope="col">Exceptions</th><th scope="col">Multiplier</th><th scope="col">Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>Green</td><td>0–4</td><td>3.00 ×</td><td>The exception count does not raise the framework’s usual supervisory concern. It does not establish model accuracy.</td></tr>
+              <tr><td>Yellow</td><td>5–9</td><td>3.40 × – 3.85 ×</td><td>Supervisory monitoring triggered. The multiplier increases progressively.</td></tr>
+              <tr><td>Red</td><td>≥ 10</td><td>4.00 ×</td><td>A strong presumption of model problems triggers supervisory action and the maximum listed increase.</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -443,7 +233,7 @@
   </main>
 
   <footer class="shell">
-    <p>Gabriele Antonini / Quantitative Finance Notes / 2026</p>
+    <p>Quant Notebook / Quantitative Finance</p>
   </footer>
 </body>
 </html>

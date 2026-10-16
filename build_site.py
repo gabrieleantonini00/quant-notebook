@@ -118,6 +118,13 @@ def style_note(path):
     # The pinned local KaTeX assets also work without an internet connection.
     if (BASE_DIR/'assets/vendor/katex/katex.min.js').exists():
         text = text.replace('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',prefix+'assets/vendor/katex/')
+    if path.relative_to(NOTES_DIR).parts[0] == 'finance':
+        # Finance styling and its regenerated figure must update cached notebooks.
+        for asset in ('assets/site.css', 'assets/finance.css', 'assets/plots/finance-var-es-tail.svg'):
+            version = hashlib.sha256((BASE_DIR/asset).read_bytes()).hexdigest()[:12]
+            url = prefix + asset
+            text = re.sub(r'(?<=["\'])' + re.escape(url) + r'(?:\?v=[a-f0-9]+)?(?=["\'])',
+                          url + '?v=' + version, text)
     if text != path.read_text(encoding='utf-8'): path.write_text(text,encoding='utf-8')
 
 
