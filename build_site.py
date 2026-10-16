@@ -7,6 +7,7 @@ from pathlib import Path
 from html.parser import HTMLParser
 from html import escape
 import argparse
+import hashlib
 import json
 import math
 import re
@@ -162,6 +163,9 @@ def build_site_manifest(style_notes=True):
     # Escape HTML delimiters so note metadata cannot terminate a script element.
     inline = json.dumps(data,ensure_ascii=False).replace('<','\\u003c').replace('>','\\u003e').replace('&','\\u0026')
     template = (BASE_DIR/'templates/index.html').read_text(encoding='utf-8')
+    # A content-based version keeps browser caches from hiding library updates.
+    library_version = hashlib.sha256((BASE_DIR/'assets/library.js').read_bytes()).hexdigest()[:12]
+    template = template.replace('"assets/library.js"', f'"assets/library.js?v={library_version}"')
     (BASE_DIR/'index.html').write_text(template.replace('/* SITE_DATA */','const areaContent = '+inline+';'),encoding='utf-8')
     groups=[]
     for key,area in data.items():
