@@ -123,17 +123,15 @@
       .filter(([, a]) => a.has_notes)
       .map(([key, area]) => {
         const color  = colors[key] || '#2563eb';
-        const count  = (area.sections || []).filter(s => s.link).length;
 
         const btn = document.createElement('button');
         btn.className = 'subject-row';
         btn.type = 'button';
         btn.style.setProperty('--area-color', color);
-        btn.setAttribute('aria-label', `${shortNames[key] || area.title}, ${count} topics`);
+        btn.setAttribute('aria-label', shortNames[key] || area.title);
 
         btn.append(
           node('span', 'sr-name',  shortNames[key] || area.title),
-          node('span', 'sr-count', `${count} topics`),
           node('span', 'sr-arrow', '→')
         );
 
