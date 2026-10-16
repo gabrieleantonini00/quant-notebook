@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Repeated cross-sectional samples, time indicators, changing composition, interaction models, parameter stability, and the distinction from panel pooled OLS.">
+  <meta name="order" content="20">
+  <title>Pooled cross-sections and parameter stability | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/pooled-cross-sections">← Back to Pooled Cross-Sections</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Pooled Cross-Sections</div>
+      <h1>Pooled cross-sections and parameter stability</h1>
+      <p class="article-lead">Pooling independent surveys can reveal how a population changes over time. It does not reveal how the same individuals change unless those individuals are actually followed.</p>
+    </header>
+
+    <section><h2>Repeated samples are not a panel</h2>
+      <p>Suppose one survey samples households in 2020 and a second draws a new sample in 2025. The records can be stacked, but household 17 in one file need not be household 17 in the other. Treat the observation as unit $i$ sampled in wave $t$, not as a matched longitudinal record.</p>
+      <p>A pooled cross-section increases the amount of information and allows period comparisons. It does not support household fixed effects or household first differences when identities are not linked. If a survey rotates or partially reuses its sample, some observations may be dependent across waves; the sampling design determines the appropriate variance calculation.</p>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Question</th><th scope="col">Repeated cross-sections</th><th scope="col">Panel</th></tr></thead><tbody>
+        <tr><th scope="row">Same people at every date?</th><td>Not required</td><td>Yes, for observed repeated records</td></tr>
+        <tr><th scope="row">Individual change observable?</th><td>Generally no</td><td>Yes</td></tr>
+        <tr><th scope="row">Composition can change?</th><td>Yes, across sampled populations</td><td>Yes, through entry, exit, and attrition</td></tr>
+        <tr><th scope="row">Unit effects removable by demeaning?</th><td>No, without repeated unit records</td><td>Yes, with identifying within-unit variation</td></tr>
+      </tbody></table></div>
+    </section>
+    <section><h2>Begin with period indicators</h2>
+      <p>For two periods, let $D_t=1$ in the later period. A common-slope model is</p>
+      <div class="math-block">$$y_{it}=\beta_0+\delta D_t+x_{it}^{\mathsf T}\beta+u_{it}.$$</div>
+      <p>The coefficient $\delta$ compares conditional fitted levels across periods at the same covariate values. With more waves, include period indicators relative to an omitted reference wave. The sample need not have the same size in each wave, but blindly stacking means larger waves receive more weight.</p>
+      <p>Pooling presumes a common meaning for the outcome and regressors: currency units, inflation adjustment, questionnaire definitions, population coverage, and missing-value rules must be comparable. A nominal wage increase is not automatically an increase in real purchasing power.</p>
+    </section>
+    <section><h2>Allow slopes to change using interactions</h2>
+      <div class="math-block">$$y_{it}=\beta_0+\delta D_t+\beta_1x_{it}+\gamma(D_tx_{it})+u_{it}.$$</div>
+      <p>At $D_t=0$, the intercept and slope are $(\beta_0,\beta_1)$. At $D_t=1$, they are $(\beta_0+\delta,\beta_1+\gamma)$. The period contrast at a chosen $x$ is $\delta+\gamma x$. Thus the main period coefficient is the contrast at $x=0$; center $x$ at a meaningful value if zero is outside the data range.</p>
+      <p>For an illustrative wage equation measured in currency units, suppose $\hat\beta_0=10$, $\hat\beta_1=2$, $\hat\delta=1$, and $\hat\gamma=0.5$, where $x$ is years of education beyond a reference level. At $x=4$, the fitted levels are 18 and 21: a conditional period difference of 3. The later-period slope is 2.5 rather than 2. These numbers describe a fitted contrast, not an identified policy effect.</p>
+    </section>
+    <section><h2>Parameter stability is a testable restriction</h2>
+      <p>Interact the period indicator with every column of $X$, including its intercept. Equality of the two coefficient vectors is a joint zero restriction on all interaction coefficients. If each group has $K$ parameters, the classical Chow statistic is</p>
+      <div class="math-block">$$F=\frac{[SSR_R-(SSR_0+SSR_1)]/K}{(SSR_0+SSR_1)/(n_0+n_1-2K)}.$$</div>
+      <p>$SSR_R$ comes from the restricted common-coefficient fit. $SSR_0$ and $SSR_1$ come from separate fits on the same two groups. The exact $F$ reference requires the classical assumptions, including a common error variance and enough observations for each fit. When variances differ, use an interaction regression and a heteroskedasticity-robust joint Wald test instead.</p>
+      <p>If only slopes are constrained equal and period intercepts remain free, the number of restrictions changes. A test chosen after searching many possible break dates also needs a reference distribution that accounts for the search; the fixed-date Chow test does not do that.</p>
+    </section>
+    <section><h2>Population change versus individual change</h2>
+      <p>The difference between two unconditional means combines changes in the outcome relationship and changes in population composition. For example, average wages can rise because the sampled population becomes more educated, even when the conditional wage schedule is unchanged.</p>
+      <p>Regression adjustment, reweighting, and survey weights can help define a comparable population contrast, but they answer different questions. Check overlap: a fitted comparison at covariate values present in only one wave depends on extrapolation. Survey weights describe the sampling design; they are not automatically inverse error-variance weights for efficient GLS.</p>
+      <p>Period indicators alone do not identify the effect of a policy introduced between waves. Other events, selection, and changes in measurement can produce the same pattern. A causal comparison needs an explicit design and assumptions beyond pooling.</p>
+    </section>
+    <section><h2>Pooled OLS is also an estimator for panel data</h2>
+      <p>The phrase <em>pooled OLS</em> describes a regression on stacked observations, so it can also refer to panel estimation. In $y_{it}=a+x_{it}^{\mathsf T}\beta+c_i+\varepsilon_{it}$, it can consistently estimate slopes if the composite disturbance is appropriately orthogonal to the regressors, even when $\operatorname{Var}(c_i)&gt;0$. A nonzero unit effect does not automatically bias the coefficients; correlation with regressors is the key issue.</p>
+      <p>Even under orthogonality, $c_i$ creates within-unit error dependence. Panel pooled OLS therefore generally needs an appropriate covariance estimator, often unit clustering, or a defensible random-effects covariance model. That is a different problem from combining genuinely independent survey waves.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: data-structure discussions in Mehdi Hosseinkouchack, <cite>Econometrics</cite>, Section 0, and Andrea Ugolini, <cite>Advanced Econometrics</cite>, Lecture 00; the interaction and stability argument follows Hosseinkouchack, Section 2, slides 32–33. The worked repeated-survey example is an illustrative extension of that framework.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="../cross-sectional/ols-estimation.html">OLS and data structures</a></li><li><a href="../cross-sectional/regression-inference.html">Robust joint tests</a></li><li><a href="../panel-data/fixed-effects.html">Panel data and within-unit estimation</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

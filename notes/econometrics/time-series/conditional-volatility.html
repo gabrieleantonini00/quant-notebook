@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Conditional mean and variance, ARCH tests, GARCH persistence, variance forecasts, asymmetric volatility, heavy-tailed innovations, and links to VaR and ES.">
+  <meta name="order" content="43">
+  <title>ARCH, GARCH, and conditional volatility | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/time-series">← Back to Time Series</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Time Series</div>
+      <h1>ARCH, GARCH, and conditional volatility</h1>
+      <p class="article-lead">Returns can be difficult to predict while their volatility clusters. Conditional variance models describe how the scale of future innovations changes with past information.</p>
+    </header>
+
+    <section><h2>Separate the mean from the scale</h2>
+      <div class="math-block">$$r_t=\mu_t+\varepsilon_t,\qquad \varepsilon_t=\sqrt{h_t}\,z_t,\qquad E[z_t\mid\mathcal F_{t-1}]=0,\quad E[z_t^2\mid\mathcal F_{t-1}]=1.$$</div>
+      <p>Here $\mu_t$ and $h_t$ are determined by information at $t-1$. They are the conditional mean and innovation variance. Return autocorrelations may be small while squared or absolute returns remain dependent. Changing conditional variance is compatible with a constant unconditional variance when the model's moment conditions hold.</p>
+      <p>State the return units. If returns are measured in percentage points, $h_t$ is in squared percentage points and $\sqrt{h_t}$ is a percentage-point standard deviation. Converting decimal returns to percentages multiplies variances by $100^2$.</p>
+    </section>
+    <section><h2>ARCH models yesterday's squared surprises</h2>
+      <div class="math-block">$$h_t=\omega+\sum_{j=1}^q\alpha_j\varepsilon_{t-j}^2,\qquad \omega&gt;0,\quad\alpha_j\ge0.$$</div>
+      <p>For ARCH(1), a finite unconditional second moment exists under $\alpha_1&lt;1$, giving $E[h_t]=\omega/(1-\alpha_1)$ under the standard innovation assumptions. Conditional Gaussianity does not make the unconditional distribution Gaussian: mixing high- and low-variance periods can generate fat tails. Higher moments require stronger conditions than the variance condition.</p>
+      <p>An ARCH LM diagnostic regresses fitted squared mean-model residuals on a constant and $q$ lags of those residual squares. Test the joint zero-lag restriction, often using an asymptotic $n_{\mathrm{aux}}R^2\sim\chi_q^2$ approximation with the auxiliary regression's usable sample size. First ensure the mean specification has not left substantial linear serial correlation.</p>
+    </section>
+    <section><h2>GARCH adds persistence in the variance itself</h2>
+      <div class="math-block">$$h_t=\omega+\alpha\varepsilon_{t-1}^2+\beta h_{t-1},\qquad \omega&gt;0,\quad\alpha,\beta\ge0.$$</div>
+      <p>With standardized innovations and $\alpha+\beta&lt;1$, the usual finite unconditional variance is</p>
+      <div class="math-block">$$\bar h=\frac{\omega}{1-\alpha-\beta}.$$</div>
+      <p>$\alpha$ measures reaction to new squared innovations and $\beta$ carries past conditional variance. Their sum governs expected variance persistence in this specification. The finite-second-moment condition should not be confused with every possible strict-stationarity condition: processes can have different distributional and moment properties.</p>
+      <p>At $\alpha+\beta=1$, an IGARCH specification with positive intercept has no finite unconditional variance of this form. The intercept-free exponentially weighted moving-average variance recursion is a special related case. Multiplying a one-period volatility by the square root of horizon is not generally valid under arbitrary conditional volatility dynamics and mean dependence.</p>
+    </section>
+    <section><h2>Worked variance forecast</h2>
+      <p>Take illustrative percentage-point returns with $\omega=0.05$, $\alpha=0.10$, $\beta=0.85$, current variance $h_t=4$, and current innovation $\varepsilon_t=-3$. Then</p>
+      <div class="math-block">$$h_{t+1\mid t}=0.05+0.10(9)+0.85(4)=4.35,\qquad \sqrt{4.35}\approx2.086.$$</div>
+      <p>The long-run variance is $\bar h=0.05/(1-0.95)=1$. For $h\ge1$, future conditional innovation variance forecasts satisfy</p>
+      <div class="math-block">$$h_{t+h\mid t}=\bar h+(\alpha+\beta)^{h-1}(h_{t+1\mid t}-\bar h).$$</div>
+      <p>At horizon 10, this is approximately $3.111$, with standard deviation $1.764$ percentage points. This is the variance of an innovation at a future date, not the variance of a ten-period cumulative return. The latter needs aggregation of the relevant future variances and any covariance terms.</p>
+      <figure class="figure-card"><img src="../../../assets/plots/econometrics-garch-forecast.svg" width="960" height="480" loading="lazy" alt="Conditional variance forecasts start at 4.35 squared percentage points at horizon one and gradually decay toward the long-run variance of one under persistence 0.95."><figcaption>Known-parameter GARCH(1,1) forecast using the stated illustrative inputs. The vertical axis shows variance, not volatility; the dashed line is the finite unconditional variance.</figcaption></figure>
+    </section>
+    <section><h2>Asymmetry and heavy tails are distinct choices</h2>
+      <p>Symmetric GARCH gives equal variance responses to equal positive and negative innovations. A GJR-style variance equation adds a sign indicator:</p>
+      <div class="math-block">$$h_t=\omega+\alpha\varepsilon_{t-1}^2+\gamma\varepsilon_{t-1}^2\mathbf{1}\{\varepsilon_{t-1}&lt;0\}+\beta h_{t-1}.$$</div>
+      <p>With the displayed convention, $\gamma&gt;0$ increases the response to negative innovations. Positivity and finite-variance restrictions depend on the full specification; for symmetric standardized innovations, the familiar finite-variance condition involves $\alpha+\beta+\gamma/2$. Threshold-GARCH names vary across software, so always show the equation and power being modeled.</p>
+      <p>EGARCH instead models $\log h_t$, guaranteeing positive variance after exponentiation. One convention is $\log h_t=\omega+\beta\log h_{t-1}+\alpha(|z_{t-1}|-E|z|)+\gamma z_{t-1}$; a negative $\gamma$ then increases the effect of negative standardized shocks. Modeling asymmetry and selecting a heavy-tailed innovation distribution solve different problems.</p>
+      <p>A Student-$t$ innovation must be standardized to variance one when $h_t$ is the conditional variance. Gaussian quasi-maximum likelihood can target variance dynamics under suitable assumptions even without Gaussian innovations, with an appropriate robust covariance; correct tail forecasts require more than a successful variance fit.</p>
+    </section>
+    <section><h2>Check standardized residuals and connect to risk</h2>
+      <p>Inspect $\hat z_t=\hat\varepsilon_t/\sqrt{\hat h_t}$ for residual mean dependence, remaining squared dependence, distributional mismatch, parameter constraints, and stability across samples. Evaluate forecasts at realistic origins; avoid using future observations to initialize or select the model being evaluated.</p>
+      <p>For a one-period return model with standardized innovation quantile $q_a$, a monetary loss $L=-Vr$ has upper-tail quantile $VaR_{1-a}=V(-\mu-\sigma q_a)$, when the return units and portfolio value $V$ are consistent. This sign convention converts a lower return-tail quantile into an upper loss quantile. See the separate Finance notes for Expected Shortfall, tail assumptions, estimation, and backtesting.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: Mehdi Hosseinkouchack, <cite>Econometrics</cite>, Section 5; Andrea Ugolini, <cite>Advanced Econometrics</cite>, Lectures 06–08. The official <a href="https://bashtage.github.io/arch/univariate/forecasting.html">arch forecasting documentation</a> provides implementation-oriented variance forecast definitions.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="arma-forecasting.html">Mean dynamics and forecasting</a></li><li><a href="../../finance/value-at-risk.html">Value at Risk</a></li><li><a href="../../finance/expected-shortfall.html">Expected Shortfall</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Data structures, the linear regression model, OLS geometry, exogeneity, finite-sample properties, and a worked regression example.">
+  <meta name="order" content="10">
+  <title>OLS: estimation and interpretation | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/cross-sectional">← Back to Cross-Sectional</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Cross-Sectional</div>
+      <h1>OLS: estimation and interpretation</h1>
+      <p class="article-lead">OLS fits a linear relationship by minimizing squared prediction errors. Interpreting that fit requires a separate account of the data structure, the error term, and the variation that identifies each coefficient.</p>
+    </header>
+
+    <section><h2>Start with the observational unit</h2>
+      <p>A cross-section observes many units at one date or over a common reference period: households in a survey, firms in a financial year, or districts in a census. An observation index does not itself create independence; households in the same village or firms in the same industry may share shocks.</p>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Structure</th><th scope="col">What is observed?</th><th scope="col">Main source of variation</th></tr></thead><tbody>
+        <tr><th scope="row">Cross-section</th><td>Many units, one reference period</td><td>Differences across units</td></tr>
+        <tr><th scope="row">Pooled cross-sections</th><td>New samples at several dates</td><td>Cross-unit and population changes</td></tr>
+        <tr><th scope="row">Panel</th><td>The same units at several dates</td><td>Within-unit and between-unit differences</td></tr>
+        <tr><th scope="row">Time series</th><td>One system followed through time</td><td>Dynamics, persistence, and shocks</td></tr>
+      </tbody></table></div>
+      <p>Spatial dependence can occur in any of these structures. It describes a relationship between observations rather than a replacement for the unit-and-time classification.</p>
+    </section>
+    <section><h2>The model and its dimensions</h2>
+      <div class="math-block">$$y_i=x_i^{\mathsf T}\beta+u_i,\qquad y=X\beta+u.$$</div>
+      <p>There are $n$ observations and $K$ coefficient parameters, including an intercept when present. The vector $y$ is $n\times1$, $X$ is $n\times K$, and $\beta$ is $K\times1$. The error $u_i$ collects factors that the specified regressors do not describe. A residual $\hat u_i$ is an estimated error after fitting the model; it is not the unobserved $u_i$.</p>
+      <p>Linearity concerns the parameters. A model with $x$, $x^2$, and $\log z$ is still linear in their coefficients. The conditional mean restriction $E[u_i\mid x_i]=0$ implies $E[y_i\mid x_i]=x_i^{\mathsf T}\beta$. Without that restriction, OLS can still estimate a best linear projection, but its slope need not equal a structural or causal effect.</p>
+    </section>
+    <section><h2>Derive the OLS estimator</h2>
+      <p>Choose $b$ to minimize the residual sum of squares. Differentiation produces the normal equations:</p>
+      <div class="math-block">$$S(b)=(y-Xb)^{\mathsf T}(y-Xb),\qquad \frac{\partial S}{\partial b}=-2X^{\mathsf T}y+2X^{\mathsf T}Xb=0.$$</div>
+      <div class="math-block">$$\hat\beta=(X^{\mathsf T}X)^{-1}X^{\mathsf T}y,\qquad X^{\mathsf T}\hat u=0.$$</div>
+      <p>Full column rank makes the solution unique. With an intercept, residuals sum to zero and the fitted regression passes through the sample means. These are algebraic properties of the fitted sample; they do not establish population exogeneity. In computation, use QR or another stable least-squares solver rather than explicitly inverting $X^{\mathsf T}X$.</p>
+      <p>The projection matrix $P_X=X(X^{\mathsf T}X)^{-1}X^{\mathsf T}$ gives $\hat y=P_Xy$. The residual vector $(I-P_X)y$ is orthogonal to the columns of $X$. This geometry also explains partial regression: a multiple-regression coefficient uses the part of one regressor left after removing its linear association with the other regressors.</p>
+      <p>OLS also solves the sample moment conditions corresponding to $E[x_i u_i]=0$. Under a correctly specified conditionally Gaussian spherical-error model, maximizing the likelihood gives the same coefficient estimate. The Gaussian variance MLE is $\hat u^{\mathsf T}\hat u/n$, whereas the classical unbiased variance estimate divides by $n-K$.</p>
+    </section>
+    <section><h2>Which assumptions deliver which properties?</h2>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Property</th><th scope="col">Conditions to distinguish</th></tr></thead><tbody>
+        <tr><th scope="row">Unique OLS fit</th><td>Full column rank; no perfect multicollinearity</td></tr>
+        <tr><th scope="row">Conditional unbiasedness</th><td>$E[u\mid X]=0$ and full rank</td></tr>
+        <tr><th scope="row">Consistency</th><td>$n^{-1}X^{\mathsf T}X\to_p Q$ nonsingular and $n^{-1}X^{\mathsf T}u\to_p0$, supported by suitable sampling and moment conditions</td></tr>
+        <tr><th scope="row">BLUE</th><td>Exogeneity and spherical conditional errors: $\operatorname{Var}(u\mid X)=\sigma^2I$</td></tr>
+        <tr><th scope="row">Exact classical $t$ and $F$ inference</th><td>Additionally, conditional normality of the errors</td></tr>
+      </tbody></table></div>
+      <p>Random regressors are compatible with OLS. For an independently sampled cross-section, conditional mean exogeneity at the observation level supports the sample conditional restriction under the usual independence assumptions. For time series or panels, conditioning on all dates is stronger than contemporaneous orthogonality. Orthogonality alone is not a complete consistency theorem: convergence and identification conditions still matter.</p>
+      <p>Heteroskedasticity does not by itself bias OLS coefficients under exogeneity. It changes their covariance and generally removes the classical efficiency claim. Robust standard errors address inference under an appropriate dependence structure; they do not repair endogeneity.</p>
+    </section>
+    <section><h2>A small worked example</h2>
+      <p>Take the illustrative observations $x=(1,2,3,4)$ and $y=(2,3,5,4)$. In a regression with an intercept, $\bar x=2.5$ and $\bar y=3.5$:</p>
+      <div class="math-block">$$\hat\beta_1=\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}{\sum_i(x_i-\bar x)^2}=\frac{4}{5}=0.8,\qquad \hat\beta_0=3.5-0.8(2.5)=1.5.$$</div>
+      <p>The fitted values are $(2.3,3.1,3.9,4.7)$ and the residuals are $(-0.3,-0.1,1.1,-0.7)$. Their squared sum is 1.8; the total sum of squares around $\bar y$ is 5, so $R^2=1-1.8/5=0.64$. With $K=2$, the classical residual variance estimate is $s^2=1.8/(4-2)=0.9$.</p>
+      <p>The slope describes an average fitted increase of 0.8 outcome units for one unit of $x$. Four observations and a reasonably high $R^2$ do not establish causality or justify extrapolation beyond the observed range.</p>
+    </section>
+    <section><h2>Interpret the scale before interpreting the coefficient</h2>
+      <p>In a level-level model, $\beta_k$ is measured in outcome units per regressor unit. In a log-log model it is an elasticity. If $\log y$ is regressed on a level $x$, one additional unit of $x$ corresponds to an approximate $100\beta_k\%$ change, or exactly $100(e^{\beta_k}-1)\%$ for the multiplicative change in the fitted log outcome. Predicting the arithmetic mean of $y$ after exponentiating requires a retransformation adjustment.</p>
+      <p>Choose controls using the estimand and research design, not only significance. Adding a post-treatment variable can change the causal question, and adding a collinear variable can increase uncertainty even when it improves sample fit.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: personal <cite>OLS and Panel Data Models</cite>, PDF pp. 3–16; Mehdi Hosseinkouchack, <cite>Econometrics</cite>, Sections 0–2; Andrea Ugolini, <cite>Advanced Econometrics</cite>, Lecture 00.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="regression-inference.html">Inference, diagnostics, and endogeneity</a></li><li><a href="../pooled-cross-sections/pooled-samples.html">Pooled samples and parameter stability</a></li><li><a href="../panel-data/fixed-effects.html">Panel fixed effects</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

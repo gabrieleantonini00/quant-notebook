@@ -15,3 +15,6 @@ Thumbs.db
 
 # Original research PDFs stay local; HTML notes contain the reviewed material.
 /Notes*.pdf
+
+# Econometrics study sources remain local; publish only the derived HTML notes.
+/Econometrics/

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Panel structure, unit heterogeneity, within transformation, LSDV, first differences, two-way effects, and clustered inference.">
+  <meta name="order" content="30">
+  <title>Fixed effects and first differences | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/panel-data">← Back to Panel Data</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Panel Data</div>
+      <h1>Fixed effects and first differences</h1>
+      <p class="article-lead">Following the same units lets us compare each unit with itself. Fixed effects remove additive characteristics that do not change over time, while leaving the identification problem for time-varying factors explicit.</p>
+    </header>
+
+    <section><h2>A panel has both unit and time indices</h2>
+      <p>Let $i=1,\ldots,N$ index units and $t=1,\ldots,T_i$ their observed periods. A balanced panel has the same dates for every unit; an unbalanced panel does not. Check identifiers, duplicate unit-date records, date gaps, and attrition before choosing an estimator.</p>
+      <div class="math-block">$$y_{it}=a+x_{it}^{\mathsf T}\beta+c_i+\varepsilon_{it}.$$</div>
+      <p>The additive unit effect $c_i$ may capture persistent productivity, a firm's location, or an individual's stable characteristics. If it is correlated with the regressors, ignoring it generally violates pooled OLS exogeneity. Fixed effects permit this correlation; they still require restrictions on the idiosyncratic disturbance $\varepsilon_{it}$.</p>
+    </section>
+    <section><h2>The within transformation removes the unit effect</h2>
+      <p>Average the equation across the observed dates of unit $i$ and subtract that average from each observation:</p>
+      <div class="math-block">$$y_{it}-\bar y_i=(x_{it}-\bar x_i)^{\mathsf T}\beta+(\varepsilon_{it}-\bar\varepsilon_i).$$</div>
+      <p>Both $a$ and $c_i$ disappear. OLS on these deviations estimates the within slope, provided the transformed regressors have sufficient rank. A usual static-panel condition is</p>
+      <div class="math-block">$$E[\varepsilon_{it}\mid x_{i1},\ldots,x_{iT_i},c_i]=0\quad\text{for every }t.$$</div>
+      <p>This strict exogeneity condition rules out feedback from today's idiosyncratic shock into future regressors. It is stronger than saying only that $x_{it}$ is uncorrelated with today's disturbance. Selective attrition can also undermine the required observed-sample conditions.</p>
+      <p>Only within-unit variation identifies $\beta$. A time-invariant regressor becomes zero after demeaning, so its separate coefficient cannot be estimated with unit fixed effects. A regressor that changes very little may be identified imprecisely even when it is not exactly absorbed.</p>
+    </section>
+    <section><h2>LSDV and the Frisch-Waugh-Lovell connection</h2>
+      <p>Write the stacked model as $y=X\beta+D\alpha+\varepsilon$, where $D$ contains unit indicators and redundant intercept columns are omitted. Removing the projection on $D$ gives</p>
+      <div class="math-block">$$M_D=I-D(D^{\mathsf T}D)^{-1}D^{\mathsf T},\qquad \hat\beta_{FE}=(X^{\mathsf T}M_DX)^{-1}X^{\mathsf T}M_Dy.$$</div>
+      <p>Since $M_DD=0$, regression with unit dummies (LSDV) and the within transformation give the same slope estimates. Degrees of freedom must account for the estimated effects and the chosen covariance convention; treating demeaned observations as an untouched independent sample gives misleading standard errors.</p>
+      <p>Add time effects $\lambda_t$ to absorb shocks common to all units at a date. In a balanced, unweighted panel, subtracting unit and time means and adding the grand mean implements two-way residualization. For a general unbalanced panel, a single such subtraction is not generally equivalent to the full dummy-variable projection; use an estimator that absorbs both sets of effects correctly.</p>
+    </section>
+    <section><h2>Worked example: within and between tell different stories</h2>
+      <p>Consider two illustrative units, each observed three times:</p>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Unit</th><th scope="col">Regressor $x$</th><th scope="col">Outcome $y$</th><th scope="col">Unit mean</th></tr></thead><tbody>
+        <tr><th scope="row">A</th><td>1, 2, 3</td><td>12, 14, 16</td><td>$\bar x_A=2$, $\bar y_A=14$</td></tr>
+        <tr><th scope="row">B</th><td>4, 5, 6</td><td>8, 10, 12</td><td>$\bar x_B=5$, $\bar y_B=10$</td></tr>
+      </tbody></table></div>
+      <p>Within either unit, $\tilde x=(-1,0,1)$ and $\tilde y=(-2,0,2)$, so $\hat\beta_{FE}=8/4=2$. Across the six pooled observations, however, the intercept-and-slope regression gives $\hat\beta_{pooled}=-10/17.5\approx-0.571$. The reversal occurs because B has a higher average $x$ but a lower unit intercept.</p>
+      <figure class="figure-card"><img src="../../../assets/plots/econometrics-panel-within.svg" width="960" height="480" loading="lazy" alt="Two groups each have an increasing outcome with slope two, but the pooled regression through all six observations slopes downward because group B has a lower intercept."><figcaption>Illustrative data from the table. Within-unit slopes equal 2; pooled OLS mixes within and between variation and has slope about -0.571. The plot demonstrates a mechanism rather than an empirical result.</figcaption></figure>
+    </section>
+    <section><h2>First differences offer another transformation</h2>
+      <div class="math-block">$$\Delta y_{it}=\Delta x_{it}^{\mathsf T}\beta+\Delta\varepsilon_{it},\qquad \Delta y_{it}=y_{it}-y_{i,t-1}.$$</div>
+      <p>Differencing also removes $c_i$. With two observed periods and the same specification, FE and first differences give the same slopes. For more periods, their relative efficiency depends on the idiosyncratic error process: FE uses the spherical-error structure efficiently, while differencing can be attractive when levels errors are highly persistent. Neither is automatically best for every serial-correlation pattern.</p>
+      <p>If levels errors are serially uncorrelated with variance $\sigma_\varepsilon^2$, differenced errors have variance $2\sigma_\varepsilon^2$ and adjacent covariance $-\sigma_\varepsilon^2$. Do not assume differencing creates independent errors. In an irregular panel, a change across a multi-year gap is not the same interval as a one-year first difference.</p>
+    </section>
+    <section><h2>Inference and what fixed effects do not remove</h2>
+      <p>Unit-clustered covariance allows heteroskedasticity and arbitrary serial dependence within units under an appropriate many-independent-units asymptotic framework. Shared date shocks or group-level treatment assignment may require a different or additional clustering dimension. Few clusters call for methods suited to that setting.</p>
+      <p>Fixed effects remove additive time-invariant confounding. They do not remove time-varying confounders, reverse causality, measurement error, or selection into observation. Adding a lagged dependent variable creates a further problem in short panels: the within transformation induces regressor-error correlation, motivating dynamic-panel methods.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: personal <cite>OLS and Panel Data Models</cite>, PDF pp. 23–24 and 29. For implementation details, see the official <a href="https://bashtage.github.io/linearmodels/panel/mathematical-formula.html">linearmodels panel formulas</a>.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="random-effects.html">Random effects and estimator choice</a></li><li><a href="dynamic-panels.html">Dynamic panels and GMM</a></li><li><a href="../pooled-cross-sections/pooled-samples.html">Repeated cross-sections versus panels</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

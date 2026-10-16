@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Random-effects covariance, quasi-demeaning, pooled and within limits, Hausman comparisons, correlated random effects, and practical estimator selection.">
+  <meta name="order" content="31">
+  <title>Random effects and estimator choice | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/panel-data">← Back to Panel Data</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Panel Data</div>
+      <h1>Random effects and estimator choice</h1>
+      <p class="article-lead">Random effects exploit a structured covariance model to combine within-unit and between-unit information. The useful question is whether the assumptions behind that combination fit the research design.</p>
+    </header>
+
+    <section><h2>Move the unit component into the disturbance</h2>
+      <div class="math-block">$$y_{it}=a+x_{it}^{\mathsf T}\beta+u_{it},\qquad u_{it}=c_i+\varepsilon_{it}.$$</div>
+      <p>The standard random-intercept model assumes the unit component is orthogonal to the regressor history, alongside suitable exogeneity for the idiosyncratic errors. A convenient sufficient restriction is $E[c_i\mid X_i]=0$ after an overall intercept is included. Normality is useful for a Gaussian likelihood but is not necessary merely to write the GLS estimator.</p>
+      <p>Under the conventional variance-components specification, $\operatorname{Var}(c_i)=\sigma_c^2$, $\operatorname{Var}(\varepsilon_{it})=\sigma_\varepsilon^2$, and different idiosyncratic shocks are uncorrelated. For a unit observed $T_i$ times,</p>
+      <div class="math-block">$$\Omega_i=\sigma_\varepsilon^2 I_{T_i}+\sigma_c^2\boldsymbol{1}\boldsymbol{1}^{\mathsf T},\qquad \operatorname{Corr}(u_{it},u_{is})=\frac{\sigma_c^2}{\sigma_c^2+\sigma_\varepsilon^2}\quad(t\ne s).$$</div>
+      <p>A shared unit component creates dependence across dates even if the $\varepsilon_{it}$ are independent. Pooled OLS can still have consistent slopes under composite-error orthogonality, but its usual independent-error covariance is inappropriate and it need not be efficient.</p>
+    </section>
+    <section><h2>Quasi-demeaning explains the estimator</h2>
+      <p>GLS for this covariance model is equivalent to OLS on partially demeaned data:</p>
+      <div class="math-block">$$y^*_{it}=y_{it}-\theta_i\bar y_i,\quad x^*_{it}=x_{it}-\theta_i\bar x_i,\quad \theta_i=1-\sqrt{\frac{\sigma_\varepsilon^2}{\sigma_\varepsilon^2+T_i\sigma_c^2}}.$$</div>
+      <p>Transform the intercept too: its transformed value is $1-\theta_i$. This note defines $\theta_i$ as the fraction of the mean subtracted; some sources call the complementary square-root ratio $\theta$ instead. Comparing formulas without checking that convention can reverse the apparent limiting cases.</p>
+      <p>If $\sigma_c^2=0$, then $\theta_i=0$ and RE reduces to pooled OLS. As the relative importance of the unit component or $T_i$ grows, $\theta_i$ approaches 1 and the transformation approaches within demeaning for time-varying slopes. A time-invariant regressor is identified through between-unit information only while that information is retained.</p>
+      <p>Feasible GLS estimates the variance components, then calculates $\hat\theta_i$. Different finite-sample component estimators exist; one should not assume a single subtraction of pooled residual variances is universally valid, especially with an unbalanced panel or violated RE exogeneity.</p>
+    </section>
+    <section><h2>A numerical transformation</h2>
+      <p>Let $T_i=4$, $\sigma_\varepsilon^2=4$, and $\sigma_c^2=3$. Then</p>
+      <div class="math-block">$$\theta_i=1-\sqrt{\frac{4}{4+4(3)}}=0.5.$$</div>
+      <p>For $y_{it}=20$ and $\bar y_i=16$, the transformed outcome is $20-0.5(16)=12$. If $x_{it}=6$ and $\bar x_i=4$, the transformed regressor is 4; the transformed constant is 0.5. Full within demeaning would instead produce an outcome of 4 and a regressor of 2. RE intentionally retains part of the between-unit information.</p>
+      <p>This transformation is a consequence of the covariance specification. It does not justify treating $c_i$ as exogenous when subject-matter knowledge suggests otherwise.</p>
+    </section>
+    <section><h2>FE, RE, and pooled OLS answer different comparisons</h2>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Estimator</th><th scope="col">Unit effect and regressors</th><th scope="col">Variation used</th></tr></thead><tbody>
+        <tr><th scope="row">Pooled OLS</th><td>Requires composite-error orthogonality for the slope target</td><td>Within and between, without modeling the unit covariance</td></tr>
+        <tr><th scope="row">Fixed effects</th><td>Allows correlation with $c_i$; still needs idiosyncratic exogeneity</td><td>Within-unit changes</td></tr>
+        <tr><th scope="row">Random effects</th><td>Requires the relevant orthogonality to $c_i$</td><td>GLS combination of within and between</td></tr>
+      </tbody></table></div>
+      <p>A test for a zero random-intercept variance compares a variance-components model with the pooled special case; it does not test whether regressors are correlated with the unit effect. Variance is on a boundary at zero, so the reference distribution depends on the precise score or likelihood test and its one-sided or two-sided construction.</p>
+    </section>
+    <section><h2>What a Hausman comparison can establish</h2>
+      <p>In the classical comparison, FE is consistent under both hypotheses and RE is efficient under the null. For the coefficients identified by both estimators, let $d=\hat\beta_{FE}-\hat\beta_{RE}$. Then</p>
+      <div class="math-block">$$H=d^{\mathsf T}(\widehat V_{FE}-\widehat V_{RE})^{-1}d.$$</div>
+      <p>The standard asymptotic reference is chi-squared with degrees of freedom equal to the number of independent tested coefficient differences. A large discrepancy provides evidence against the maintained RE restrictions. Non-rejection does not prove those restrictions, and rejection does not rescue a misspecified FE model.</p>
+      <p>Simply subtracting two separately computed robust covariance matrices need not produce a valid robust Hausman test. Use a compatible covariance-of-the-difference procedure or a suitable regression-based comparison. A negative statistic or non-positive covariance difference is a reason to investigate the method, not evidence of a negative model distance.</p>
+    </section>
+    <section><h2>Correlated random effects makes the restriction visible</h2>
+      <p>A useful extension models the unit effect through means of the time-varying covariates, $c_i=\bar x_i^{\mathsf T}\pi+a_i$. Include those unit means in the equation and maintain suitable orthogonality for $a_i$. In the standard linear setting this separates within and between information and motivates a test of whether the included means matter.</p>
+      <p>This Mundlak-style extension is an additional modeling device, not a guarantee that every source of endogeneity has been controlled. Choose the estimator by stating the assumptions, checking variation and sampling, and matching covariance estimation to dependence; do not let a single preliminary test automate the research design.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: personal <cite>OLS and Panel Data Models</cite>, PDF pp. 23–28. The quasi-demeaning convention and unbalanced-panel implementation can be compared with the official <a href="https://bashtage.github.io/linearmodels/panel/mathematical-formula.html">linearmodels mathematical details</a>. The correlated-random-effects paragraph is a related extension.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="fixed-effects.html">Fixed effects and first differences</a></li><li><a href="dynamic-panels.html">Dynamic panel bias</a></li><li><a href="../cross-sectional/regression-inference.html">GLS, covariance, and identification</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

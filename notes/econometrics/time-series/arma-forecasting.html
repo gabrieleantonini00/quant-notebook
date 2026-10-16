@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AR, MA, ARMA and ARIMA models, lag polynomials, root conventions, ACF and PACF, information criteria, forecast recursions, and evaluation.">
+  <meta name="order" content="41">
+  <title>ARMA dynamics and forecasting | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/time-series">← Back to Time Series</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Time Series</div>
+      <h1>ARMA dynamics and forecasting</h1>
+      <p class="article-lead">ARMA models summarize how past observations and past innovations predict the current value. Their main practical value comes from understanding persistence, forecast uncertainty, and out-of-sample behavior.</p>
+    </header>
+
+    <section><h2>AR and MA describe different kinds of memory</h2>
+      <p>Use the convention that moving-average coefficients enter with a plus sign. With $\varepsilon_t$ a zero-mean innovation of variance $\sigma^2$,</p>
+      <div class="math-block">$$y_t=c+\sum_{j=1}^p\phi_jy_{t-j}+\varepsilon_t+\sum_{j=1}^q\theta_j\varepsilon_{t-j}.$$</div>
+      <p>An AR term carries memory through previous observations; an MA term carries memory through recent innovations. A finite MA of finite-variance white noise is covariance-stationary. Its invertibility is a separate condition that permits recovering innovations from the observed history.</p>
+      <p>For a causal stationary AR(1), $y_t=c+\phi y_{t-1}+\varepsilon_t$, $|\phi|&lt;1$, the mean is $\mu=c/(1-\phi)$, the variance is $\sigma^2/(1-\phi^2)$, and $\rho(k)=\phi^k$. Recursive substitution yields</p>
+      <div class="math-block">$$y_t-\mu=\phi^{m+1}(y_{t-m-1}-\mu)+\sum_{j=0}^{m}\phi^j\varepsilon_{t-j}\;\longrightarrow\;\sum_{j=0}^{\infty}\phi^j\varepsilon_{t-j}.$$</div>
+      <p>For an MA(1), $y_t=\mu+\varepsilon_t+\theta\varepsilon_{t-1}$, the variance is $\sigma^2(1+\theta^2)$ and lag-one correlation is $\theta/(1+\theta^2)$; correlations at larger lags vanish. If $\theta=0.5$, lag-one correlation is 0.4.</p>
+    </section>
+    <section><h2>Root conventions: outside versus inside</h2>
+      <p>Define the lag operator by $Ly_t=y_{t-1}$ and write $\phi(L)y_t=c+\theta(L)\varepsilon_t$, with $\phi(z)=1-\phi_1z-\cdots-\phi_pz^p$ and $\theta(z)=1+\theta_1z+\cdots+\theta_qz^q$.</p>
+      <p>For the usual causal stationary ARMA representation, AR polynomial roots lie outside the unit circle; an invertible MA representation has MA polynomial roots outside it too, after handling any common factors. In a difference-equation trial solution $y_t=\lambda^t$, the companion eigenvalues instead lie inside the unit circle. The two are reciprocal conventions: $z=1/\lambda$.</p>
+      <p>For $y_t=y_{t-1}-0.5y_{t-2}+\varepsilon_t$, the characteristic eigenvalues are $(1\pm i)/2$, with modulus $1/\sqrt2$. The lag roots are $1\pm i$, with modulus $\sqrt2$. Both descriptions imply stable, damped oscillations. Centering removes the intercept; it does not remove the forcing innovations.</p>
+      <p>Wold's decomposition gives an infinite linear innovation representation for a purely nondeterministic covariance-stationary process. It does not say every stationary process is exactly a finite-order ARMA, nor that a best linear forecast always equals the full nonlinear conditional expectation.</p>
+    </section>
+    <section><h2>Identify, estimate, and check</h2>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Ideal population pattern</th><th scope="col">ACF</th><th scope="col">PACF</th></tr></thead><tbody>
+        <tr><th scope="row">AR($p$)</th><td>Generally tails off</td><td>Cuts off after $p$</td></tr>
+        <tr><th scope="row">MA($q$)</th><td>Cuts off after $q$</td><td>Generally tails off</td></tr>
+        <tr><th scope="row">ARMA</th><td>Generally tails off</td><td>Generally tails off</td></tr>
+      </tbody></table></div>
+      <p>Sample patterns are noisy, and mixed or nearly canceling dynamics can blur these rules. Stable AR models can be estimated by OLS with appropriate innovation assumptions; MA and ARMA models usually use conditional or exact likelihood methods. Lagged outcomes generally rule out finite-sample strict exogeneity, so consistency is an asymptotic claim rather than exact OLS unbiasedness.</p>
+      <p>Compare $AIC=-2\hat\ell+2k$ and $BIC=-2\hat\ell+k\log T$ on a common response and comparable likelihood sample; count all estimated likelihood parameters consistently. These criteria help choose lag orders after considering transformations. Do not compare raw fit statistics across unrelated outcomes or let a high $R^2$ determine integration order.</p>
+      <p>Inspect residual autocorrelation. A Ljung-Box statistic at maximum lag $m$ is $Q=T(T+2)\sum_{k=1}^m\hat\rho_k^2/(T-k)$. Fitted ARMA residual tests often adjust the reference degrees of freedom for estimated dynamics. Approximation quality and conditional heteroskedasticity matter; lack of linear residual correlation does not establish independent errors.</p>
+    </section>
+    <section><h2>Forecast recursively and quantify uncertainty</h2>
+      <p>Under the innovation conditional-mean restrictions, replace future innovations by zero and future lagged observations by earlier forecasts. For an AR(1),</p>
+      <div class="math-block">$$\hat y_{t+h\mid t}=\mu+\phi^h(y_t-\mu),\qquad \operatorname{Var}(y_{t+h}-\hat y_{t+h\mid t}\mid\mathcal F_t)=\sigma^2\sum_{j=0}^{h-1}\phi^{2j}.$$</div>
+      <p>The variance formula assumes known parameters and a homoskedastic innovation process. Gaussian innovations give Gaussian prediction intervals; otherwise, simulation or a suitable distributional model may be needed. Estimated-parameter and model-selection uncertainty are additional sources of error.</p>
+      <p>With illustrative $\mu=2$, $\phi=0.7$, $\sigma=1$, and $y_t=5$, the first three forecasts are 4.10, 3.47, and 3.029. Forecast-error variances are 1, 1.49, and 1.7301. The forecast converges to 2 while variance approaches $1/(1-0.7^2)\approx1.961$.</p>
+      <figure class="figure-card"><img src="../../../assets/plots/econometrics-ar1-forecast.svg" width="960" height="480" loading="lazy" alt="An AR1 forecast starts at five and decays toward mean two over ten horizons. Gaussian 95 percent prediction bounds widen as forecast error variance increases."><figcaption>Known-parameter AR(1) calculation using the inputs above. The band is a pointwise Gaussian 95% prediction interval, excludes parameter uncertainty, and concerns future observations rather than confidence in the mean.</figcaption></figure>
+    </section>
+    <section><h2>Evaluate using the information available at the time</h2>
+      <p>Reserve future observations for evaluation and use rolling or expanding forecast origins. Refit parameters and any scaling or transformation inside each training window. Randomly splitting dependent time observations can leak future information and produce an unrealistic estimate of forecasting performance.</p>
+      <p>Compare against a relevant benchmark, such as a random walk for levels or a historical mean for returns. Report the horizon and loss: $MAE=H^{-1}\sum_h|e_h|$ and $RMSE=\sqrt{H^{-1}\sum_he_h^2}$. In an ARIMA($p,d,q$), the ARMA equation applies to the differenced series; reconstruct level forecasts and their uncertainty with the integration step included.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: personal <cite>Time Series</cite> notes, PDF pp. 3–9; Mehdi Hosseinkouchack, <cite>Econometrics</cite>, Section 3; Andrea Ugolini, <cite>Advanced Econometrics</cite>, Lectures 02–04. Complementary discussion appears in Hyndman and Athanasopoulos, <a href="https://otexts.com/fpp3/arima.html"><cite>Forecasting: Principles and Practice</cite>, ARIMA models</a>.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="stationarity-unit-roots.html">Stationarity and unit roots</a></li><li><a href="var-cointegration.html">Multivariate dynamics and error correction</a></li><li><a href="conditional-volatility.html">Forecasting conditional variance</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent
 NOTES_DIR = BASE_DIR / 'notes'
 DOMAINS = {
     'statistics': ('Statistics', 'Probability, distributions, inference, ANOVA, and multiple testing.'),
-    'econometrics': ('Econometrics', 'Dependence across places, spatial models, and spillover effects.'),
+    'econometrics': ('Econometrics', 'Cross-sectional regression, pooled samples, panel data, time series, and spatial dependence.'),
     'learning': ('Statistical Learning', 'Learning from data and evaluating predictions.'),
     'nlp': ('Natural Language Processing', 'Text representations, topic models, and language models.'),
     'finance': ('Quantitative Finance', 'Risk estimation and risk-adjusted performance.'),
@@ -26,7 +26,7 @@ ALIASES = {'statistical-learning':'learning','machine-learning':'learning','ml':
            'natural-language-processing':'nlp','quantitative-finance':'finance',
            'bayesian-statistics':'bayesian','machine-setup':'setup','computing':'setup','environment':'setup'}
 PLANNED = {
-    'econometrics':['Cross-sectional data','Pooled data','Panel models','Time series'],
+    'econometrics':[],
     'bayesian':[], 'setup':[],
     'learning':['Supervised learning foundations','Regression and regularization','Classification models','Unsupervised learning','Reinforcement learning'],
 }
@@ -38,6 +38,13 @@ STATISTICS_CATEGORY_PATHS = {
     'parametric-inference.html': ['Statistical Inference'],
     'anova.html': ['Statistical Inference'],
     'multiple-hypothesis-testing.html': ['Statistical Inference'],
+}
+ECONOMETRICS_CATEGORY_PATHS = {
+    'cross-sectional': ['Cross-Sectional'],
+    'pooled-cross-sections': ['Pooled Cross-Sections'],
+    'panel-data': ['Panel Data'],
+    'time-series': ['Time Series'],
+    'spatial-econometrics.html': ['Spatial Econometrics'],
 }
 
 class NoteParser(HTMLParser):
@@ -89,6 +96,8 @@ def parse_note(path):
         category_path = LEARNING_CATEGORY_PATHS.get(parts[1], [parts[1].replace('-', ' ').title()])
     elif parts[0] == 'statistics':
         category_path = STATISTICS_CATEGORY_PATHS.get(path.name, [])
+    elif parts[0] == 'econometrics':
+        category_path = ECONOMETRICS_CATEGORY_PATHS.get(parts[1], [])
     return {'title':parser.h1 or parser.title.split('|')[0].strip(),
             'summary':parser.description, 'topics':parser.headings,
             'link':path.relative_to(BASE_DIR).as_posix(),
@@ -109,6 +118,29 @@ def style_note(path):
     if (BASE_DIR/'assets/vendor/katex/katex.min.js').exists():
         text = text.replace('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',prefix+'assets/vendor/katex/')
     if text != path.read_text(encoding='utf-8'): path.write_text(text,encoding='utf-8')
+
+
+def render_note_directory(sections, depth=0):
+    """Keep the no-JavaScript directory consistent with category navigation."""
+    direct, categories = [], {}
+    for note in sections:
+        path = note.get('category_path', [])
+        if depth < len(path):
+            categories.setdefault(path[depth], []).append(note)
+        else:
+            direct.append(note)
+    html = ''
+    if direct:
+        html += '<ul>' + ''.join(
+            f'<li><a href="{escape(n["link"], quote=True)}">{escape(n["title"])}</a></li>'
+            for n in direct
+        ) + '</ul>'
+    for category, notes in categories.items():
+        level = min(3 + depth, 6)
+        html += f'<h{level}>{escape(category)}</h{level}>'
+        html += render_note_directory(notes, depth + 1)
+    return html
+
 
 def build_site_manifest(style_notes=True):
     data = {key:{'title':title,'description':description,'sections':[],
@@ -134,8 +166,8 @@ def build_site_manifest(style_notes=True):
     groups=[]
     for key,area in data.items():
         if not area['has_notes']: continue
-        items=''.join(f'<li><a href="{escape(n["link"],quote=True)}">{escape(n["title"])}</a></li>' for n in area['sections'])
-        groups.append(f'<section><h2>{escape(area["title"])}</h2><ul>{items}</ul></section>')
+        items=render_note_directory(area['sections'])
+        groups.append(f'<section><h2>{escape(area["title"])}</h2>{items}</section>')
     plain='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>All notes · Gabriele Antonini</title><link rel="stylesheet" href="assets/site.css"><link rel="icon" href="assets/favicon.svg"></head><body class="note-page"><header class="shell"><p><a href="index.html">Back to notebook</a></p></header><main class="shell"><article><h1>All study notes</h1>'+''.join(groups)+'</article></main></body></html>'
     (BASE_DIR/'all-notes.html').write_text(plain,encoding='utf-8')
     print(f'Built {len(paths)} notes in {sum(a["has_notes"] for a in data.values())} subjects.')

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Multivariate autoregressions, stability, reduced-form shocks, Granger prediction, cointegration, VECM algebra, rank, and adjustment.">
+  <meta name="order" content="42">
+  <title>VAR, cointegration, and error correction | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/time-series">← Back to Time Series</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Time Series</div>
+      <h1>VAR, cointegration, and error correction</h1>
+      <p class="article-lead">Related series may share short-run dynamics and long-run constraints. A VAR describes joint lagged prediction; a VECM retains stationary equilibrium errors when the levels are integrated and cointegrated.</p>
+    </header>
+
+    <section><h2>A VAR models several outcomes together</h2>
+      <p>Let $y_t$ be an $m\times1$ vector. A VAR($p$) with intercept $c$ and optional exogenous or deterministic terms $Bx_t$ is</p>
+      <div class="math-block">$$y_t=c+A_1y_{t-1}+\cdots+A_py_{t-p}+Bx_t+\varepsilon_t.$$</div>
+      <p>Each $A_j$ is $m\times m$. Every equation uses lags of every included outcome. Innovations may have contemporaneous cross-equation covariance $\Sigma$, while the maintained model rules out predictable innovation means given the past and included exogenous information. These are difference equations in discrete time, not differential equations.</p>
+      <p>For a stable causal representation, the companion eigenvalues lie inside the unit circle, equivalently the roots of $\det(I-A_1z-\cdots-A_pz^p)=0$ lie outside it. If the specification is stationary, the regressors are valid, and the same regressor matrix is used in every equation, equation-by-equation OLS estimates the reduced form; SUR does not change the coefficient estimates merely because the contemporaneous errors correlate.</p>
+    </section>
+    <section><h2>Predictive relationships are not automatically structural effects</h2>
+      <p>A joint test that lags of one variable add no predictive content for another is a Granger non-causality test relative to the chosen information set. Rejecting it need not establish an intervention effect: omitted variables, anticipation, or common information can generate predictive ordering.</p>
+      <p>Reduced-form innovations can move together contemporaneously. Structural impulse responses need restrictions that distinguish the underlying shocks. A Cholesky ordering imposes a recursive identification scheme; changing the order can change the interpretation. A fitted VAR coefficient is not itself a complete structural impulse response.</p>
+      <p>Choose lag length with a common sample and a parameter budget: a larger system quickly consumes degrees of freedom. Check residual serial correlation with system diagnostics, stability, and forecast performance. Omitted dynamics can correlate lagged outcomes with the equation disturbance; a covariance correction alone need not restore consistency.</p>
+    </section>
+    <section><h2>Cointegration preserves a long-run combination</h2>
+      <p>Suppose the components of $y_t$ are $I(1)$, but some nonzero vector $\beta$ gives $\beta^{\mathsf T}y_t\sim I(0)$. That vector defines a cointegrating relation. The individual series can wander while their equilibrium error remains stable.</p>
+      <p>For illustration, let consumption $C_t$ and income $Y_t$ be $I(1)$ and suppose $z_t=C_t-0.8Y_t$ is stationary. This does not require $C_t=0.8Y_t$ at every date: $z_t$ can fluctuate around an equilibrium mean. An intercept or trend in the cointegrating relation changes that definition and the relevant test specification.</p>
+      <p>The stationary linear combination, not a high levels-regression $R^2$, is the key property. An Engle-Granger residual test uses cointegration-specific critical values because the equilibrium coefficients were estimated; treating it as an ordinary ADF test on an observed standalone series is inappropriate.</p>
+    </section>
+    <section><h2>Derive the VECM from the VAR</h2>
+      <p>Subtract $y_{t-1}$ from a VAR in levels and collect changes. Omitting deterministic terms only for compact notation,</p>
+      <div class="math-block">$$\Delta y_t=\Pi y_{t-1}+\sum_{j=1}^{p-1}\Gamma_j\Delta y_{t-j}+\varepsilon_t,$$</div>
+      <div class="math-block">$$\Pi=\sum_{j=1}^pA_j-I,\qquad \Gamma_j=-\sum_{k=j+1}^pA_k.$$</div>
+      <p>For a VAR(2), write $y_{t-2}=y_{t-1}-\Delta y_{t-1}$; then $\Pi=A_1+A_2-I$ and $\Gamma_1=-A_2$. This is an algebraic reparameterization. Cointegration adds a reduced-rank structure $\Pi=\alpha\beta^{\mathsf T}$, where $\alpha$ and $\beta$ are $m\times r$ and $0&lt;r&lt;m$.</p>
+      <p>The columns of $\beta$ define equilibrium combinations, and $\alpha$ describes their adjustment in each equation. Only their product is unchanged by a compatible rescaling; normalizations are needed to discuss individual coefficients. For example, replacing $\beta$ by $-\beta$ also flips $\alpha$ without changing the model.</p>
+    </section>
+    <section><h2>Rank guides the model under the maintained integration assumptions</h2>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Rank of $\Pi$</th><th scope="col">Usual interpretation</th><th scope="col">Representation</th></tr></thead><tbody>
+        <tr><th scope="row">$r=0$</th><td>No cointegrating relations</td><td>VAR in first differences when these are stationary</td></tr>
+        <tr><th scope="row">$0&lt;r&lt;m$</th><td>$r$ equilibrium combinations</td><td>Reduced-rank VECM</td></tr>
+        <tr><th scope="row">$r=m$</th><td>Levels are stationary under the usual stable system assumptions</td><td>VAR in levels</td></tr>
+      </tbody></table></div>
+      <p>Rank alone is not a universal stability theorem. The interpretation assumes the appropriate $I(0)/I(1)$ setup, excludes explosive or higher-order integrated complications, and depends on how deterministic terms enter. Johansen rank testing is sensitive to lag length, deterministic specification, sample size, and breaks.</p>
+    </section>
+    <section><h2>Read an adjustment coefficient with its normalization</h2>
+      <p>Continue the illustrative relation $z_{t-1}=C_{t-1}-0.8Y_{t-1}$ and take $\alpha=(-0.15,0.02)^{\mathsf T}$. Ignoring other terms for this one-step calculation, an equilibrium error of 10 implies</p>
+      <div class="math-block">$$E[\Delta C_t\mid\mathcal F_{t-1}]=-1.5,\qquad E[\Delta Y_t\mid\mathcal F_{t-1}]=0.2.$$</div>
+      <p>The implied change in the equilibrium error is $-1.5-0.8(0.2)=-1.66$. Thus the simple expected error falls from 10 to 8.34, a 16.6% adjustment. Consumption's -0.15 coefficient is its equation's response, not automatically the whole system's percentage speed of correction.</p>
+      <p>A useful workflow is to examine each series' integration behavior, choose deterministic terms and lags, assess rank, estimate the chosen representation, check innovations, and interpret any structural response only after stating its identifying assumptions.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: personal <cite>Time Series</cite> notes, PDF pp. 12–16; Mehdi Hosseinkouchack, <cite>Econometrics</cite>, Section 4, including Engle-Granger testing and error-correction models.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="stationarity-unit-roots.html">Integration and spurious regression</a></li><li><a href="arma-forecasting.html">Univariate dynamics and root conventions</a></li><li><a href="../panel-data/fixed-effects.html">Panels versus a multivariate time series</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

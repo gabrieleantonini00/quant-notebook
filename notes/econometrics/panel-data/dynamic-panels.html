@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lagged outcomes, short-panel bias, difference GMM, system GMM, instrument timing, serial-correlation tests, and instrument proliferation.">
+  <meta name="order" content="32">
+  <title>Dynamic panels and GMM | Econometrics</title>
+  <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <script src="../../../assets/notes.js" defer></script>
+</head>
+<body class="note-page">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../../index.html#econometrics/panel-data">← Back to Panel Data</a>
+    <span class="nav-tag">Econometrics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Econometrics / Panel Data</div>
+      <h1>Dynamic panels and GMM</h1>
+      <p class="article-lead">A lagged outcome can describe persistence, but in a short panel it also changes the identification problem. Removing unit effects does not remove the correlation induced by the lagged dependent variable.</p>
+    </header>
+
+    <section><h2>The dynamic panel equation</h2>
+      <div class="math-block">$$y_{it}=\rho y_{i,t-1}+x_{it}^{\mathsf T}\beta+c_i+\varepsilon_{it}.$$</div>
+      <p>The parameter $\rho$ measures persistence conditional on the included regressors and unit effect. The usual micro-panel setting has many units and few dates. Pooled OLS generally correlates the lagged outcome with $c_i$; fixed effects remove $c_i$ but introduce correlation between the demeaned lag and the demeaned disturbance.</p>
+      <p>Past outcomes contain past errors. The within error subtracts an average that includes those same errors. In the basic AR(1) setting, the resulting Nickell bias is typically downward and of order $1/T$. Increasing the number of units with fixed $T$ does not eliminate it. Its magnitude and even simple sign intuitions should not be transferred mechanically to arbitrary richer specifications.</p>
+    </section>
+    <section><h2>Why differencing is not enough</h2>
+      <div class="math-block">$$\Delta y_{it}=\rho\Delta y_{i,t-1}+\Delta x_{it}^{\mathsf T}\beta+\Delta\varepsilon_{it}.$$</div>
+      <p>The unit effect disappears, but $\Delta y_{i,t-1}$ includes $\varepsilon_{i,t-1}$, while the differenced disturbance includes $-\varepsilon_{i,t-1}$. Under the basic serially uncorrelated innovation assumptions,</p>
+      <div class="math-block">$$\operatorname{Cov}(\Delta y_{i,t-1},\Delta\varepsilon_{it})=-\sigma_\varepsilon^2\ne0.$$</div>
+      <p>OLS on the differenced equation is therefore generally inconsistent. This is an identification problem; changing standard errors alone cannot solve it.</p>
+    </section>
+    <section><h2>Use timing restrictions to build instruments</h2>
+      <p>With serially uncorrelated levels innovations and compatible initial-condition restrictions, outcomes dated $t-2$ and earlier can be orthogonal to $\Delta\varepsilon_{it}$:</p>
+      <div class="math-block">$$E[y_{is}(\varepsilon_{it}-\varepsilon_{i,t-1})]=0,\qquad s\le t-2.$$</div>
+      <p>For example, at $t=3$, $y_{i1}$ is a candidate instrument for $\Delta y_{i2}$; at $t=4$, candidates include $y_{i1}$ and $y_{i2}$. They must also predict the endogenous differenced regressor sufficiently well. These conditions are assumptions about the economic process, not consequences of writing dates as subscripts.</p>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Regressor timing</th><th scope="col">Meaning relative to levels innovations</th><th scope="col">Candidate level instruments for the differenced equation</th></tr></thead><tbody>
+        <tr><th scope="row">Strictly exogenous</th><td>Orthogonal to past, current, and future innovations</td><td>All dates can qualify under the maintained restrictions</td></tr>
+        <tr><th scope="row">Predetermined</th><td>May respond to past innovations, not current or future ones</td><td>Dates $s\le t-1$</td></tr>
+        <tr><th scope="row">Endogenous</th><td>May correlate with its current innovation, not future ones</td><td>Dates $s\le t-2$</td></tr>
+      </tbody></table></div>
+      <p>More persistent error processes can invalidate these lag windows. If a unit has missing dates, “two observations ago” is not necessarily two calendar periods ago.</p>
+    </section>
+    <section><h2>Difference GMM combines moment conditions</h2>
+      <p>Let $Z_i$ contain the chosen instruments and $v_i(\delta)$ the vector of differenced residuals for parameter vector $\delta=(\rho,\beta^{\mathsf T})^{\mathsf T}$. Difference GMM minimizes</p>
+      <div class="math-block">$$g_N(\delta)=\frac1N\sum_iZ_i^{\mathsf T}v_i(\delta),\qquad \hat\delta=\arg\min_\delta g_N(\delta)^{\mathsf T}A_Ng_N(\delta).$$</div>
+      <p>A one-step weighting matrix uses a maintained error structure. Two-step GMM estimates the moment covariance using preliminary residuals and updates the weighting matrix. For independent units, the central covariance estimate is built from the unit-level moment vectors, preserving dependence across dates inside a unit.</p>
+      <p>Two-step standard errors can be downward biased in finite samples. A Windmeijer-type correction addresses an important part of that problem; it does not guarantee valid inference in every sample or fix invalid instruments.</p>
+    </section>
+    <section><h2>System GMM adds assumptions, not just equations</h2>
+      <p>When $y$ is highly persistent, lagged levels can be weak predictors of changes. System GMM combines differenced equations with equations in levels. Lagged differences can instrument the levels equation under additional restrictions such as</p>
+      <div class="math-block">$$E[\Delta y_{i,t-1}(c_i+\varepsilon_{it})]=0.$$</div>
+      <p>This requires an assumption connecting initial conditions or changes to the unit effect; it does not follow merely from no serial correlation of $\varepsilon_{it}$. Mean-stationarity conditions are one route. System GMM can improve performance when those extra moments are valid and informative, but it is not an automatic cure for persistence or weak identification.</p>
+    </section>
+    <section><h2>Read diagnostics together</h2>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Diagnostic</th><th scope="col">What to look for</th></tr></thead><tbody>
+        <tr><th scope="row">AR(1) in differenced residuals</th><td>Often expected even with independent levels innovations</td></tr>
+        <tr><th scope="row">AR(2) in differenced residuals</th><td>Rejection challenges the usual lagged-level instruments</td></tr>
+        <tr><th scope="row">Hansen overidentification test</th><td>Evidence about the joint moments under its assumptions; non-rejection is not proof of validity</td></tr>
+        <tr><th scope="row">Instrument count and lag windows</th><td>Check sensitivity to smaller, collapsed, substantively motivated instrument sets</td></tr>
+      </tbody></table></div>
+      <p>Using every available lag can rapidly proliferate instruments, overfit the endogenous regressors, and weaken specification tests. Report $N$, observed time spans, instrument count, timing classifications, lag limits, one- or two-step estimation, covariance correction, and diagnostic results. Instrument count below $N$ is a useful warning heuristic, not a sufficient validity condition.</p>
+      <p>If the aim is a long-run multiplier, $\beta_k/(1-\rho)$ requires a stable scalar dynamic relationship, $|\rho|&lt;1$, and appropriate interpretation of the regressor path. For illustrative $\rho=0.6$ and $\beta_k=0.8$, the sustained-change multiplier is 2; uncertainty in both estimates must be propagated.</p>
+    </section>
+
+    <section><h2>Study sources and further reading</h2>
+      <p>Study basis: personal <cite>OLS and Panel Data Models</cite>, PDF pp. 29–31. Related foundational methods are Anderson–Hsiao IV, Arellano–Bond difference GMM, and Arellano–Bover / Blundell–Bond system GMM. The official <a href="https://blog.stata.com/2015/11/12/xtabond-cheat-sheet/">Stata xtabond explanation</a> illustrates instrument timing and serial-correlation diagnostics.</p>
+      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    </section>
+    <section><h2>Related notes</h2><ul><li><a href="fixed-effects.html">Static fixed effects</a></li><li><a href="../cross-sectional/regression-inference.html">IV and moment conditions</a></li><li><a href="../time-series/arma-forecasting.html">Autoregressive dynamics and forecasts</a></li></ul></section>
+  </article></main>
+  <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
+</body>
+</html>

@@ -38,7 +38,7 @@
     learning:      'Model evaluation, explainability, and the behavior of trained learning systems.',
     nlp:           'Bag-of-words, TF-IDF, word embeddings, Word2Vec, transformer self-attention, BERT, and large language models.',
     finance:       'Value-at-Risk, Expected Shortfall, GARCH volatility, Sharpe ratio, Sortino ratio, and risk-adjusted performance.',
-    econometrics:  'Spatial dependence, neighboring outcomes, spillovers, and econometric model choice.',
+    econometrics:  'Cross-sectional regression, pooled cross-sections, fixed and random effects, dynamic panels, time series, and spatial dependence.',
     bayesian:      'Bayesian inference, prior/posterior distributions, MCMC methods, and hierarchical models.',
     setup:         'Development environment, tools, and technical workflow configuration.'
   };

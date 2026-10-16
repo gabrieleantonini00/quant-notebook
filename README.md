@@ -2,7 +2,9 @@
 
 **Quantitative Methods & Statistical Learning**
 
-A personal website for probability and statistics, econometrics, statistical learning, natural language processing, and quantitative finance. The 17 current study notes include worked examples, comparison tables, rendered equations, and calculated plots.
+A personal website for probability and statistics, econometrics, statistical learning, natural language processing, and quantitative finance. The 27 current study notes include worked examples, comparison tables, rendered equations, and calculated plots.
+
+Econometrics is organized into Cross-Sectional, Pooled Cross-Sections, Panel Data, Time Series, and Spatial Econometrics. Its notes cover OLS and IV, repeated surveys and parameter stability, FE and RE, dynamic-panel GMM, stationarity and unit roots, ARMA forecasts, VAR/VECM, and ARCH/GARCH. Finance notes remain the destination for detailed VaR and Expected Shortfall coverage.
 
 ## Open locally
 
@@ -52,7 +54,7 @@ git commit -m "Update learning notebook"
 git push
 ```
 
-The `.gitignore` keeps local backups, previews, logs, credentials, Python caches, and the two original research PDFs out of Git. The reviewed material appears in the HTML notes; the source PDFs remain local.
+The `.gitignore` keeps local backups, previews, logs, credentials, Python caches, the two original research PDFs, and the entire `Econometrics/` study-source folder out of Git. The reviewed material appears in rewritten HTML notes with source acknowledgements; the original PDFs remain local.
 
 Official references: [Creating a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository), [GitHub Pages visibility](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 
