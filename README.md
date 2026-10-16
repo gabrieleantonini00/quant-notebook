@@ -1,4 +1,6 @@
-# Gabriele’s learning notebook
+# Quant Notebook
+
+**Quantitative Methods & Statistical Learning**
 
 A personal website for probability and statistics, econometrics, statistical learning, natural language processing, and quantitative finance. The 17 current study notes include worked examples, comparison tables, rendered equations, and calculated plots.
 
@@ -36,7 +38,9 @@ If a renamed note has a custom short title or summary in `assets/library.js`, up
 
 ## GitHub repository and future updates
 
-The repository is intended to stay **private** while the notebook develops. GitHub Free supports private repositories, but GitHub Pages on that plan requires a public repository. A private repository stores the site files and their history; it does not publish a private website. No automatic Pages deployment is configured. All site links are relative, so public hosting can be enabled later without changing note links.
+The public website is hosted with GitHub Pages at [gabrieleantonini00.github.io/quant-notebook](https://gabrieleantonini00.github.io/quant-notebook/). The publishing source is the root folder of the `main` branch. GitHub Pages republishes the site after each push to `main`; changes kept locally do not affect the published website. The `.nojekyll` file lets GitHub serve the generated HTML and assets directly.
+
+Keep the local checkout for editing, rebuilding, and checking notes. The published website is served by GitHub and remains available when your computer is off. All site links are relative so they work under the repository's `/quant-notebook/` URL.
 
 After editing or adding notes, run:
 

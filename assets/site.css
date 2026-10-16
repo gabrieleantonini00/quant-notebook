@@ -317,7 +317,7 @@ svg {
 /* Big minimal title */
 .hero-title {
   font-family: var(--sans);
-  font-size: clamp(52px, 8vw, 104px);
+  font-size: clamp(40px, 6.4vw, 88px);
   font-weight: 500;
   line-height: 1.08;
   letter-spacing: -0.055em;
@@ -332,11 +332,13 @@ svg {
   color: #b8c8e0;
 }
 
-/* Single-line tagline */
+/* Introductory description */
 .hero-tagline {
   font-family: var(--sans);
   font-size: clamp(15px, 1.6vw, 18px);
   font-weight: 400;
+  max-width: 70ch;
+  line-height: 1.75;
   color: #bec9d9;
   margin: 0 0 35px;
   letter-spacing: 0;
