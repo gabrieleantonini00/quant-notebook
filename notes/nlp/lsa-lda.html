@@ -150,9 +150,9 @@
         <p>Thus the same per-component value implies different total prior strength when $K$ or $V$ changes. For asymmetric priors, the normalised vectors determine the prior means; scaling all their components together changes concentration around those means.</p>
         <p><strong>Common settings and starting points:</strong></p>
         <ul>
-          <li><strong>scikit-learn defaults:</strong> $a=1/K$ and $b=1/K$, so $\alpha_0=1$ and $\beta_0=V/K$. Its <code>topic_word_prior</code> corresponds to $\beta$ here, also commonly denoted $\eta$. See the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html" target="_blank" rel="noopener noreferrer">LDA documentation</a>.</li>
-          <li><strong>Classical Gibbs-sampling setting:</strong> $a=50/K$ and $b=0.1$, giving $\alpha_0=50$, as used by <a href="https://groups.seas.harvard.edu/courses/cs281/papers/griffiths-steyvers-2004.pdf" target="_blank" rel="noopener noreferrer">Griffiths and Steyvers (2004)</a>. The value $50$ is the total, not the value for each topic.</li>
-          <li><strong>Smaller word prior:</strong> $b=0.01$ is another established setting, including the <a href="https://iesl.cs.umass.edu/mallet/api/constant-values.html#cc.mallet.topics.ParallelTopicModel.DEFAULT_BETA" target="_blank" rel="noopener noreferrer">MALLET ParallelTopicModel default</a>.</li>
+          <li><strong>scikit-learn defaults:</strong> $a=1/K$ and $b=1/K$, so $\alpha_0=1$ and $\beta_0=V/K$. Its <code>topic_word_prior</code> corresponds to $\beta$ here, also commonly denoted $\eta$.</li>
+          <li><strong>Classical Gibbs-sampling setting:</strong> $a=50/K$ and $b=0.1$, giving $\alpha_0=50$. The value $50$ is the total, not the value for each topic.</li>
+          <li><strong>MALLET ParallelTopicModel default:</strong> $b=0.01$ provides a smaller word prior.</li>
         </ul>
         <p>These settings are baselines, not universal optima. Tune or estimate the hyperparameters for the corpus, checking held-out predictive fit and topic interpretability; the posterior also depends on the observed counts.</p>
 
