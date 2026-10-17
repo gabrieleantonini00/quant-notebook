@@ -116,9 +116,18 @@
               </ul>
             </li>
           </ol>
+          <p>Marginalising over the latent topic assignment gives the probability of vocabulary word $v$ at position $n$ in document $d$:</p>
+          <div class="math-block">
+            $$P(w_{d,n}=v\mid\theta_d,\phi)=\sum_{k=1}^{K}\theta_{d,k}\,\phi_{k,v}.$$
+          </div>
+          <p>The document's word distribution is therefore a mixture of the shared topic-word distributions, weighted by its topic proportions.</p>
         </div>
 
         <h3 id="posterior-inference">Posterior Inference</h3>
+        <p>Given the observed words $w$, inference recovers the posterior distribution of document-topic proportions $\theta$, topic-word distributions $\phi$, and latent topic assignments $z$:</p>
+        <div class="math-block">
+          $$p(\theta,\phi,z\mid w,\alpha,\beta).$$
+        </div>
         <ul>
           <li>
             <strong>The Sparsity Problem:</strong> Given fixed topic assignments, a multinomial MLE gives zero probability to words with zero counts in a topic. This motivates smoothing, especially when topic-specific counts are small.
@@ -130,7 +139,7 @@
             <strong>Posterior Inference vs. MAP:</strong> A prior defines a posterior distribution; MAP is only one possible summary. A Dirichlet prior is not equivalent to the Gaussian prior underlying ridge regression. In particular, sparse Dirichlet priors can have boundary modes, so MAP does not guarantee strictly positive probabilities.
           </li>
           <li>
-            <strong>Intractable Posterior & Approximation:</strong> Because the exact denominator of the joint posterior $P(\boldsymbol{\theta}, \boldsymbol{\phi}, \mathbf{z} \mid \mathbf{w}, \alpha, \beta)$ involves summing over all possible topic combinations, exact inference is intractable. Approximation algorithms such as <strong>Collapsed Gibbs Sampling (MCMC)</strong> or <strong>Mean-Field Variational Inference</strong> are employed.
+            <strong>Intractable Posterior & Approximation:</strong> Computing the posterior's normalising constant requires summing over topic assignments and integrating over the latent probability vectors, making exact inference intractable in general. Approximation algorithms such as <strong>Collapsed Gibbs Sampling (MCMC)</strong> or <strong>Mean-Field Variational Inference</strong> are employed.
           </li>
         </ul>
 
