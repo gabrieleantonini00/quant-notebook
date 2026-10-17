@@ -3,6 +3,7 @@ body.spatial-note { min-width: 0; }
 .spatial-note .katex { position: relative; }
 .spatial-note .figure-card { margin: 30px 0; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .spatial-note .figure-card picture { display: block; }
+.spatial-note .model-diagram img { max-width: 640px; margin-inline: auto; }
 @media (max-width: 680px) {
   .spatial-note .figure-card img { max-width: 420px; margin-inline: auto; }
 }

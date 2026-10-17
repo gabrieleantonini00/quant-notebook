@@ -9,7 +9,7 @@
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
   <link rel="stylesheet" href="../../assets/editorial-notes.css?v=63d56bf18ad5">
-  <link rel="stylesheet" href="../../assets/spatial.css?v=2276b6339592">
+  <link rel="stylesheet" href="../../assets/spatial.css?v=65197e6416a5">
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
   <script defer src="../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
@@ -54,6 +54,11 @@
         <p>$X$ contains local covariates, $\rho$ measures outcome interaction and $u$ is the disturbance. The reduced form requires $I-\rho W$ to be invertible. When $|\rho|r(W)&lt;1$, where $r(W)$ is the spectral radius,</p>
         <div class="math-block">$$(I-\rho W)^{-1}=I+\rho W+\rho^2W^2+\cdots.$$</div>
         <p>The multiplier propagates a change through immediate neighbours, more distant locations and paths returning to its origin. For nonnegative row-standardised $W$, $|\rho|&lt;1$ is sufficient for convergence. This bound depends on the normalisation of $W$.</p>
+        <p>In the model diagrams, A and B are a neighbouring pair in the network above, with $w_{AB}=w_{BA}=w=1/2$. Other neighbours are omitted. Arrows show terms in simultaneous equations, not a time sequence; $x_A$ and $x_B$ denote covariate $k$.</p>
+        <figure class="figure-card model-diagram">
+          <img src="../../assets/plots/econometrics-spatial-sar-channels.svg?v=4e36bfa61bf7" alt="SAR: x A enters y A and x B enters y B through beta k. A bidirectional rho w link connects y A and y B, representing simultaneous outcome interaction." loading="lazy" width="600" height="365">
+          <figcaption>Local covariates affect their own outcome through $\beta_k$. The bronze link connects outcomes in both directions, allowing feedback to return to its origin.</figcaption>
+        </figure>
       </section>
 
       <section>
@@ -62,6 +67,10 @@
         <div class="math-block">$$y=X\beta+WX\theta+u.$$</div>
         <p>For covariate $k$, $\beta_k$ measures the local response and $\theta_k w_{ij}$ the response in location $i$ to a change in location $j$. There is no outcome feedback: the effect matrix is $\beta_k I+\theta_k W$. With exogenous regressors and suitable regularity conditions, OLS can estimate this model.</p>
         <p>In SLX and SDM, $WX\theta$ conventionally contains only lagged nonconstant covariates. With row sums equal to one, a lagged intercept duplicates the intercept.</p>
+        <figure class="figure-card model-diagram">
+          <img src="../../assets/plots/econometrics-spatial-slx-channels.svg?v=af8a849ff1ef" alt="SLX: each covariate affects its own outcome through beta k and the neighbouring outcome through theta k w. Outcomes are not linked to each other." loading="lazy" width="600" height="365">
+          <figcaption>Dashed links run from a covariate to the neighbouring outcome through $\theta_k w$. There is no $y$-to-$y$ link to transmit that response further.</figcaption>
+        </figure>
       </section>
 
       <section>
@@ -71,6 +80,10 @@
         <p>$\lambda$ controls error propagation. If $E[\varepsilon\mid X,W]=0$ and $\operatorname{Var}(\varepsilon\mid X,W)=\sigma^2 I$, then</p>
         <div class="math-block">$$\operatorname{Var}(u\mid X,W)=\sigma^2(I-\lambda W)^{-1}(I-\lambda W)^{-\mathsf T}.$$</div>
         <p>Spatially correlated errors do not by themselves imply covariate spillovers in the conditional mean. Under exogeneity and suitable regularity conditions, OLS coefficients can remain consistent, but conventional OLS standard errors ignore the error dependence and OLS is generally inefficient. Spatial-error likelihood or GMM estimation accounts for this structure.</p>
+        <figure class="figure-card model-diagram">
+          <img src="../../assets/plots/econometrics-spatial-sem-channels.svg?v=bce346558d80" alt="SEM: epsilon A and epsilon B enter u A and u B. Errors have a bidirectional lambda w link and each error enters its local outcome. Local covariate terms are omitted." loading="lazy" width="600" height="435">
+          <figcaption>Innovations $\varepsilon$ enter the errors $u$, which interact across locations and enter local outcomes. Local $X\beta$ terms are omitted from this diagram. Under exogeneity, this channel changes the covariance, not the conditional mean.</figcaption>
+        </figure>
       </section>
 
       <section>
@@ -79,6 +92,10 @@
         <div class="math-block">$$y=\rho Wy+X\beta+WX\theta+u.$$</div>
         <p>Setting $\theta=0$ gives SAR; setting $\rho=0$ gives SLX. With $W\boldsymbol{1}=\boldsymbol{1}$ and an invertible multiplier, the common-factor restriction $\theta=-\rho\beta$ on nonconstant covariates gives an SEM representation with $\lambda=\rho$. An SDM intercept $a$ then becomes $a/(1-\rho)$ in the SEM representation.</p>
         <p>Adding $WX$ allows covariate spillovers to differ from the propagation induced by $Wy$. It does not automatically resolve omitted-variable bias or endogeneity.</p>
+        <figure class="figure-card model-diagram">
+          <img src="../../assets/plots/econometrics-spatial-sdm-channels.svg?v=c0bb47972e67" alt="SDM: local beta k links from x to y, dashed theta k w links to neighbouring outcomes, and a bidirectional rho w link between outcomes." loading="lazy" width="600" height="365">
+          <figcaption>SDM combines the dashed covariate-spillover links of SLX with the outcome-feedback link of SAR. A covariate change can enter a neighbouring outcome and then propagate through the outcome network.</figcaption>
+        </figure>
       </section>
 
       <section>

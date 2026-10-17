@@ -118,6 +118,8 @@ def style_note(path):
         for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/learning.css', 'assets/spatial.css', 'assets/notes.js',
                       'assets/plots/econometrics-spatial-weights.svg', 'assets/plots/econometrics-spatial-weights-mobile.svg',
                       'assets/plots/econometrics-spatial-spillovers.svg', 'assets/plots/econometrics-spatial-spillovers-mobile.svg',
+                      'assets/plots/econometrics-spatial-sar-channels.svg', 'assets/plots/econometrics-spatial-slx-channels.svg',
+                      'assets/plots/econometrics-spatial-sem-channels.svg', 'assets/plots/econometrics-spatial-sdm-channels.svg',
                       'assets/plots/learning-xai-pdp-ice.svg', 'assets/plots/learning-xai-ale.svg',
                       'assets/plots/learning-xai-pdp-ice-mobile.svg', 'assets/plots/learning-xai-ale-mobile.svg',
                       'assets/plots/statistics-discrete-cdf.svg', 'assets/plots/statistics-continuous-cdf.svg',
