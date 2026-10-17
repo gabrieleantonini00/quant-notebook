@@ -405,7 +405,7 @@
           "Latent Dirichlet Allocation (LDA)"
         ],
         "link": "notes/nlp/lsa-lda.html",
-        "reading_minutes": 4,
+        "reading_minutes": 5,
         "order": 2,
         "category_path": []
       },

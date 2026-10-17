@@ -92,7 +92,7 @@
               <span class="variable-symbol">$\phi_k$</span>: Word distribution for topic $k$ (point on simplex)
             </div>
             <div class="variable-item">
-              <span class="variable-symbol">$\alpha, \beta$</span>: Dirichlet hyperparameter priors (pseudocounts)
+              <span class="variable-symbol">$\alpha, \beta$</span>: Positive Dirichlet hyperparameter vectors (pseudocounts)
             </div>
           </div>
 
@@ -122,6 +122,39 @@
           </div>
           <p>The document's word distribution is therefore a mixture of the shared topic-word distributions, weighted by its topic proportions.</p>
         </div>
+
+        <h3 id="dirichlet-priors">Dirichlet Priors: Concentration and Sparsity</h3>
+        <p>For symmetric priors, write $\alpha=(a,\dots,a)$ over $K$ topics and $\beta=(b,\dots,b)$ over $V$ vocabulary words, with $a,b&gt;0$. Here $a$ and $b$ are <strong>per-component</strong> values.</p>
+        <table>
+          <thead>
+            <tr><th>Prior</th><th>Lower values</th><th>Higher values</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Document-topic</strong>, $a$</td>
+              <td>$a&lt;1$ favours uneven topic mixtures, with much of a document's probability mass on relatively few topics.</td>
+              <td>$a&gt;1$ favours more balanced mixtures; increasing $a$ concentrates them more tightly around equal topic weights.</td>
+            </tr>
+            <tr>
+              <td><strong>Topic-word</strong>, $b$</td>
+              <td>$b&lt;1$ favours uneven word distributions, with relatively few words carrying much of a topic's probability mass.</td>
+              <td>$b&gt;1$ favours more balanced word distributions; increasing $b$ pulls them more tightly towards equal word probabilities.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>At $a=1$ or $b=1$, the corresponding prior is uniform over the simplex, not concentrated on the vector of equal probabilities. Under symmetry the prior means remain $E[\theta_{d,k}]=1/K$ and $E[\phi_{k,v}]=1/V$ at every positive value. Small values favour near-zero probabilities, not exact zeros.</p>
+        <p>The <strong>total concentrations</strong> are:</p>
+        <div class="math-block">
+          $$\alpha_0=\sum_{k=1}^{K}\alpha_k=Ka,\qquad \beta_0=\sum_{v=1}^{V}\beta_v=Vb.$$
+        </div>
+        <p>Thus the same per-component value implies different total prior strength when $K$ or $V$ changes. For asymmetric priors, the normalised vectors determine the prior means; scaling all their components together changes concentration around those means.</p>
+        <p><strong>Common settings and starting points:</strong></p>
+        <ul>
+          <li><strong>scikit-learn defaults:</strong> $a=1/K$ and $b=1/K$, so $\alpha_0=1$ and $\beta_0=V/K$. Its <code>topic_word_prior</code> corresponds to $\beta$ here, also commonly denoted $\eta$. See the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html" target="_blank" rel="noopener noreferrer">LDA documentation</a>.</li>
+          <li><strong>Classical Gibbs-sampling setting:</strong> $a=50/K$ and $b=0.1$, giving $\alpha_0=50$, as used by <a href="https://groups.seas.harvard.edu/courses/cs281/papers/griffiths-steyvers-2004.pdf" target="_blank" rel="noopener noreferrer">Griffiths and Steyvers (2004)</a>. The value $50$ is the total, not the value for each topic.</li>
+          <li><strong>Smaller word prior:</strong> $b=0.01$ is another established setting, including the <a href="https://iesl.cs.umass.edu/mallet/api/constant-values.html#cc.mallet.topics.ParallelTopicModel.DEFAULT_BETA" target="_blank" rel="noopener noreferrer">MALLET ParallelTopicModel default</a>.</li>
+        </ul>
+        <p>These settings are baselines, not universal optima. Tune or estimate the hyperparameters for the corpus, checking held-out predictive fit and topic interpretability; the posterior also depends on the observed counts.</p>
 
         <h3 id="posterior-inference">Posterior Inference</h3>
         <p>Given the observed words $w$, inference recovers the posterior distribution of document-topic proportions $\theta$, topic-word distributions $\phi$, and latent topic assignments $z$:</p>
