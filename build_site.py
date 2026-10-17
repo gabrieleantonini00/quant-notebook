@@ -41,7 +41,6 @@ ECONOMETRICS_CATEGORY_PATHS = {
     'pooled-cross-sections': ['Pooled Cross-Sections'],
     'panel-data': ['Panel Data'],
     'time-series': ['Time Series'],
-    'spatial-econometrics.html': ['Spatial Econometrics'],
 }
 
 class NoteParser(HTMLParser):
@@ -114,9 +113,11 @@ def style_note(path):
     # The pinned local KaTeX assets also work without an internet connection.
     if (BASE_DIR/'assets/vendor/katex/katex.min.js').exists():
         text = text.replace('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',prefix+'assets/vendor/katex/')
-    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp', 'statistics', 'statistical-learning'):
+    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp', 'statistics', 'statistical-learning') or path.name == 'spatial-econometrics.html':
         # Version shared notebook assets so published pages pick up editorial changes.
-        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/learning.css', 'assets/notes.js',
+        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/learning.css', 'assets/spatial.css', 'assets/notes.js',
+                      'assets/plots/econometrics-spatial-weights.svg', 'assets/plots/econometrics-spatial-weights-mobile.svg',
+                      'assets/plots/econometrics-spatial-spillovers.svg', 'assets/plots/econometrics-spatial-spillovers-mobile.svg',
                       'assets/plots/learning-xai-pdp-ice.svg', 'assets/plots/learning-xai-ale.svg',
                       'assets/plots/learning-xai-pdp-ice-mobile.svg', 'assets/plots/learning-xai-ale-mobile.svg',
                       'assets/plots/statistics-discrete-cdf.svg', 'assets/plots/statistics-continuous-cdf.svg',

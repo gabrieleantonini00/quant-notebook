@@ -316,22 +316,21 @@
         ]
       },
       {
-        "title": "Spatial econometrics",
+        "title": "Spatial Econometrics",
         "summary": "Spatial econometrics: spatial weights, SAR feedback and spillovers, estimation, and the SEM, SLX, and SDM models.",
         "topics": [
-          "Why location matters",
-          "Define neighbors with $W$",
-          "SAR: outcomes feed back across places",
-          "Direct effects and spillovers",
-          "Estimation: why $Wy$ is special",
-          "Other ways to model spatial dependence"
+          "Spatial Weights",
+          "Outcome Dependence (SAR)",
+          "Covariate Spillovers (SLX)",
+          "Error Dependence (SEM)",
+          "Combined Dependence (SDM)",
+          "Direct & Indirect Effects",
+          "Estimation"
         ],
         "link": "notes/econometrics/spatial-econometrics.html",
-        "reading_minutes": 5,
+        "reading_minutes": 4,
         "order": 50,
-        "category_path": [
-          "Spatial Econometrics"
-        ]
+        "category_path": []
       }
     ],
     "has_notes": true,

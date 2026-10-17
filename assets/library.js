@@ -77,7 +77,7 @@
     'value-at-risk':         'Value at Risk',
     'expected-shortfall':    'Expected Shortfall',
     'sharpe-ratio':          'Sharpe & Sortino Ratios',
-    'spatial-econometrics':  'Spatial econometrics'
+    'spatial-econometrics':  'Spatial Econometrics'
   };
 
   /* ── flat topic list ─────────────────────────────────────────────── */
