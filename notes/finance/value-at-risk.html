@@ -117,6 +117,9 @@
         <div class="math-block">
           $$r_s^* = r_s \left( \frac{\sigma_t}{\sigma_s} \right)$$
         </div>
+
+        <h3>Neural Quantile Models</h3>
+        <p>Direct neural quantile estimation uses the pinball loss defined below. Its <a href="https://www.jmlr.org/papers/volume21/19-264/19-264.pdf">nonparametric sieve interpretation</a> allows network complexity to grow with sample size; a fixed architecture gives a finite-dimensional model.</p>
       </section>
 
       <!-- Section 4: Semi-Parametric Quantile Regression -->
@@ -140,9 +143,8 @@
       <!-- Hybrid Models -->
       <section id="hybrid-models">
         <h2 id="hybrid-models-title">Hybrid Models</h2>
-        <p>A hybrid approach can combine several volatility forecasts into a positive estimate $\widehat{\sigma}_t$. Filtered historical simulation then maps past standardized shocks to today's scale:</p>
+        <p>Filtered historical simulation combines a conditional mean-volatility model with an empirical innovation distribution. The volatility estimate $\widehat{\sigma}_t$ can come from GARCH, a neural model, or a combination of forecasts:</p>
         <div class="math-block">$$z_s=\frac{r_s-\widehat{\mu}_s}{\widehat{\sigma}_s},\qquad r_s^*=\widehat{\mu}_t+\widehat{\sigma}_t z_s,\qquad \widehat{\text{VaR}}_{\alpha,t}=\text{Quantile}_{1-\alpha}\{r_s^*\}$$</div>
-        <p>Alternatively, a neural network can forecast the quantile directly using the pinball loss above. These are modeling choices, not guarantees of better forecasts. A recurrent model must receive only information available at the forecast time; even a bidirectional network must be restricted to a fully historical input window.</p>
       </section>
 
       <!-- Out-of-Sample Backtesting -->

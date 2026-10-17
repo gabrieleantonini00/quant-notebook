@@ -141,20 +141,24 @@
         <p>A quantity is <em>elicitable</em> if it uniquely minimizes an expected scoring loss. Over broad distribution classes, ES alone lacks this property, but the VaR–ES pair is jointly elicitable under suitable regularity conditions. This supports comparing pairs of forecasts with a consistent score.</p>
         <p>Write $p=1-\alpha$ for the lower-tail probability, $v_t$ for signed-return VaR, and $e_t$ for signed-return ES. A commonly used score, for $e_t&lt;0$ and $e_t\le v_t$, is:</p>
         <div class="math-block">$$L_{\mathrm{FZ0}}(r_t,v_t,e_t;p)=-\frac{\mathbb{I}(r_t\le v_t)(v_t-r_t)}{p\,e_t}+\frac{v_t}{e_t}+\log(-e_t)-1$$</div>
-        <p>The factor $p$ in the first denominator is essential. Minimize the average score on training data and compare mean scores on unseen data using the same probability and return units. A lower realized average is evidence about relative forecast performance, not proof of calibration.</p>
+        <p>Use the same tail probability and return units when comparing mean out-of-sample scores. Calibration is assessed separately by backtesting.</p>
       </section>
 
       <section id="asymmetric-laplace">
         <h2>Asymmetric Laplace Models</h2>
-        <p>The asymmetric Laplace working density connects quantile regression to likelihood-based estimation. For scale $s_t>0$ and pinball loss $\rho_p(u)=u[p-\mathbb{I}(u&lt;0)]$:</p>
+        <p>The previous section estimates $(v_t,e_t)$ through a joint score. The asymmetric Laplace (AL) construction supplies a likelihood-based route to the same pair: its location is $v_t$, while its time-varying scale identifies $e_t$ (<a href="https://users.ox.ac.uk/~mast0315/VaRESALDwithSupplementJBES.pdf">Taylor, 2019</a>).</p>
+        <p>For scale $s_t>0$ and pinball loss $\rho_p(u)=u[p-\mathbb{I}(u&lt;0)]$:</p>
         <div class="math-block">$$f(r_t\mid v_t,s_t)=\frac{p(1-p)}{s_t}\exp\!\left[-\frac{\rho_p(r_t-v_t)}{s_t}\right]$$</div>
-        <p>At the true conditional quantile, the expected pinball loss satisfies $s_t=p(\mu_t-e_t)$, where $\mu_t$ is the conditional mean. Thus $e_t=\mu_t-s_t/p$; for demeaned returns this becomes $e_t=-s_t/p$. A semiparametric approach can use this connection without requiring actual returns to follow an asymmetric Laplace distribution. The scale is linked to ES; it is not the return standard deviation.</p>
+        <p>At the true conditional $p$-quantile, the population-optimal working scale is the expected pinball loss:</p>
+        <div class="math-block">$$s_t=\mathbb E[\rho_p(r_t-v_t)\mid\mathcal F_{t-1}]=p(\mu_t-e_t),\qquad e_t=\mu_t-\frac{s_t}{p}$$</div>
+        <p>Here $\mu_t$ is the conditional mean; $e_t=-s_t/p$ applies when $\mu_t=0$. Maximizing the working AL likelihood therefore estimates VaR through location and ES through scale. The semiparametric interpretation leaves the actual return distribution unspecified. The scale $s_t$ measures expected pinball loss, distinct from return volatility.</p>
       </section>
 
       <section id="neural-models">
         <h2>Neural Models</h2>
-        <h3>LSTM</h3>
-        <p>A recurrent network can output $(v_t,e_t)$ from historical returns and other past information, then learn by minimizing a joint score. A parameterization such as $v_t=-\operatorname{softplus}(a_t)$ and $e_t=v_t-\operatorname{softplus}(b_t)$ enforces negative, ordered forecasts when that domain is appropriate. Greater flexibility brings more estimation uncertainty, especially with few tail observations. Compare against simple baselines using rolling forecasts and the same scoring rule; an LSTM does not automatically improve tail accuracy.</p>
+        <p>For the $L_{\mathrm{FZ0}}$ domain, parameterize the network outputs as:</p>
+        <div class="math-block">$$e_t=-\operatorname{softplus}(a_t),\qquad v_t=e_t+\operatorname{softplus}(b_t)$$</div>
+        <p>This enforces $e_t&lt;0$ and $e_t&lt;v_t$, while allowing either sign for VaR. In an AL specification, the scale relation also requires a conditional mean model or an explicit $\mu_t=0$ assumption.</p>
       </section>
 
       <section id="es-validation">
@@ -162,7 +166,6 @@
         <p>Counting VaR exceptions does not assess their severity. For continuous distributions, correctly specified conditional forecasts satisfy two useful moment conditions:</p>
         <div class="math-block">$$H_{q,t}=\mathbb{I}(r_t\le v_t)-p,\qquad H_{e,t}=e_t-v_t+\frac{\mathbb{I}(r_t\le v_t)(v_t-r_t)}{p}$$</div>
         <p>Both have conditional expectation zero. Persistent means or predictability from past information can reveal misspecification. Formal inference must account for estimation uncertainty and time dependence. Regression-based ES backtests require their own assumptions. These residuals are an explanatory diagnostic, not a substitute for implementing a formal test correctly.</p>
-        <p class="takeaway"><strong>Study checkpoint:</strong> distinguish confidence $\alpha$ from tail probability $p=1-\alpha$, signed returns from cash losses, and a good average score from a calibrated risk forecast.</p>
       </section>
 
       <nav class="page-nav">
