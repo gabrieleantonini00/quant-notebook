@@ -121,7 +121,8 @@ def style_note(path):
     if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp'):
         # Version shared notebook assets so published pages pick up editorial changes.
         for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/notes.js',
-                      'assets/plots/finance-var-es-tail.svg', 'assets/plots/nlp-llm-parameters.svg'):
+                      'assets/plots/finance-var-es-tail.svg', 'assets/plots/nlp-llm-parameters.svg',
+                      'assets/plots/nlp-cbow-network.svg', 'assets/plots/nlp-cbow-network-mobile.svg'):
             version = hashlib.sha256((BASE_DIR/asset).read_bytes()).hexdigest()[:12]
             url = prefix + asset
             text = re.sub(r'(?<=["\'])' + re.escape(url) + r'(?:\?v=[a-f0-9]+)?(?=["\'])',

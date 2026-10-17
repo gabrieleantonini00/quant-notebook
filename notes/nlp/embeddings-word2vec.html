@@ -12,7 +12,7 @@
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
   <link rel="stylesheet" href="../../assets/editorial-notes.css?v=077c1ace277a">
-  <link rel="stylesheet" href="../../assets/nlp.css?v=d5a847f6c356">
+  <link rel="stylesheet" href="../../assets/nlp.css?v=c66fe96d630e">
   <script src="../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
 <body class="note-page editorial-note nlp-note">
@@ -46,6 +46,14 @@
         <p>
           In the <strong>Continuous Bag of Words (CBOW)</strong> formulation, the objective is to predict a missing target center word $w_t$ given a window of $C$ surrounding context words $\{w_{t-c}, \dots, w_{t+c}\} \setminus \{w_t\}$.
         </p>
+
+        <figure class="figure-card cbow-network" id="cbow-network">
+          <picture>
+            <source media="(max-width: 680px)" srcset="../../assets/plots/nlp-cbow-network-mobile.svg?v=ddd16f0246a9" width="360" height="636">
+            <img src="../../assets/plots/nlp-cbow-network.svg?v=f1da38f363c5" width="840" height="450" alt="CBOW neural network: one-hot context vectors share W, their projected embeddings are averaged into h, and W prime maps h to vocabulary logits before softmax." loading="lazy">
+          </picture>
+          <figcaption>Full-softmax CBOW. The input matrix $W$ is shared across context positions; $W'$ is learned separately. Only a few coordinates are drawn. Architecture adapted from <a href="https://arxiv.org/abs/1301.3781">Mikolov et al. (2013)</a>.</figcaption>
+        </figure>
 
         <div class="schema-card">
           <h3>Projection and Prediction</h3>

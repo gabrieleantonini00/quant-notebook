@@ -13,6 +13,8 @@
 .nlp-note .layer-step > div { min-width: 0; }
 .nlp-note .layer-step .math-block { margin: 18px 0 8px; }
 .nlp-note .layer-name { color: var(--editorial-accent); font-size: 13px; font-weight: 500; }
+.nlp-note .cbow-network { margin: 32px 0; padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.nlp-note .cbow-network picture { display: block; }
 .nlp-note .variable-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
