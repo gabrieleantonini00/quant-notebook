@@ -107,7 +107,12 @@
 <h3>Covariance and Efficiency</h3>
 <p>With $E[u\mid X]=0$ and conditional error covariance $\Omega$,</p>
 <div class="math-block">$$\begin{aligned}A&amp;=(X^{\mathsf T}X)^{-1}X^{\mathsf T},\\\operatorname{Var}(\widehat\beta\mid X)&amp;=A\Omega A^{\mathsf T}.\end{aligned}$$</div>
-<p>When $\Omega=\sigma^2I_n$, this reduces to $\sigma^2(X^{\mathsf T}X)^{-1}$. Gauss–Markov then makes OLS BLUE, the minimum-variance linear unbiased estimator conditional on $X$. Conditional Gaussian errors additionally give exact classical $t$ and $F$ inference.</p>
+<p>When $\Omega=\sigma^2I_n$, this reduces to $\sigma^2(X^{\mathsf T}X)^{-1}$.</p>
+      <h3>Gauss–Markov &amp; BLUE</h3>
+      <p>For a correctly specified linear model with full column rank, $E[u\mid X]=0$ and $\operatorname{Var}(u\mid X)=\sigma^2I_n$, the Gauss–Markov theorem makes OLS the <strong>Best Linear Unbiased Estimator</strong> (BLUE). <em>Linear</em> means linear in $y$, conditional on $X$; regressors may include powers or transformations. <em>Best</em> means that every linear combination of the coefficients has the smallest conditional variance among linear unbiased estimators. It does not compare OLS with every biased or nonlinear estimator.</p>
+      <p>To see the variance comparison, any other linear unbiased estimator can be written as $\widetilde\beta=(A+D)y$, where $A=(X^{\mathsf T}X)^{-1}X^{\mathsf T}$ and $DX=0$. Consequently,</p>
+      <div class="math-block">$$\operatorname{Var}(\widetilde\beta\mid X)-\operatorname{Var}(\widehat\beta\mid X)=\sigma^2DD^{\mathsf T}\succeq0.$$</div>
+      <p>The positive-semidefinite difference establishes the variance bound. Normality is not required for BLUE; conditional Gaussian errors additionally provide exact classical $t$ and $F$ inference.</p>
 <p>Heteroskedasticity alone does not bias OLS under exogeneity, but changes its covariance and generally removes the BLUE claim. Robust covariance estimation must match the dependence structure and cannot repair endogeneity.</p>
 </section>
 

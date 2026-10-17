@@ -137,20 +137,21 @@
         ]
       },
       {
-        "title": "Inference, diagnostics, and endogeneity",
-        "summary": "Classical and robust regression inference, omitted-variable bias, multicollinearity, GLS, instrumental variables, and GMM.",
+        "title": "Regression Inference & Diagnostics",
+        "summary": "Regression tests, VIF, heteroskedasticity diagnostics, robust standard errors, specification, endogeneity and instrumental variables.",
         "topics": [
-          "Classical inference and joint restrictions",
-          "Robust covariance: preserve the fit, change the uncertainty",
-          "Omitted variables and multicollinearity are different problems",
-          "GLS and feasible GLS",
-          "Instrumental variables: where does the variation come from?",
-          "A practical reading order for a regression table",
-          "Study sources and further reading",
-          "Related notes"
+          "t Tests & Confidence Intervals",
+          "F Tests & Joint Restrictions",
+          "Multicollinearity & VIF",
+          "Heteroskedasticity & Diagnostics",
+          "Robust Standard Errors",
+          "Model Specification",
+          "Endogeneity",
+          "GLS & Feasible GLS",
+          "Instrumental Variables"
         ],
         "link": "notes/econometrics/cross-sectional/regression-inference.html",
-        "reading_minutes": 5,
+        "reading_minutes": 8,
         "order": 11,
         "category_path": [
           "Cross-Sectional"

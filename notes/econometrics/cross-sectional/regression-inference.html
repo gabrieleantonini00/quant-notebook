@@ -3,76 +3,142 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Classical and robust regression inference, omitted-variable bias, multicollinearity, GLS, instrumental variables, and GMM.">
+  <meta name="description" content="Regression tests, VIF, heteroskedasticity diagnostics, robust standard errors, specification, endogeneity and instrumental variables.">
   <meta name="order" content="11">
-  <title>Inference, diagnostics, and endogeneity | Econometrics</title>
+  <title>Regression Inference &amp; Diagnostics | Econometrics</title>
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/site.css?v=44a5994a4911">
+  <link rel="stylesheet" href="../../../assets/editorial-notes.css?v=63d56bf18ad5">
+  <link rel="stylesheet" href="../../../assets/cross-sectional.css?v=6fd04387ba76">
   <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
   <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
-  <script src="../../../assets/notes.js" defer></script>
+  <script src="../../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
-<body class="note-page">
+<body class="note-page editorial-note cross-sectional-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
   <header class="topbar"><div class="shell topbar-inner">
-    <a class="nav-back" href="../../../index.html#econometrics/cross-sectional">← Back to Cross-Sectional</a>
+    <a class="nav-back" href="../../../index.html#econometrics/cross-sectional">← Cross-Sectional</a>
     <span class="nav-tag">Econometrics</span>
   </div></header>
   <main class="shell" id="note-content"><article>
     <header class="article-header">
       <div class="meta-eyebrow">Econometrics / Cross-Sectional</div>
-      <h1>Inference, diagnostics, and endogeneity</h1>
-      <p class="article-lead">A fitted coefficient, an uncertainty estimate, and an identification argument answer different questions. Regression diagnostics are useful when they make those questions explicit.</p>
+      <h1>Regression Inference &amp; Diagnostics</h1>
     </header>
 
-    <section><h2>Classical inference and joint restrictions</h2>
-      <p>Let $K$ include the intercept. With exogenous regressors and conditionally normal, homoskedastic, uncorrelated errors, estimate the conditional covariance of OLS by</p>
-      <div class="math-block">$$\widehat V_{\mathrm{classical}}=s^2(X^{\mathsf T}X)^{-1},\qquad s^2=\frac{\hat u^{\mathsf T}\hat u}{n-K}.$$</div>
-      <p>A coefficient test uses $t=(\hat\beta_j-b_0)/\operatorname{se}(\hat\beta_j)$ and a $t_{n-K}$ reference distribution under those assumptions. A confidence interval reports an estimate's precision; rejecting a zero coefficient does not measure the economic importance of its size.</p>
-      <p>To test $q$ independent restrictions $H_0:R\beta=r$, use a joint test rather than comparing separate $t$ tests. With an appropriate covariance estimator, the asymptotic Wald statistic is</p>
-      <div class="math-block">$$W=(R\hat\beta-r)^{\mathsf T}(R\widehat V R^{\mathsf T})^{-1}(R\hat\beta-r)\;\overset{a}{\sim}\;\chi_q^2.$$</div>
-      <p>Under the exact classical normal model, $W/q$ using the classical covariance has an $F_{q,n-K}$ distribution. Robust software may apply finite-sample adjustments and a different reference distribution; record the covariance and degrees-of-freedom convention.</p>
-    </section>
-    <section><h2>Robust covariance: preserve the fit, change the uncertainty</h2>
-      <p>For independent observations with heteroskedastic errors, the HC0 sandwich estimator is</p>
-      <div class="math-block">$$\widehat V_{HC0}=(X^{\mathsf T}X)^{-1}\left(\sum_i\hat u_i^2x_ix_i^{\mathsf T}\right)(X^{\mathsf T}X)^{-1}.$$</div>
-      <p>HC1 multiplies by $n/(n-K)$. HC2 replaces $\hat u_i^2$ with $\hat u_i^2/(1-h_{ii})$, and HC3 uses $\hat u_i^2/(1-h_{ii})^2$, where $h_{ii}$ is leverage from $P_X$. These corrections can matter in smaller samples with influential observations; they do not turn a tiny or poorly identified sample into a reliable experiment.</p>
-      <div class="table-wrap"><table><thead><tr><th scope="col">Dependence pattern</th><th scope="col">Covariance approach</th><th scope="col">What it relies on</th></tr></thead><tbody>
-        <tr><th scope="row">Independent, unequal variances</th><td>HC covariance</td><td>Independent observations and suitable moments</td></tr>
-        <tr><th scope="row">Dependence inside groups</th><td>Cluster covariance</td><td>Enough approximately independent clusters</td></tr>
-        <tr><th scope="row">Serial dependence</th><td>HAC covariance</td><td>Appropriate weak dependence, kernel, and bandwidth</td></tr>
-        <tr><th scope="row">Specified error covariance</th><td>GLS or feasible GLS</td><td>A defensible covariance model and exogeneity</td></tr>
-      </tbody></table></div>
-      <p>Choose clustering from the sampling or assignment mechanism, not a mechanical comparison of $N$ and $T$. Ordinary HC errors do not cover arbitrary serial, spatial, or group dependence.</p>
-    </section>
-    <section><h2>Omitted variables and multicollinearity are different problems</h2>
-      <p>Suppose the population equation is $y=\beta_0+\beta_1x+\beta_2z+u$, with the required exogeneity, but the fitted equation omits $z$. In the simple scalar setting with an intercept,</p>
-      <div class="math-block">$$\operatorname{plim}\tilde\beta_1=\beta_1+\beta_2\frac{\operatorname{Cov}(x,z)}{\operatorname{Var}(x)}.$$</div>
-      <p>If $\beta_1=1$, $\beta_2=2$, and the auxiliary projection slope of $z$ on $x$ is 0.5, the short regression converges to 2 rather than 1. A robust covariance estimate leaves that bias unchanged. In multiple regression, assess the association after partialling out the included controls; several omitted-variable effects can also cancel.</p>
-      <p>Perfect multicollinearity makes coefficients unidentified. High but imperfect collinearity increases uncertainty without itself causing bias under exogeneity. For a nonconstant regressor $x_j$, $VIF_j=1/(1-R_j^2)$, where $R_j^2$ comes from regressing it on the other regressors. Adding irrelevant regressors can increase variance, while deleting substantively necessary ones can introduce bias.</p>
-      <p>$R^2$ cannot fall when regressors are added to the same OLS sample with an intercept. Adjusted $R^2$ penalizes extra parameters, but neither statistic identifies a causal model.</p>
-    </section>
-    <section><h2>GLS and feasible GLS</h2>
-      <p>If $E[u\mid X]=0$ and $\operatorname{Var}(u\mid X)=\sigma^2\Omega$ with a known positive-definite $\Omega$, transform the model by $\Omega^{-1/2}$:</p>
-      <div class="math-block">$$\hat\beta_{GLS}=(X^{\mathsf T}\Omega^{-1}X)^{-1}X^{\mathsf T}\Omega^{-1}y.$$</div>
-      <p>Weighted least squares is the diagonal-covariance case, using weights proportional to inverse error variances. Feasible GLS estimates the covariance parameters first. Its efficiency advantage depends on getting that structure right; it is not a remedy for omitted confounders or simultaneous determination. Robust OLS and feasible GLS pursue different objectives: robust inference versus exploiting a variance model to improve efficiency.</p>
-    </section>
-    <section><h2>Instrumental variables: where does the variation come from?</h2>
-      <p>When $E[x_iu_i]\ne0$, an instrument must provide variation relevant for the endogenous regressor while remaining orthogonal to the structural disturbance. Put the excluded instruments and all included exogenous regressors in $Z$. Identification requires enough independent moment conditions and the relevant rank condition, not simply a nonzero correlation somewhere in $Z^{\mathsf T}X$.</p>
-      <div class="math-block">$$P_Z=Z(Z^{\mathsf T}Z)^{-1}Z^{\mathsf T},\qquad \hat\beta_{2SLS}=(X^{\mathsf T}P_ZX)^{-1}X^{\mathsf T}P_Zy.$$</div>
-      <p>First project the endogenous regressors on $Z$; then use the projected regressors to obtain the coefficients. For inference, use a dedicated IV estimator: treating a hand-built second stage as ordinary OLS gives the wrong standard errors. Weak instruments can make conventional normal approximations misleading, and an overidentification test cannot prove the instruments' substantive exclusion restrictions.</p>
-      <p>GMM generalizes the same logic. With $g_n(b)=n^{-1}\sum_i z_i(y_i-x_i^{\mathsf T}b)$, minimize $g_n(b)^{\mathsf T}A_ng_n(b)$. An efficient weighting matrix estimates the inverse covariance of the moments under the relevant heteroskedasticity or dependence. More moment conditions do not automatically mean better finite-sample performance.</p>
-    </section>
-    <section><h2>A practical reading order for a regression table</h2>
-      <ol><li>State the outcome scale, target population, sample, and coefficient interpretation.</li><li>Explain why the chosen regressors or instruments identify the quantity of interest.</li><li>Inspect missingness, functional form, leverage, and residual patterns.</li><li>Match covariance estimation to the data's dependence structure.</li><li>Report effect sizes and intervals alongside specification sensitivity.</li></ol>
+    <section><h2>t Tests &amp; Confidence Intervals</h2>
+      <p>For $y=X\beta+u$, let $K$ count all coefficients, including the intercept, and assume $X$ has full column rank. The classical OLS covariance estimator is</p>
+      <div class="math-block">$$\begin{aligned}\widehat V_{\mathrm{CL}}&amp;=s^2(X^{\mathsf T}X)^{-1},\\s^2&amp;=\frac{\mathrm{RSS}}{n-K},\qquad \mathrm{RSS}=\sum_i\widehat u_i^2.\end{aligned}$$</div>
+      <p>For a single restriction $H_0:\beta_j=b_0$,</p>
+      <div class="math-block">$$t_j=\frac{\widehat\beta_j-b_0}{\sqrt{\widehat V_{jj}}}.$$</div>
+      <p>Under $u\mid X\sim N(0,\sigma^2I_n)$ and the classical covariance, $t_j\sim t_{n-K}$ under $H_0$. A two-sided level-$\alpha$ test rejects when $|t_j|&gt;t_{n-K,1-\alpha/2}$; a one-sided alternative uses the corresponding tail and sign. The matching confidence interval is</p>
+      <div class="math-block">$$\widehat\beta_j\ \pm\ t_{n-K,1-\alpha/2}\sqrt{\widehat V_{jj}}.$$</div>
+      <p>With an appropriate robust covariance and regularity conditions, the studentized statistic is asymptotically standard normal. Using a $t$ reference with robust errors is a finite-sample convention, not the same exact result. A small $p$-value concerns the null restriction; effect size and interval width describe magnitude and precision.</p>
     </section>
 
-    <section><h2>Study sources and further reading</h2>
-      <p>Study basis: personal <cite>OLS and Panel Data Models</cite>, PDF pp. 9–22; Mehdi Hosseinkouchack, <cite>Econometrics</cite>, Sections 1–2. The IV discussion distinguishes identification from covariance correction.</p>
-      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
+    <section><h2>F Tests &amp; Joint Restrictions</h2>
+      <p>Write $q$ independent linear restrictions as $H_0:R\beta=r$, with $\operatorname{rank}(R)=q$. For restricted and unrestricted OLS models fitted to the same observations,</p>
+      <div class="math-block">$$F=\frac{(\mathrm{RSS}_R-\mathrm{RSS}_U)/q}{\mathrm{RSS}_U/(n-K)}.$$</div>
+      <p>Here $K$ is the unrestricted parameter count. Under the classical Gaussian model, $F\sim F_{q,n-K}$ under $H_0$; reject in the upper tail. The overall regression test sets all $K-1$ slopes to zero when an intercept is included. Joint significance can differ from separate $t$ tests because coefficient estimates are correlated.</p>
+      <h3>Robust Wald Test</h3>
+      <div class="math-block">$$\begin{aligned}d&amp;=R\widehat\beta-r,\\W&amp;=d^{\mathsf T}(R\widehat V R^{\mathsf T})^{-1}d\ \xrightarrow{d}\ \chi_q^2\quad(H_0).\end{aligned}$$</div>
+      <p>Use the covariance appropriate to the error structure. With the classical covariance, $W/q$ equals the exact $F$ statistic. Under heteroskedasticity, the RSS comparison is generally invalid; robust $F$-style tests use $W/q$ with a stated degrees-of-freedom adjustment. For one restriction and the same covariance, $W=t^2$.</p>
     </section>
-    <section><h2>Related notes</h2><ul><li><a href="ols-estimation.html">OLS estimation and interpretation</a></li><li><a href="../panel-data/random-effects.html">Random effects and estimator choice</a></li><li><a href="../panel-data/dynamic-panels.html">Dynamic panels and GMM</a></li></ul></section>
+
+    <section><h2>Multicollinearity &amp; VIF</h2>
+      <p>Perfect collinearity prevents separate identification of coefficients. High but imperfect collinearity increases uncertainty without itself biasing OLS under exogeneity.</p>
+      <p>For a nonconstant regressor $x_j$, regress it on all the other regressors, including the intercept, and retain $R_j^2$. The variance inflation factor is</p>
+      <div class="math-block">$$\mathrm{VIF}_j=\frac{1}{1-R_j^2}.$$</div>
+      <p>Under homoskedasticity, with $S_{jj}=\sum_i(x_{ij}-\bar x_j)^2$,</p>
+      <div class="math-block">$$\operatorname{Var}(\widehat\beta_j\mid X)=\frac{\sigma^2}{S_{jj}}\,\mathrm{VIF}_j.$$</div>
+      <p>VIF measures inflation relative to an orthogonal design with the same spread of $x_j$; standard-error inflation is $\sqrt{\mathrm{VIF}_j}$. A value of 1 means no linear association with the other regressors. Values above 5 or 10 are common warning thresholds, not decision rules. Examine redundant variables, coding and interactions before changing the specification. Dropping a necessary confounder to reduce VIF can introduce omitted-variable bias.</p>
+    </section>
+
+    <section><h2>Heteroskedasticity &amp; Diagnostics</h2>
+      <p>Heteroskedasticity means $\operatorname{Var}(u_i\mid x_i)=\sigma_i^2$ varies across observations. With the required exogeneity and sampling conditions, OLS remains unbiased and consistent, but its classical covariance is generally incorrect.</p>
+      <figure class="figure-card">
+        <picture><source media="(max-width: 680px)" srcset="../../../assets/plots/econometrics-residual-diagnostics-mobile.svg?v=bc6da700d476" width="423" height="870"><img src="../../../assets/plots/econometrics-residual-diagnostics.svg?v=0b6a9f39f8bb" width="927" height="337" loading="lazy" alt="Three simulated OLS residual plots: roughly constant spread, a widening fan, and a curved residual mean. Bronze lines show average residuals in ten fitted-value bins."></picture>
+        <figcaption>Simulated data, each fitted by OLS with an intercept and a linear regressor. A fan suggests changing variance; curvature suggests a missing mean term. Bronze lines join binned residual means and serve as visual guides.</figcaption>
+      </figure>
+      <p>Plot residuals against fitted values and relevant regressors. Look for changing spread, curvature and isolated influential points. A scale–location plot, $\sqrt{|\widehat u_i/[s\sqrt{1-h_{ii}}]|}$ against fitted values, makes changes in dispersion easier to see. Neither a flat pattern nor a nonsignificant test establishes homoskedasticity. A misspecified conditional mean can also produce apparent variance patterns.</p>
+      <h3>Breusch–Pagan Test</h3>
+      <p>Choose $q$ variance predictors $z_i$ and fit the auxiliary regression</p>
+      <div class="math-block">$$\widehat u_i^2=a+z_i^{\mathsf T}\gamma+v_i,\qquad H_0:\gamma=0.$$</div>
+      <p>Include an intercept and count only linearly independent nonconstant terms in $q$. In the studentized Breusch–Pagan test, also called the Koenker variant,</p>
+      <div class="math-block">$$\mathrm{LM}=nR_{\mathrm{aux}}^2\ \xrightarrow{d}\ \chi_q^2\quad(H_0).$$</div>
+      <p>The original Breusch–Pagan test uses a Gaussian-error normalization; studentization relaxes that normality requirement under independent sampling and suitable moments. Reject for large LM values. The test detects variance association with the chosen predictors, so its power depends on that choice. It does not identify a variance function or diagnose endogeneity.</p>
+      <h3>White Test</h3>
+      <p>Regress squared residuals on the original nonconstant regressors, their squares and cross-products, plus an intercept. After removing redundant columns, use $nR_{\mathrm{aux}}^2$ with degrees of freedom equal to the auxiliary nonconstant rank. This allows richer variance patterns but can consume many degrees of freedom. Both tests require an appropriate mean specification and sampling conditions.</p>
+    </section>
+
+    <section><h2>Robust Standard Errors</h2>
+      <p>Robust covariance estimation changes uncertainty estimates while preserving OLS coefficients. For independent observations, let $B=(X^{\mathsf T}X)^{-1}$, $x_i$ be a column vector and $h_{ii}=x_i^{\mathsf T}Bx_i$ be leverage:</p>
+      <div class="math-block">$$\widehat V_{\mathrm{HC}}=B\left(\sum_i\omega_i x_ix_i^{\mathsf T}\right)B.$$</div>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Type</th><th scope="col">Residual weight $\omega_i$</th><th scope="col">Adjustment</th></tr></thead><tbody>
+        <tr><th scope="row">HC0</th><td>$\widehat u_i^2$</td><td>Basic heteroskedasticity-consistent estimator</td></tr>
+        <tr><th scope="row">HC1</th><td>$\frac{n}{n-K}\widehat u_i^2$</td><td>Residual degrees of freedom</td></tr>
+        <tr><th scope="row">HC2</th><td>$\frac{\widehat u_i^2}{1-h_{ii}}$</td><td>Leverage correction</td></tr>
+        <tr><th scope="row">HC3</th><td>$\frac{\widehat u_i^2}{(1-h_{ii})^2}$</td><td>Stronger leverage correction, related to a jackknife</td></tr>
+      </tbody></table></div>
+      <p>HC2 and HC3 address residual shrinkage, especially at high-leverage observations. They need $h_{ii}&lt;1$ and do not guarantee accurate inference in a small sample. HC estimators are asymptotically equivalent under standard fixed-$K$ conditions; no version corrects endogeneity.</p>
+      <h3>Cluster and HAC Covariance</h3>
+      <p><strong>Cluster covariance</strong> permits arbitrary heteroskedasticity and correlation within each cluster, with independence across clusters. Its central sandwich block aggregates cluster scores $s_g=X_g^{\mathsf T}\widehat u_g$:</p>
+      <div class="math-block">$$\widehat V_{\mathrm{CR0}}=B\left(\sum_{g=1}^G s_gs_g^{\mathsf T}\right)B.$$</div>
+      <p>Finite-sample corrections such as CR1 and leverage-based CR2/CR3 modify this estimator. Standard cluster asymptotics require enough independent clusters; a large observation count does not compensate for very few clusters. Choose clustering from the sampling, assignment and dependence structure.</p>
+      <p><strong>HAC covariance</strong>, including Newey–West, also incorporates weighted lagged score covariances for suitably weak serial dependence. Report the kernel and bandwidth. Ordinary HC does not cover serial or group dependence, and ordinary temporal HAC does not automatically handle spatial dependence. Robust inference can be chosen in advance rather than switched on only after a diagnostic rejects.</p>
+    </section>
+
+    <section><h2>Model Specification</h2>
+      <p>A conditional-mean error can arise from missing regressors, nonlinear terms, interactions, incorrect transformations or parameter instability. Residual curvature suggests revisiting the mean; a robust covariance estimate leaves the fitted mean unchanged.</p>
+      <h3>Ramsey RESET</h3>
+      <p>Augment the original regression with powers of its fitted values, for example</p>
+      <div class="math-block">$$y_i=x_i^{\mathsf T}\beta+\delta_2\widehat y_i^2+\delta_3\widehat y_i^3+e_i.$$</div>
+      <p>Test $H_0:\delta_2=\delta_3=0$ jointly, retaining only added terms that are independent of the original design. The classical auxiliary $F$ test relies on homoskedasticity and the usual large-sample justification for generated terms; use a robust Wald version when appropriate. Rejection suggests that the selected nonlinear terms add explanatory power, but does not identify the missing variable or the correct replacement model. Nonrejection does not establish exogeneity.</p>
+      <p>Substantive restrictions can also be tested directly by adding specific interactions or nonlinear terms and testing them jointly. Comparing fit statistics alone does not validate a causal specification.</p>
+    </section>
+
+    <section><h2>Endogeneity</h2>
+      <p>For a structural regression, endogeneity means $E[x_iu_i]\ne0$. With $n^{-1}X^{\mathsf T}X\xrightarrow{p}Q$ nonsingular and $n^{-1}X^{\mathsf T}u\xrightarrow{p}c$,</p>
+      <div class="math-block">$$\operatorname{plim}\widehat\beta_{\mathrm{OLS}}=\beta+Q^{-1}c.$$</div>
+      <p>Common sources are omitted confounders, simultaneous determination of regressors and outcomes, measurement error in regressors and outcome-related sample selection. Heteroskedasticity and multicollinearity alone do not imply endogeneity.</p>
+      <h3>Omitted-Variable Bias</h3>
+      <p>If the true equation is $y=\beta_0+\beta_1x+\beta_2w+u$, with $E[u\mid x,w]=0$, omitting $w$ gives, in the scalar case with an intercept,</p>
+      <div class="math-block">$$\operatorname{plim}\widetilde\beta_1=\beta_1+\beta_2\frac{\operatorname{Cov}(x,w)}{\operatorname{Var}(x)}.$$</div>
+      <p>The sign depends on both the omitted effect and its association with the included regressor. With additional controls, use the association after partialling them out. Robust standard errors, larger samples and higher $R^2$ do not eliminate this inconsistency.</p>
+    </section>
+
+    <section><h2>GLS &amp; Feasible GLS</h2>
+      <p>For $E[u\mid X]=0$ and $\operatorname{Var}(u\mid X)=\sigma^2\Omega$, with known positive-definite $\Omega$, premultiply the model by $\Omega^{-1/2}$. OLS on the transformed equation gives</p>
+      <div class="math-block">$$\begin{aligned}\widehat\beta_{\mathrm{GLS}}&amp;=(X^{\mathsf T}\Omega^{-1}X)^{-1}X^{\mathsf T}\Omega^{-1}y,\\\operatorname{Var}(\widehat\beta_{\mathrm{GLS}}\mid X)&amp;=\sigma^2(X^{\mathsf T}\Omega^{-1}X)^{-1}.\end{aligned}$$</div>
+      <p>GLS is BLUE under this covariance model. Weighted least squares is the diagonal case, with weights proportional to inverse error variances. Feasible GLS estimates $\Omega$ first; its asymptotic efficiency claim requires consistent covariance estimation and suitable regularity conditions. A misspecified variance model can invalidate model-based standard errors. These methods exploit an error-covariance model and still require exogeneity.</p>
+    </section>
+
+    <section><h2>Instrumental Variables</h2>
+      <p>Consider the effect of training participation $X$ on earnings $Y$. Unobserved motivation $U$ affects both, making participation endogenous. A randomly assigned training offer $Z$ can supply exogenous participation variation if it changes enrolment and affects earnings only through actual training.</p>
+      <figure class="figure-card iv-figure">
+        <picture><source media="(max-width: 680px)" srcset="../../../assets/plots/econometrics-iv-mechanism-mobile.svg?v=c991fe939486" width="480" height="650"><img src="../../../assets/plots/econometrics-iv-mechanism.svg?v=ad8536c8855d" width="900" height="430" loading="lazy" alt="Random training offer Z affects participation X, which affects earnings Y. Unobserved motivation U affects both X and Y. Dashed arrows show confounding; the offer-to-participation arrow is bronze."></picture>
+        <figcaption>Hypothetical IV mechanism. Validity assumes the offer is independent of unobserved earnings determinants and has no direct effect on earnings. For example, an offer that independently changes job search would violate exclusion.</figcaption>
+      </figure>
+      <h3>Identification Conditions</h3>
+      <ul>
+        <li><strong>Relevance:</strong> the excluded instruments predict the endogenous regressors after controlling for included exogenous variables.</li>
+        <li><strong>Exogeneity:</strong> instruments are orthogonal to the structural disturbance, $E[z_iu_i]=0$.</li>
+        <li><strong>Exclusion:</strong> excluded instruments affect the outcome only through the modelled endogenous regressors. This is a substantive identifying restriction.</li>
+      </ul>
+      <p>Let $X$ now denote the full $n\times K$ regressor matrix and $Z$ the $n\times L$ instrument matrix, containing the excluded instruments and all included exogenous regressors. Identification requires $L\ge K$, full instrument rank and $\operatorname{rank}(E[z_ix_i^{\mathsf T}])=K$. Having enough instruments is necessary but not sufficient.</p>
+      <h3>Two-Stage Least Squares</h3>
+      <div class="math-block">$$\begin{aligned}P_Z&amp;=Z(Z^{\mathsf T}Z)^{-1}Z^{\mathsf T},\\\widehat X&amp;=P_ZX,\\\widehat\beta_{\mathrm{2SLS}}&amp;=(X^{\mathsf T}P_ZX)^{-1}X^{\mathsf T}P_Zy.\end{aligned}$$</div>
+      <p>First regress each endogenous regressor on all instruments and included exogenous regressors. Then regress the outcome on the fitted endogenous regressors and the included exogenous regressors. This reproduces 2SLS coefficients; inference must use an IV covariance estimator based on structural residuals $y-X\widehat\beta_{\mathrm{2SLS}}$, rather than ordinary second-stage OLS standard errors.</p>
+      <p>Under a constant-effect linear structural model, IV targets that coefficient. With binary encouragement, binary participation and heterogeneous effects, random assignment, exclusion, relevance and monotonicity instead support a local average treatment effect for people whose participation changes because of the offer.</p>
+      <h3>Weak Instruments</h3>
+      <p>Inspect first-stage partial relevance after controls. With one endogenous regressor, the excluded-instrument $F$ statistic and partial $R^2$ are useful summaries. The rule $F&gt;10$ is a rough screening heuristic, not a universal guarantee, especially with heteroskedasticity, multiple endogenous regressors or many instruments. Weak identification can distort conventional IV tests and intervals; use inference designed for weak instruments when needed.</p>
+      <h3>Durbin–Wu–Hausman Test</h3>
+      <p>With valid, sufficiently relevant instruments, test $H_0$: the suspect regressors are exogenous. In a residual-inclusion implementation, retain first-stage residuals, add them to the structural regression and test their coefficients jointly. The classical test assumes homoskedasticity; a robust implementation needs the appropriate covariance and conditions. It tests regressor exogeneity conditional on instrument validity, not instrument validity itself.</p>
+      <h3>GMM and Overidentifying Restrictions</h3>
+      <div class="math-block">$$\begin{aligned}g_n(b)&amp;=\frac1n\sum_i z_i(y_i-x_i^{\mathsf T}b),\\\widehat\beta_{\mathrm{GMM}}&amp;=\arg\min_b\ g_n(b)^{\mathsf T}A_ng_n(b).\end{aligned}$$</div>
+      <p>An efficient weight estimates the inverse asymptotic covariance of the moments under the relevant dependence structure. With $L&gt;K$, the Hansen statistic $J=n\,g_n(\widehat\beta)^{\mathsf T}\widehat S^{-1}g_n(\widehat\beta)$, evaluated at efficient GMM, is asymptotically $\chi^2_{L-K}$ under valid moments, strong identification and regularity conditions. Sargan is the classical homoskedastic counterpart. Rejection challenges the joint moment restrictions and model; nonrejection cannot prove exclusion, and a just-identified model has no overidentification test.</p>
+    </section>
   </article></main>
   <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
 </body>
