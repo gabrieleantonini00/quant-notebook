@@ -402,8 +402,7 @@
         "summary": "Latent Semantic Analysis (LSA) via SVD and Latent Dirichlet Allocation (LDA) via Bayesian Inference and Dirichlet Priors.",
         "topics": [
           "Latent Semantic Analysis (LSA)",
-          "Latent Dirichlet Allocation (LDA)",
-          "Posterior Inference"
+          "Latent Dirichlet Allocation (LDA)"
         ],
         "link": "notes/nlp/lsa-lda.html",
         "reading_minutes": 3,
