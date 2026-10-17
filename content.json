@@ -1,104 +1,111 @@
 {
   "statistics": {
-    "title": "Statistics",
-    "description": "Probability, distributions, inference, ANOVA, and multiple testing.",
+    "title": "Probability & Statistics",
+    "description": "Probability, random variables, estimation, hypothesis testing, ANOVA, and multiple testing.",
     "sections": [
       {
-        "title": "Basic Probability Theory & Event Calculus",
-        "summary": "Basic Probability Theory and Event Calculus: Set operations, De Morgan's laws, Kolmogorov's axiomatic framework, fundamental properties and proofs, conditional probability, and Bayes' theorem.",
+        "title": "Probability & Events",
+        "summary": "Events, probability axioms, conditional probability, independence, total probability, and Bayes' theorem.",
         "topics": [
-          "Operations on Sets and Events",
-          "Kolmogorov's Axiomatic Framework",
-          "Fundamental Properties & Analytical Proofs",
-          "Conditional Probability & Event Independence",
-          "Law of Total Probability & Bayes' Theorem",
-          "What does a spam flag actually mean?"
+          "Events & Set Operations",
+          "Probability Spaces & Axioms",
+          "Probability Rules",
+          "Conditional Probability & Independence",
+          "Total Probability & Bayes' Theorem"
         ],
         "link": "notes/statistics/probability-theory.html",
-        "reading_minutes": 6,
+        "reading_minutes": 5,
         "order": 1,
         "category_path": []
       },
       {
-        "title": "Random Variables & Distribution Transformations",
-        "summary": "Random Variables, Distributions & Transformations: CDF, PMF, PDF, quantiles, discrete/continuous families, Poisson approximation, and Jacobian transformations including the Gumbel derivation.",
+        "title": "Random Variables & Distributions",
+        "summary": "Random variables, CDFs, quantiles, discrete and continuous distributions, joint and conditional distributions, and transformations.",
         "topics": [
-          "CDF, PDF & PMF Foundations",
-          "Main Discrete Probability Distributions",
-          "Main Continuous Probability Distributions",
-          "Random Variable Transformations & The Jacobian Method",
-          "How long until the next arrival?"
+          "Random Variables, CDFs & Quantiles",
+          "Discrete Distributions",
+          "Continuous Distributions",
+          "Joint, Marginal & Conditional Distributions",
+          "Distribution Transformations"
         ],
         "link": "notes/statistics/random-variables.html",
-        "reading_minutes": 6,
+        "reading_minutes": 5,
         "order": 2,
         "category_path": []
       },
       {
-        "title": "Statistical Operators: Expectation, Variance & Covariance",
-        "summary": "Statistical Operators: Expectation, Variance, Covariance, Correlation, Independence vs. Uncorrelatedness in Bivariate Normal distributions, and Quantitative Finance Two-Asset Portfolios.",
+        "title": "Expectation, Variance & Dependence",
+        "summary": "Expectation, variance, covariance, independence, conditional expectation, total variance, and portfolio moments.",
         "topics": [
-          "The Expectation Operator",
-          "Variance Operator & Dispersion Calculus",
-          "Covariance, Correlation & The Independence Disconnect",
-          "Quantitative Finance Application: Two-Asset Portfolios & Shortfall Risk",
-          "Does averaging two measurements help?"
+          "Expectation",
+          "Variance",
+          "Covariance, Correlation & Independence",
+          "Conditional Expectation & Total Variance",
+          "Portfolio Moments & Loss Probability"
         ],
         "link": "notes/statistics/statistical-operators.html",
-        "reading_minutes": 6,
+        "reading_minutes": 5,
         "order": 3,
         "category_path": []
       },
       {
-        "title": "Parametric Inference & Hypothesis Testing",
-        "summary": "Parametric Inference and Hypothesis Testing: Estimator properties, Bessel's correction, consistency, Chebyshev inequality, Method of Moments, Maximum Likelihood, CLT asymptotics, and Wald testing.",
+        "title": "Point Estimation",
+        "summary": "Estimator properties, method of moments, maximum likelihood, the law of large numbers, the CLT, and Slutsky's theorem.",
         "topics": [
-          "Properties of Estimators: Bias, Consistency & Efficiency",
-          "Estimation Methods: Moments & Maximum Likelihood",
-          "Central Limit Theorem (CLT) & Asymptotics",
-          "Hypothesis Testing & Confidence Intervals",
-          "Is a mean reading different from 100?"
+          "Estimator Properties",
+          "Estimation Methods",
+          "Consistency & Asymptotic Distributions"
         ],
         "link": "notes/statistics/parametric-inference.html",
-        "reading_minutes": 7,
+        "reading_minutes": 4,
         "order": 4,
-        "category_path": [
-          "Statistical Inference"
-        ]
+        "category_path": []
       },
       {
-        "title": "Analysis of variance (ANOVA)",
-        "summary": "One-way ANOVA: compare several group means through between- and within-group variation, an F test, assumptions, and follow-up comparisons.",
+        "title": "Hypothesis Testing & Confidence Intervals",
+        "summary": "Hypotheses, error rates, power, Wald tests, p-values, confidence intervals, and exact versus asymptotic inference.",
         "topics": [
-          "One question for several means",
-          "Why compare two variances?",
-          "A small worked example",
-          "What the result does and does not say"
+          "Hypotheses, Size & Power",
+          "Test Statistics",
+          "p-Values & Decisions",
+          "Confidence Intervals",
+          "Exact & Asymptotic Inference"
         ],
-        "link": "notes/statistics/anova.html",
+        "link": "notes/statistics/hypothesis-testing.html",
         "reading_minutes": 3,
         "order": 5,
-        "category_path": [
-          "Statistical Inference"
-        ]
+        "category_path": []
       },
       {
-        "title": "Multiple hypothesis testing",
-        "summary": "Multiple hypothesis testing: false positives across many tests, FWER, FDP, FDR, and Bonferroni, Holm, BH, BY, and FDP-StepM methods.",
+        "title": "ANOVA",
+        "summary": "One-way ANOVA, variance decomposition, the F test, assumptions, and follow-up comparisons.",
         "topics": [
-          "Why one $p$-value is not enough",
-          "Three ways to define the error",
-          "FWER: Bonferroni and Holm",
-          "FDR: Benjamini–Hochberg and Benjamini–Yekutieli",
-          "Controlling the realized fraction: FDP-StepM",
-          "Choosing a procedure"
+          "Model & Hypotheses",
+          "Variance Decomposition",
+          "F Test",
+          "Assumptions",
+          "Interpretation & Follow-up Comparisons"
+        ],
+        "link": "notes/statistics/anova.html",
+        "reading_minutes": 2,
+        "order": 6,
+        "category_path": []
+      },
+      {
+        "title": "Multiple Hypothesis Testing",
+        "summary": "FWER, FDP, FDR, Bonferroni, Holm, Benjamini-Hochberg, Benjamini-Yekutieli, and FDP-StepM.",
+        "topics": [
+          "Multiple Testing & False Positives",
+          "Error Criteria: FWER, FDP & FDR",
+          "FWER Control: Bonferroni & Holm",
+          "FDR Control: Benjamini–Hochberg & Benjamini–Yekutieli",
+          "FDP Control: FDP-StepM",
+          "Choosing an Error Criterion"
         ],
         "link": "notes/statistics/multiple-hypothesis-testing.html",
-        "reading_minutes": 5,
-        "order": 6,
-        "category_path": [
-          "Statistical Inference"
-        ]
+        "reading_minutes": 4,
+        "order": 7,
+        "category_path": []
       }
     ],
     "has_notes": true,

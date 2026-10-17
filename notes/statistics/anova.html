@@ -1,79 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="One-way ANOVA: compare several group means through between- and within-group variation, an F test, assumptions, and follow-up comparisons.">
-  <meta name="order" content="5">
-  <title>ANOVA | Statistical Inference</title>
+  <meta name="order" content="6">
+  <meta name="description" content="One-way ANOVA, variance decomposition, the F test, assumptions, and follow-up comparisons.">
+  <title>ANOVA | Quant Notebook</title>
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../../assets/site.css">
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
   <script defer src="../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
-  <script src="../../assets/notes.js" defer></script>
+  <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
+  <link rel="stylesheet" href="../../assets/editorial-notes.css?v=63d56bf18ad5">
+  <link rel="stylesheet" href="../../assets/statistics.css?v=e29a8da9caf1">
+  <script src="../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
-<body class="note-page">
+<body class="note-page editorial-note statistics-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
-  <header class="topbar">
-    <div class="shell topbar-inner">
-      <a class="nav-back" href="../../index.html#statistics/statistical-inference">← Back to Statistical Inference</a>
-      <span class="nav-tag">Statistical Inference</span>
-    </div>
-  </header>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../index.html#statistics">← Probability &amp; Statistics</a>
+    <span class="nav-tag">Probability &amp; Statistics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Probability &amp; Statistics</div>
+      <h1>ANOVA</h1>
+    </header>
+<section><h2>Model &amp; Hypotheses</h2>
 
-  <main class="shell" id="note-content">
-    <article>
-      <header class="article-header">
-        <div class="meta-eyebrow">Statistical Inference</div>
-        <h1>Analysis of variance (ANOVA)</h1>
-        <p class="article-lead">ANOVA asks whether several group means differ by comparing variation <em>between</em> groups with variation <em>within</em> groups.</p>
-      </header>
+<p>One-way ANOVA compares the population means of $k$ groups. For observation $j$ in group $i$, the model is $Y_{ij}=\mu_i+\varepsilon_{ij}$:</p>
+<div class="math-block">$$H_0:\mu_1=\cdots=\mu_k,\qquad H_1:\text{at least one mean differs}.$$</div>
+<p>This is an omnibus test: rejection identifies an overall difference, without identifying which pairs differ.</p>
 
-      <section>
-        <h2>One question for several means</h2>
-        <p>Suppose three training methods produce three sets of test scores. The one-way ANOVA null hypothesis is that all population means are equal; the alternative is that <em>at least one</em> differs:</p>
-        <div class="math-block">$$H_0:\mu_1=\mu_2=\cdots=\mu_k,\qquad H_1:\text{not all means are equal}.$$</div>
-        <p>Testing each pair separately at the same significance level gives several chances for a false positive. ANOVA begins with a single <em>omnibus</em> test of the overall difference. A significant result does not say which pairs differ.</p>
-      </section>
+</section>
 
-      <section>
-        <h2>Why compare two variances?</h2>
-        <p>For observation $j$ in group $i$, the one-way model is $Y_{ij}=\mu_i+\varepsilon_{ij}$. If the group means truly are equal, differences among the <em>sample</em> means should mostly reflect the same noise that makes observations vary around their own group means. ANOVA compares those two sources of variation:</p>
-        <div class="math-block">$$SS_{\mathrm{between}}=\sum_{i=1}^{k}n_i(\bar y_i-\bar y)^2,\qquad SS_{\mathrm{within}}=\sum_{i=1}^{k}\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2.$$</div>
-        <p>Here $n_i$ is the size of group $i$, $\bar y_i$ its sample mean, $\bar y$ the overall mean, and $N=\sum_i n_i$. The total squared variation separates exactly into these two parts. Divide each sum of squares by its degrees of freedom, then form the F ratio:</p>
-        <div class="math-block">$$F=\frac{SS_{\mathrm{between}}/(k-1)}{SS_{\mathrm{within}}/(N-k)}=\frac{MS_{\mathrm{between}}}{MS_{\mathrm{within}}}.$$</div>
-        <p>Under the classical assumptions and $H_0$, $F$ follows an $F_{k-1,N-k}$ distribution. A large ratio means the group means are far apart relative to the variation inside groups.</p>
-      </section>
+<section><h2>Variance Decomposition</h2>
 
-      <section>
-        <h2>A small worked example</h2>
-        <p>Take three hypothetical groups: A has scores 4, 5, 6; B has 6, 7, 8; C has 8, 9, 10. Their sample means are 5, 7, and 9, while the grand mean is 7. The figure shows both kinds of variation.</p>
-        <figure class="figure-card">
-          <img src="../../assets/plots/statistics-anova-variation.svg" alt="Dot plot of three hypothetical groups with observations 4, 5, 6; 6, 7, 8; and 8, 9, 10. Colored horizontal marks show group means 5, 7, and 9. A dashed line shows the grand mean 7. Arrows distinguish within-group from between-group variation." loading="lazy" width="880" height="510">
+<p>Let $n_i$ be the size of group $i$, $\bar y_i$ its sample mean, $N=\sum_i n_i$ and $\bar y$ the grand mean. The total squared variation separates into between-group and within-group components:</p>
+<div class="math-block">$$SS_{\mathrm{between}}=\sum_{i=1}^{k}n_i(\bar y_i-\bar y)^2,$$</div>
+<div class="math-block">$$SS_{\mathrm{within}}=\sum_{i=1}^{k}\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2,$$</div>
+<div class="math-block">$$SS_{\mathrm{total}}=SS_{\mathrm{between}}+SS_{\mathrm{within}}.$$</div>
+<figure class="figure-card">
+          <img src="../../assets/plots/statistics-anova-variation.svg?v=d07b402578c2" alt="Dot plot of three hypothetical groups with observations 4, 5, 6; 6, 7, 8; and 8, 9, 10. Colored horizontal marks show group means 5, 7, and 9. A dashed line shows the grand mean 7. Arrows distinguish within-group from between-group variation." loading="lazy" width="856" height="501">
           <figcaption>Constructed data for illustration. The distance between a group mean and the grand mean contributes to between-group variation; distances from observations to their own group mean contribute to within-group variation.</figcaption>
         </figure>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th scope="col">Source</th><th scope="col">Sum of squares</th><th scope="col">Degrees of freedom</th><th scope="col">Mean square</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">Between groups</th><td>24</td><td>2</td><td>12</td></tr>
-              <tr><th scope="row">Within groups</th><td>6</td><td>6</td><td>1</td></tr>
-              <tr><th scope="row">Total</th><td>30</td><td>8</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>Thus $F=12/1=12$, with 2 and 6 degrees of freedom. Under the classical model, $p=0.008$: there is evidence that the three population means are not all equal. The sample is deliberately tiny and tidy; a real analysis needs diagnostics as well as the test statistic.</p>
-      </section>
+</section>
 
-      <section>
-        <h2>What the result does and does not say</h2>
-        <p>A one-way ANOVA assumes independent observations, normally distributed errors <em>within</em> groups for the exact small-sample F test, and a common error variance across groups. Independence depends mainly on how data were collected; a plot or p-value cannot repair dependence from repeated measurements on the same person. If variances differ substantially, Welch's ANOVA is an alternative to the pooled-variance F test.</p>
-        <p>Rejecting $H_0$ identifies an overall difference, not the differing pairs or the practical size of the effect. If pairwise comparisons are the next question, use a procedure that accounts for the family of comparisons, such as Tukey's method for all pairwise group means or a suitable multiple-testing adjustment for planned contrasts. See <a href="multiple-hypothesis-testing.html">Multiple hypothesis testing</a> for why the number of tests matters.</p>
-        <p>ANOVA is a statistical analysis, not an experimental design by itself. Causal language also requires an appropriate assignment or identification strategy.</p>
-      </section>
-    </article>
-  </main>
-  <footer class="shell"><p>Probability &amp; Statistics Notes</p></footer>
+<section><h2>F Test</h2>
+
+<p>Divide each sum of squares by its degrees of freedom, then compare the two mean squares:</p>
+<div class="math-block">$$F=\frac{SS_{\mathrm{between}}/(k-1)}{SS_{\mathrm{within}}/(N-k)}=\frac{MS_{\mathrm{between}}}{MS_{\mathrm{within}}}.$$</div>
+<p>Under the classical assumptions and $H_0$, $F\sim F_{k-1,N-k}$. Reject when $F&gt;F_{k-1,N-k;1-\alpha}$. A large ratio indicates that group means differ more than within-group noise would explain.</p>
+
+</section>
+
+<section><h2>Assumptions</h2>
+
+<p>The exact F test assumes independent observations, normal errors within groups and a common error variance. Welch's ANOVA relaxes the common-variance assumption. Repeated observations on the same unit require a model that accounts for their dependence.</p>
+
+</section>
+
+<section><h2>Interpretation &amp; Follow-up Comparisons</h2>
+
+<p>Rejection does not identify the differing pairs or quantify practical importance. For all pairwise comparisons under the classical model, Tukey's method accounts for the family of comparisons; planned contrasts can use an appropriate multiple-testing adjustment. See <a href="multiple-hypothesis-testing.html">Multiple Hypothesis Testing</a>.</p>
+<p>ANOVA alone does not establish causality; causal interpretation requires an appropriate design or identification strategy.</p>
+
+</section>
+<nav class="page-nav"><a class="page-nav-link" href="hypothesis-testing.html"><span class="page-nav-sub">← Previous Topic</span><span class="page-nav-title">Hypothesis Testing &amp; Confidence Intervals</span></a>
+<a class="page-nav-link next" href="multiple-hypothesis-testing.html"><span class="page-nav-sub">Next Topic →</span><span class="page-nav-title">Multiple Hypothesis Testing</span></a></nav>
+</article></main>
+<footer class="shell"><p>Quant Notebook / Probability &amp; Statistics</p></footer>
 </body>
 </html>

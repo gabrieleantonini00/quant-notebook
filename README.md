@@ -2,7 +2,9 @@
 
 **Quantitative Methods & Statistical Learning**
 
-A personal website for probability and statistics, econometrics, statistical learning, natural language processing, and quantitative finance. The 27 current study notes include worked examples, comparison tables, rendered equations, and calculated plots.
+A personal website for probability and statistics, econometrics, statistical learning, natural language processing, and quantitative finance. The 28 current study notes include concise derivations, comparison tables, rendered equations, and calculated plots.
+
+Probability & Statistics contains seven notes in one list: Probability & Events; Random Variables & Distributions; Expectation, Variance & Dependence; Point Estimation; Hypothesis Testing & Confidence Intervals; ANOVA; and Multiple Hypothesis Testing. These notes share the editorial layout used by Finance and NLP.
 
 Econometrics is organized into Cross-Sectional, Pooled Cross-Sections, Panel Data, Time Series, and Spatial Econometrics. Its notes cover OLS and IV, repeated surveys and parameter stability, FE and RE, dynamic-panel GMM, stationarity and unit roots, ARMA forecasts, VAR/VECM, and ARCH/GARCH. Finance notes remain the destination for detailed VaR and Expected Shortfall coverage.
 

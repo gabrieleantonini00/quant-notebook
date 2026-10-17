@@ -2,162 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Random Variables, Distributions & Transformations: CDF, PMF, PDF, quantiles, discrete/continuous families, Poisson approximation, and Jacobian transformations including the Gumbel derivation.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="order" content="2">
-  <title>Random Variables & Distribution Transformations | Statistics & Data Science</title>
-  
-  <!-- KaTeX Math Formula Rendering -->
+  <meta name="description" content="Random variables, CDFs, quantiles, discrete and continuous distributions, joint and conditional distributions, and transformations.">
+  <title>Random Variables &amp; Distributions | Quant Notebook</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
   <script defer src="../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
-  
-  <style>
-    :root {
-      --ink:#171a18; --muted:#6c736d; --paper:#f3f3ee; --surface:#fafaf6; --line:#d7dad3;
-      --green:#1f6f52; --green-soft:#dfece4; --green-border:#c2e5d5;
-      --blue:#246d9b; --blue-soft:#eaf3f9; --blue-border:#cce1f0;
-      --amber:#b67a19; --amber-soft:#fcf5e8; --amber-border:#fae6af;
-      --coral:#cb4343; --coral-soft:#fdf0f0; --coral-border:#f7cfcf;
-      --purple:#5c4ca8; --purple-soft:#f2eef9; --purple-border:#d8cdf0;
-      --radius:8px; --content:880px;
-    }
-    * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body {
-      margin:0; min-width:320px; background:var(--paper); color:var(--ink);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      line-height:1.65; letter-spacing:0;
-    }
-    a { color:inherit; }
-    .shell { width:min(calc(100% - 48px),var(--content)); margin:0 auto; }
-    .topbar {
-      position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
-      background:color-mix(in srgb,var(--paper) 92%,transparent); backdrop-filter:blur(14px);
-    }
-    .topbar-inner {
-      min-height:66px; display:flex; justify-content:space-between; align-items:center; gap:24px;
-    }
-    .nav-back {
-      display:inline-flex; align-items:center; gap:8px; font-size:.84rem; font-weight:650;
-      text-decoration:none; color:var(--muted); transition:color 150ms ease;
-    }
-    .nav-back:hover { color:var(--ink); }
-    .nav-tag {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem;
-      background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:4px; font-weight:600;
-    }
-    article { padding:56px 0 84px; }
-    .article-header { margin-bottom:48px; border-bottom:1px solid var(--line); padding-bottom:32px; }
-    .meta-eyebrow {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem;
-      text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-bottom:12px;
-    }
-    h1 {
-      margin:0 0 16px; font-family:Georgia,"Times New Roman",serif;
-      font-size:clamp(2.4rem,5vw,3.6rem); font-weight:400; line-height:1.05;
-    }
-    .article-lead { font-size:1.1rem; color:var(--muted); margin:0 0 20px; line-height:1.55; }
-    .meta-info {
-      display:flex; gap:20px; font-size:.78rem; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif;
-    }
-    h2 {
-      margin:48px 0 20px; font-family:Georgia,"Times New Roman",serif;
-      font-size:1.75rem; font-weight:400; line-height:1.2; border-bottom:1px solid var(--line); padding-bottom:8px;
-    }
-    h3 { margin:30px 0 14px; font-family:Georgia,"Times New Roman",serif; font-size:1.3rem; font-weight:400; }
-    p, ul, ol { margin:0 0 20px; }
-    ul, ol { padding-left:24px; }
-    li { margin-bottom:8px; }
-
-    .math-block {
-      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-      padding:16px 20px; margin:22px 0; overflow-x:auto; text-align:center;
-    }
-    .callout {
-      background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--green);
-      padding:20px 24px; margin:26px 0; border-radius:0 var(--radius) var(--radius) 0;
-    }
-    .callout-title { font-weight:700; margin-bottom:8px; font-size:.92rem; color:var(--ink); }
-
-    .proof-card {
-      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-      padding:22px 24px; margin:24px 0;
-    }
-    .proof-title {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.78rem; font-weight:750;
-      text-transform:uppercase; letter-spacing:.06em; color:var(--blue); margin-bottom:8px;
-    }
-
-    .dist-grid {
-      display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; margin:24px 0;
-    }
-    .dist-card {
-      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-      padding:22px 20px;
-    }
-    .dist-tag {
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.72rem; font-weight:750;
-      text-transform:uppercase; margin-bottom:6px;
-    }
-    .dist-tag.discrete { color:var(--purple); }
-    .dist-tag.continuous { color:var(--blue); }
-    .dist-name { font-family:Georgia,serif; font-size:1.2rem; font-weight:700; margin:0 0 10px; }
-
-    .comp-table {
-      width:100%; border-collapse:collapse; margin:24px 0; font-size:.88rem;
-    }
-    .comp-table th, .comp-table td { padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); }
-    .comp-table th { font-weight:650; background:var(--paper); font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; }
-
-    .page-nav {
-      display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:64px; padding-top:32px; border-top:1px solid var(--line);
-    }
-    .page-nav-link {
-      display:flex; flex-direction:column; padding:18px 20px; background:var(--surface);
-      border:1px solid var(--line); border-radius:var(--radius); text-decoration:none;
-      transition:background 150ms ease, border-color 150ms ease;
-    }
-    .page-nav-link:hover { background:var(--paper); border-color:var(--ink); }
-    .page-nav-link.next { text-align:right; margin-left:auto; width:100%; }
-    .page-nav-sub { font-size:.72rem; text-transform:uppercase; color:var(--muted); font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
-    .page-nav-title { font-family:Georgia,serif; font-size:1.1rem; margin-top:4px; }
-    footer {
-      padding:28px 0 40px; border-top:1px solid var(--line); color:var(--muted);
-      font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:.68rem;
-    }
-    @media (max-width:768px) {
-      .dist-grid { grid-template-columns:1fr; }
-    }
-    @media (max-width:680px) {
-      .shell { width:min(calc(100% - 28px),var(--content)); }
-      .page-nav { grid-template-columns:1fr; }
-    }
-  </style>
-  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../../assets/site.css">
-  <script src="../../assets/notes.js" defer></script>
+  <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
+  <link rel="stylesheet" href="../../assets/editorial-notes.css?v=63d56bf18ad5">
+  <link rel="stylesheet" href="../../assets/statistics.css?v=e29a8da9caf1">
+  <script src="../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
-<body class="note-page">
+<body class="note-page editorial-note statistics-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
-  <header class="topbar">
-    <div class="shell topbar-inner">
-      <a class="nav-back" href="../../index.html">← Back to Overview</a>
-      <span class="nav-tag">Statistics Notes</span>
-    </div>
-  </header>
-
-  <main class="shell" id="note-content">
-    <article>
-      <header class="article-header">
-        <div class="meta-eyebrow">Statistics</div>
-        <h1>Random Variables & Distribution Transformations</h1>
-        <p class="article-lead">Measurable mappings, Cumulative Distribution Functions, Probability Density/Mass Functions, canonical discrete and continuous distributions, and the Jacobian method for variable transformations.</p>
-      </header>
-
-      <!-- Section 1: CDF, PDF, PMF Foundations -->
-      <section>
-        <h2>CDF, PDF & PMF Foundations</h2>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../index.html#statistics">← Probability &amp; Statistics</a>
+    <span class="nav-tag">Probability &amp; Statistics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Probability &amp; Statistics</div>
+      <h1>Random Variables &amp; Distributions</h1>
+    </header>
+<section>
+        <h2>Random Variables, CDFs &amp; Quantiles</h2>
         <p>
           Given a probability space $(\Omega, \mathcal{F}, \mathbb{P})$, a real-valued <strong>random variable</strong> $X$ is a measurable function mapping outcomes from the sample space to the real line:
         </p>
@@ -187,11 +57,11 @@
 
         <div class="distribution-comparison" aria-label="Discrete and continuous random variable graphs">
           <figure class="figure-card">
-            <img src="../../assets/plots/statistics-discrete-cdf.svg" alt="Discrete binomial random variable: bars show probabilities for counts zero through four, with counts up to two highlighted; beneath, the cumulative distribution is a staircase and F(2) equals the sum of the first three probabilities, 0.6875." loading="lazy" width="600" height="704">
+            <img src="../../assets/plots/statistics-discrete-cdf.svg?v=ee1bde87fffc" alt="Discrete binomial random variable: bars show probabilities for counts zero through four, with counts up to two highlighted; beneath, the cumulative distribution is a staircase and F(2) equals the sum of the first three probabilities, 0.6875." loading="lazy" width="606" height="722">
             <figcaption><strong>Discrete:</strong> $X\sim\mathrm{Bin}(4,0.5)$. The bars are probabilities; the CDF adds them: $F_X(2)=\sum_{k=0}^{2}p_X(k)=0.6875$.</figcaption>
           </figure>
           <figure class="figure-card">
-            <img src="../../assets/plots/statistics-continuous-cdf.svg" alt="Continuous standard normal random variable: a smooth density curve has the area to the left of 0.5 shaded; beneath, the smooth cumulative distribution reaches about 0.6915 at 0.5." loading="lazy" width="600" height="704">
+            <img src="../../assets/plots/statistics-continuous-cdf.svg?v=d99dd4078215" alt="Continuous standard normal random variable: a smooth density curve has the area to the left of 0.5 shaded; beneath, the smooth cumulative distribution reaches about 0.6915 at 0.5." loading="lazy" width="606" height="722">
             <figcaption><strong>Continuous:</strong> $Y\sim\mathcal N(0,1)$. The shaded area under the PDF becomes the CDF value: $F_Y(0.5)=\int_{-\infty}^{0.5}f_Y(t)\,dt\approx0.6915$.</figcaption>
           </figure>
         </div>
@@ -208,9 +78,8 @@
         </p>
       </section>
 
-      <!-- Section 2: Discrete Distributions -->
-      <section>
-        <h2>Main Discrete Probability Distributions</h2>
+<section>
+        <h2>Discrete Distributions</h2>
         <p>
           A random variable is <strong>discrete</strong> if its support $\text{supp}(X)$ is countable. Its behavior is defined by the <strong>Probability Mass Function (PMF)</strong> $p_X(x) = \mathbb{P}(X = x)$ where $\sum_x p_X(x) = 1$.
         </p>
@@ -218,23 +87,23 @@
         <div class="dist-grid">
           <div class="dist-card">
             <div class="dist-tag discrete">Discrete Family</div>
-            <h4 class="dist-name">Discrete Uniform: $\mathcal{U}\{a, b\}$</h4>
-            <p style="font-size:.85rem; color:var(--muted);">Equally likely integers in the range $\{a, a+1, \dots, b\}$ ($N = b - a + 1$):</p>
-            <div class="math-block" style="margin:8px 0;">$$p(k) = \frac{1}{N}, \quad \mathbb{E}[X] = \frac{a+b}{2}$$</div>
+            <h3 class="dist-name">Discrete Uniform: $\mathcal{U}\{a, b\}$</h3>
+            <p>Equally likely integers in the range $\{a, a+1, \dots, b\}$ ($N = b - a + 1$):</p>
+            <div class="math-block">$$p(k) = \frac{1}{N}, \quad \mathbb{E}[X] = \frac{a+b}{2}$$</div>
           </div>
 
           <div class="dist-card">
             <div class="dist-tag discrete">Discrete Family</div>
-            <h4 class="dist-name">Binomial: $\text{Bin}(n, p)$</h4>
-            <p style="font-size:.85rem; color:var(--muted);">Number of successes in $n$ independent Bernoulli trials with parameter $p$:</p>
-            <div class="math-block" style="margin:8px 0;">$$p(k) = \binom{n}{k} p^k (1-p)^{n-k}, \quad \mathbb{E}[X] = np$$</div>
+            <h3 class="dist-name">Binomial: $\text{Bin}(n, p)$</h3>
+            <p>Number of successes in $n$ independent Bernoulli trials with parameter $p$:</p>
+            <div class="math-block">$$p(k) = \binom{n}{k} p^k (1-p)^{n-k}, \quad \mathbb{E}[X] = np$$</div>
           </div>
 
-          <div class="dist-card" style="grid-column:1 / -1;">
+          <div class="dist-card">
             <div class="dist-tag discrete">Discrete Family</div>
-            <h4 class="dist-name">Poisson Distribution: $\text{Pois}(\lambda)$</h4>
-            <p style="font-size:.85rem; color:var(--muted);">Models counts in an interval under a Poisson process: disjoint intervals have independent counts, and $\lambda > 0$ is the expected count in the chosen interval:</p>
-            <div class="math-block" style="margin:8px 0;">
+            <h3 class="dist-name">Poisson Distribution: $\text{Pois}(\lambda)$</h3>
+            <p>Models counts in an interval under a Poisson process: disjoint intervals have independent counts, and $\lambda > 0$ is the expected count in the chosen interval:</p>
+            <div class="math-block">
               $$p(k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k \in \{0, 1, 2, \dots\}, \quad \mathbb{E}[X] = \text{Var}(X) = \lambda$$
             </div>
           </div>
@@ -248,7 +117,7 @@
           <div class="math-block">
             $$\lim_{n \to \infty} \binom{n}{k} p_n^k (1 - p_n)^{n-k} = \frac{\lambda^k e^{-\lambda}}{k!}$$
           </div>
-          <p style="font-size:.85rem; color:var(--muted); line-height:1.5; margin:0;">
+          <p>
             <strong>Proof:</strong> Substitute $p_n = \lambda/n$ into the Binomial PMF:
             $$\binom{n}{k} \left(\frac{\lambda}{n}\right)^k \left(1 - \frac{\lambda}{n}\right)^{n-k} = \frac{n(n-1)\cdots(n-k+1)}{k!} \frac{\lambda^k}{n^k} \left(1 - \frac{\lambda}{n}\right)^n \left(1 - \frac{\lambda}{n}\right)^{-k}$$
             Group the polynomial factors: $\frac{n(n-1)\cdots(n-k+1)}{n^k} = 1 \cdot \left(1 - \frac{1}{n}\right) \cdots \left(1 - \frac{k-1}{n}\right) \xrightarrow{n \to \infty} 1$.<br>
@@ -258,9 +127,8 @@
         </div>
       </section>
 
-      <!-- Section 3: Continuous Distributions -->
-      <section>
-        <h2>Main Continuous Probability Distributions</h2>
+<section>
+        <h2>Continuous Distributions</h2>
         <p>
           A variable $X$ is <strong>absolutely continuous</strong> when it has a nonnegative <strong>Probability Density Function (PDF)</strong> $f_X$ such that $F_X(x)=\int_{-\infty}^x f_X(t)\,dt$. Then $f_X(x)=F_X'(x)$ almost everywhere and $\mathbb{P}(a\le X\le b)=\int_a^b f_X(x)\,dx$. Differentiability of the CDF almost everywhere, by itself, is not enough to guarantee a density.
         </p>
@@ -268,38 +136,47 @@
         <div class="dist-grid">
           <div class="dist-card">
             <div class="dist-tag continuous">Continuous Family</div>
-            <h4 class="dist-name">Continuous Uniform: $\mathcal{U}(a, b)$</h4>
-            <div class="math-block" style="margin:8px 0;">$$f(x) = \frac{1}{b - a}, \quad x \in [a, b]$$</div>
-            <p style="font-size:.82rem; color:var(--muted); margin:0;">Mean $\mu = \frac{a+b}{2}$, Variance $\sigma^2 = \frac{(b-a)^2}{12}$.</p>
+            <h3 class="dist-name">Continuous Uniform: $\mathcal{U}(a, b)$</h3>
+            <div class="math-block">$$f(x) = \frac{1}{b - a}, \quad x \in [a, b]$$</div>
+            <p>Mean $\mu = \frac{a+b}{2}$, Variance $\sigma^2 = \frac{(b-a)^2}{12}$.</p>
           </div>
 
           <div class="dist-card">
             <div class="dist-tag continuous">Continuous Family</div>
-            <h4 class="dist-name">Exponential: $\text{Exp}(\lambda)$</h4>
-            <div class="math-block" style="margin:8px 0;">$$f(x) = \lambda e^{-\lambda x}, \quad F(x) = 1 - e^{-\lambda x}, \; x \ge 0$$</div>
-            <p style="font-size:.82rem; color:var(--muted); margin:0;">Memoryless: $\mathbb{P}(X > s + t \mid X > s) = \mathbb{P}(X > t)$.</p>
+            <h3 class="dist-name">Exponential: $\text{Exp}(\lambda)$</h3>
+            <div class="math-block">$$f(x) = \lambda e^{-\lambda x}, \quad F(x) = 1 - e^{-\lambda x}, \; x \ge 0$$</div>
+            <p>Memoryless: $\mathbb{P}(X > s + t \mid X > s) = \mathbb{P}(X > t)$.</p>
           </div>
 
           <div class="dist-card">
             <div class="dist-tag continuous">Continuous Family</div>
-            <h4 class="dist-name">Normal (Gaussian): $\mathcal{N}(\mu, \sigma^2)$</h4>
-            <div class="math-block" style="margin:8px 0;">$$f(x) = \frac{1}{\sigma \sqrt{2\pi}} \exp\left( -\frac{(x - \mu)^2}{2\sigma^2} \right)$$</div>
-            <p style="font-size:.82rem; color:var(--muted); margin:0;">Symmetric about mean $\mu$; inflection points at $\mu \pm \sigma$.</p>
+            <h3 class="dist-name">Normal (Gaussian): $\mathcal{N}(\mu, \sigma^2)$</h3>
+            <div class="math-block">$$f(x) = \frac{1}{\sigma \sqrt{2\pi}} \exp\left( -\frac{(x - \mu)^2}{2\sigma^2} \right)$$</div>
+            <p>Symmetric about mean $\mu$; inflection points at $\mu \pm \sigma$.</p>
           </div>
 
           <div class="dist-card">
             <div class="dist-tag continuous">Continuous Family</div>
-            <h4 class="dist-name">Bivariate Normal: $\mathcal{N}_2(\boldsymbol{\mu}, \boldsymbol{\Sigma})$</h4>
-            <div class="math-block" style="margin:8px 0;">$$\boldsymbol{\Sigma} = \begin{pmatrix} \sigma_X^2 & \rho \sigma_X \sigma_Y \\ \rho \sigma_X \sigma_Y & \sigma_Y^2 \end{pmatrix}$$</div>
-            <p style="font-size:.82rem; color:var(--muted); margin:0;">Conditional distribution: $Y \mid X=x \sim \mathcal{N}\left(\mu_Y + \rho\frac{\sigma_Y}{\sigma_X}(x - \mu_X),\, \sigma_Y^2(1 - \rho^2)\right)$.</p>
+            <h3 class="dist-name">Bivariate Normal: $\mathcal{N}_2(\boldsymbol{\mu}, \boldsymbol{\Sigma})$</h3>
+            <div class="math-block">$$\boldsymbol{\Sigma} = \begin{pmatrix} \sigma_X^2 & \rho \sigma_X \sigma_Y \\ \rho \sigma_X \sigma_Y & \sigma_Y^2 \end{pmatrix}$$</div>
+            <p>Conditional distribution: $Y \mid X=x \sim \mathcal{N}\left(\mu_Y + \rho\frac{\sigma_Y}{\sigma_X}(x - \mu_X),\, \sigma_Y^2(1 - \rho^2)\right)$.</p>
           </div>
         </div>
       </section>
 
-      <!-- Section 4: Variable Transformations -->
-      <section>
-        <h2>Random Variable Transformations & The Jacobian Method</h2>
-        
+<section><h2>Joint, Marginal &amp; Conditional Distributions</h2>
+
+<p>A joint distribution describes random variables together. For an absolutely continuous pair $(X,Y)$, the marginal density integrates out the other variable:</p>
+<div class="math-block">$$f_X(x)=\int_{-\infty}^{\infty}f_{X,Y}(x,y)\,dy.$$</div>
+<p>Where $f_X(x)&gt;0$, the conditional density is:</p>
+<div class="math-block">$$f_{Y\mid X}(y\mid x)=\frac{f_{X,Y}(x,y)}{f_X(x)}.$$</div>
+<p>For discrete variables, replace densities with probability masses and integrals with sums. Independence means that the joint distribution factorises; when densities exist, $f_{X,Y}(x,y)=f_X(x)f_Y(y)$ almost everywhere. Then conditioning on $X$ leaves the distribution of $Y$ unchanged.</p>
+
+</section>
+
+<section>
+        <h2>Distribution Transformations</h2>
+
         <h3>The 1D Change-of-Variables Formula</h3>
         <p>
           Let $X$ be a continuous random variable with PDF $f_X(x)$, and let $Y = g(X)$ where $g: \mathbb{R} \to \mathbb{R}$ is strictly monotonic and continuously differentiable on the support of $X$, with $g'(x)\ne0$ in its interior. The PDF of $Y$ is given by:
@@ -310,9 +187,9 @@
         </div>
 
         <div class="proof-card">
-          <div class="proof-title">Application 1 • Linear Transformation of the Gaussian Distribution</div>
+          <div class="proof-title">Affine Transformation of a Normal Variable</div>
           <p>Let $X \sim \mathcal{N}(\mu, \sigma^2)$ and let $Y = aX + b$ with $a \ne 0$.</p>
-          <p style="font-size:.85rem; color:var(--muted); line-height:1.5; margin:0;">
+          <p>
             <strong>Derivation:</strong> Here $g(x) = ax + b$, so $x = g^{-1}(y) = \frac{y - b}{a}$. The Jacobian derivative is $\frac{d}{dy}g^{-1}(y) = \frac{1}{a}$. Applying the transformation formula:
             $$f_Y(y) = \frac{1}{\sigma \sqrt{2\pi}} \exp\left( -\frac{\left(\frac{y - b}{a} - \mu\right)^2}{2\sigma^2} \right) \cdot \left|\frac{1}{a}\right| = \frac{1}{|a|\sigma \sqrt{2\pi}} \exp\left( -\frac{(y - (a\mu + b))^2}{2 a^2 \sigma^2} \right)$$
             This confirms analytically that $Y \sim \mathcal{N}(a\mu + b, \, a^2\sigma^2)$. $\blacksquare$
@@ -320,11 +197,11 @@
         </div>
 
         <div class="proof-card">
-          <div class="proof-title">Application 2 • Log-Transformation & Derivation of the Gumbel Distribution</div>
+          <div class="proof-title">Log Transformation &amp; the Gumbel Distribution</div>
           <p>
             Let $X \sim \text{Exp}(1)$ with PDF $f_X(x) = e^{-x}$ ($x > 0$) and consider the transformation $Y = -\ln(X)$.
           </p>
-          <p style="font-size:.85rem; color:var(--muted); line-height:1.5; margin:0;">
+          <p>
             <strong>Derivation:</strong> The mapping $g(x) = -\ln(x)$ is strictly decreasing. Its inverse is $x = g^{-1}(y) = e^{-y}$ with derivative $\frac{dx}{dy} = -e^{-y}$. The Jacobian is $|-e^{-y}| = e^{-y}$.<br><br>
             Applying the change-of-variables theorem:
             $$f_Y(y) = f_X(e^{-y}) \cdot \left| -e^{-y} \right| = e^{-e^{-y}} \cdot e^{-y} = \exp\left( -y - e^{-y} \right), \quad y \in \mathbb{R}$$
@@ -334,47 +211,9 @@
           </p>
         </div>
       </section>
-
-
-      <section class="worked-example" aria-labelledby="waiting-example">
-        <p class="example-label">Worked example · From density to probability</p>
-        <h2 id="waiting-example">How long until the next arrival?</h2>
-        <p>In a simplified model, arrivals follow a homogeneous Poisson process at a rate of $\lambda=0.2$ per minute. The waiting time is $T\sim\mathrm{Exp}(0.2)$. This assumes a constant arrival rate and independent increments; it is an illustrative model, not observed queue data.</p>
-        <p>The chance of an arrival within five minutes is the area under the density from 0 to 5, or equivalently the CDF at 5:</p>
-        <div class="math-block">$$\mathbb{P}(T\le5)=F_T(5)=1-e^{-0.2\times5}=1-e^{-1}\approx0.6321.$$</div>
-        <figure class="figure-card">
-          <img src="../../assets/plots/statistics-exponential-wait.svg" alt="Exponential waiting time with rate 0.2 per minute: density decreases from 0.2, shaded area from zero to five minutes is 0.6321; the CDF reaches 0.6321 at five minutes." loading="lazy" width="1040" height="420">
-          <figcaption>The same probability shown as an area (left) and a cumulative value (right). Curves are calculated from an exponential model with rate 0.2 per minute.</figcaption>
-        </figure>
-        <div class="table-wrap">
-          <table>
-            <caption>Three summaries of the same waiting-time distribution</caption>
-            <thead><tr><th scope="col">Quantity</th><th scope="col">Calculation</th><th scope="col">Minutes</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">Mean</th><td>$1/\lambda$</td><td>5.00</td></tr>
-              <tr><th scope="row">Median</th><td>$\ln(2)/\lambda$</td><td>3.47</td></tr>
-              <tr><th scope="row">90th percentile</th><td>$-\ln(0.10)/\lambda$</td><td>11.51</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="takeaway"><strong>Remember:</strong> Density height is not a probability. Here $f_T(5)\approx0.0736$ per minute, while $\mathbb{P}(T=5)=0$ and $\mathbb{P}(T\le5)\approx63.2\%$.</p>
-      </section>
-
-      <nav class="page-nav">
-        <a class="page-nav-link" href="probability-theory.html">
-          <span class="page-nav-sub">← Previous Topic</span>
-          <span class="page-nav-title">Basic Probability Theory</span>
-        </a>
-        <a class="page-nav-link next" href="statistical-operators.html">
-          <span class="page-nav-sub">Next Topic →</span>
-          <span class="page-nav-title">Statistical Operators & Covariance</span>
-        </a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="shell">
-    <p>Gabriele Antonini / Statistics Notes / 2026</p>
-  </footer>
+<nav class="page-nav"><a class="page-nav-link" href="probability-theory.html"><span class="page-nav-sub">← Previous Topic</span><span class="page-nav-title">Probability &amp; Events</span></a>
+<a class="page-nav-link next" href="statistical-operators.html"><span class="page-nav-sub">Next Topic →</span><span class="page-nav-title">Expectation, Variance &amp; Dependence</span></a></nav>
+</article></main>
+<footer class="shell"><p>Quant Notebook / Probability &amp; Statistics</p></footer>
 </body>
 </html>

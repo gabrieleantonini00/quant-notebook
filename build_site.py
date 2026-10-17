@@ -15,7 +15,7 @@ import re
 BASE_DIR = Path(__file__).resolve().parent
 NOTES_DIR = BASE_DIR / 'notes'
 DOMAINS = {
-    'statistics': ('Statistics', 'Probability, distributions, inference, ANOVA, and multiple testing.'),
+    'statistics': ('Probability & Statistics', 'Probability, random variables, estimation, hypothesis testing, ANOVA, and multiple testing.'),
     'econometrics': ('Econometrics', 'Cross-sectional regression, pooled samples, panel data, time series, and spatial dependence.'),
     'learning': ('Statistical Learning', 'Learning from data and evaluating predictions.'),
     'nlp': ('Natural Language Processing', 'Text representations, topic models, and language models.'),
@@ -35,11 +35,7 @@ LEARNING_CATEGORY_PATHS = {
     'classification': ['Supervised Learning', 'Classification'],
     'supervised-learning': ['Supervised Learning'],
 }
-STATISTICS_CATEGORY_PATHS = {
-    'parametric-inference.html': ['Statistical Inference'],
-    'anova.html': ['Statistical Inference'],
-    'multiple-hypothesis-testing.html': ['Statistical Inference'],
-}
+STATISTICS_CATEGORY_PATHS = {}
 ECONOMETRICS_CATEGORY_PATHS = {
     'cross-sectional': ['Cross-Sectional'],
     'pooled-cross-sections': ['Pooled Cross-Sections'],
@@ -118,9 +114,13 @@ def style_note(path):
     # The pinned local KaTeX assets also work without an internet connection.
     if (BASE_DIR/'assets/vendor/katex/katex.min.js').exists():
         text = text.replace('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',prefix+'assets/vendor/katex/')
-    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp'):
+    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp', 'statistics'):
         # Version shared notebook assets so published pages pick up editorial changes.
-        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/notes.js',
+        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/notes.js',
+                      'assets/plots/statistics-discrete-cdf.svg', 'assets/plots/statistics-continuous-cdf.svg',
+                      'assets/plots/statistics-clt-standardized.svg', 'assets/plots/statistics-clt-standardized-mobile.svg',
+                      'assets/plots/statistics-two-sided-test.svg', 'assets/plots/statistics-anova-variation.svg',
+                      'assets/plots/statistics-multiple-testing-thresholds.svg',
                       'assets/plots/finance-var-es-tail.svg', 'assets/plots/nlp-llm-parameters.svg',
                       'assets/plots/nlp-cbow-network.svg', 'assets/plots/nlp-cbow-network-mobile.svg',
                       'assets/plots/nlp-transformer-architecture.svg', 'assets/plots/nlp-transformer-architecture-mobile.svg'):

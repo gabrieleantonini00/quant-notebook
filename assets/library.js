@@ -41,8 +41,9 @@
   const summaries = {
     'probability-theory':    'Set calculus, De Morgan laws, Kolmogorov axioms, conditional probability, and Bayes\u2019 theorem.',
     'random-variables':      'CDF, PMF, PDF, quantiles, discrete & continuous distributions, and the Jacobian transformation method.',
-    'statistical-operators': 'Expectation, variance, covariance, correlation, and bivariate portfolio shortfall risk.',
-    'parametric-inference':  'Bias, consistency, efficiency, Method of Moments, Maximum Likelihood, and asymptotic CLT tests.',
+    'statistical-operators': 'Expectation, variance, covariance, dependence, conditional expectation, total variance, and portfolio moments.',
+    'parametric-inference':  'Estimator properties, method of moments, maximum likelihood, consistency, and asymptotic distributions.',
+    'hypothesis-testing':    'Hypotheses, power, Wald tests, p-values, confidence intervals, and exact versus asymptotic inference.',
     'anova':                 'Compare several group means using between- and within-group variation and the F test.',
     'multiple-hypothesis-testing': 'Control false discoveries across many tests with FWER, FDP, and FDR procedures.',
     'model-evaluation':      'Confusion matrices, precision-recall asymmetric trade-offs, F1-score, and the class imbalance paradox.',
@@ -59,12 +60,13 @@
   };
 
   const titles = {
-    'probability-theory':    'Probability and events',
-    'random-variables':      'Random variables',
-    'statistical-operators': 'Expectation and variance',
-    'parametric-inference':  'Estimation and hypothesis testing',
+    'probability-theory':    'Probability & Events',
+    'random-variables':      'Random Variables & Distributions',
+    'statistical-operators': 'Expectation, Variance & Dependence',
+    'parametric-inference':  'Point Estimation',
+    'hypothesis-testing':    'Hypothesis Testing & Confidence Intervals',
     'anova':                 'ANOVA',
-    'multiple-hypothesis-testing': 'Multiple hypothesis testing',
+    'multiple-hypothesis-testing': 'Multiple Hypothesis Testing',
     'model-evaluation':      'Model evaluation',
     'explainable-ai':        'Explainable AI (XAI)',
     'bag-of-words':          'Bag of Words',

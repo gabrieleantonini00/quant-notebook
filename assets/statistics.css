@@ -1,0 +1,41 @@
+/* Statistics notebooks share the editorial palette and section navigation. */
+.statistics-note :is(.dist-grid, .inference-grid) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin: 24px 0;
+}
+.statistics-note :is(.dist-card, .inference-card) { min-width: 0; padding: 22px 0; }
+.statistics-note :is(.dist-name, .inference-title) {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0 0 14px;
+}
+.statistics-note :is(.dist-tag, .finance-tag) { display: none; }
+.statistics-note :is(.proof-title, .callout-title) { font-style: normal; }
+.statistics-note .proof-card { border-left-color: var(--line-strong); }
+.statistics-note .axiom-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.statistics-note .axiom-card { padding: 18px 0; }
+.statistics-note .axiom-num {
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--editorial-accent);
+}
+.statistics-note .axiom-body { font-size: 16px; }
+.statistics-note .figure-card { margin: 30px 0; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.statistics-note .figure-card picture { display: block; }
+.statistics-note .distribution-comparison { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.statistics-note .distribution-comparison img { max-width: 620px; margin-inline: auto; }
+.statistics-note .distribution-comparison .figure-card { margin: 0; }
+.statistics-note .finance-box { padding: 0; border: 0; background: transparent; }
+@media (max-width: 680px) {
+  .statistics-note .nav-tag { display: none; }
+  .statistics-note .nav-back { font-size: 12px; }
+  .statistics-note :is(.dist-name, .inference-title) { font-size: 20px; }
+  .statistics-note .clt-figure img { max-width: 420px; margin-inline: auto; }
+}

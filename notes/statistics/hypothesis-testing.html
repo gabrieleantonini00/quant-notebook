@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="order" content="5">
+  <meta name="description" content="Hypotheses, error rates, power, Wald tests, p-values, confidence intervals, and exact versus asymptotic inference.">
+  <title>Hypothesis Testing &amp; Confidence Intervals | Quant Notebook</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
+  <link rel="stylesheet" href="../../assets/editorial-notes.css?v=63d56bf18ad5">
+  <link rel="stylesheet" href="../../assets/statistics.css?v=e29a8da9caf1">
+  <script src="../../assets/notes.js?v=17d1a6aa5d18" defer></script>
+</head>
+<body class="note-page editorial-note statistics-note">
+  <a class="skip-link" href="#note-content">Skip to article</a>
+  <header class="topbar"><div class="shell topbar-inner">
+    <a class="nav-back" href="../../index.html#statistics">← Probability &amp; Statistics</a>
+    <span class="nav-tag">Probability &amp; Statistics</span>
+  </div></header>
+  <main class="shell" id="note-content"><article>
+    <header class="article-header">
+      <div class="meta-eyebrow">Probability &amp; Statistics</div>
+      <h1>Hypothesis Testing &amp; Confidence Intervals</h1>
+    </header>
+<section><h2>Hypotheses, Size &amp; Power</h2>
+
+<p>A test specifies a null hypothesis $H_0$ and an alternative $H_1$ before observing the decision statistic. A level-$\alpha$ test controls the probability of rejecting a true null:</p>
+<div class="math-block">$$\sup_{\theta\in\Theta_0}P_\theta(\text{reject }H_0)\le\alpha.$$</div>
+<p>A Type I error rejects a true null; a Type II error fails to reject a false null. Power is $P_\theta(\text{reject }H_0)$ under an alternative and generally depends on the effect size, sampling variability and sample size. Failing to reject does not establish that the null is true.</p>
+
+</section>
+
+<section><h2>Test Statistics</h2>
+
+<p>For $H_0:\theta=\theta_0$ against $H_1:\theta\ne\theta_0$, an asymptotically normal estimator and a consistent standard error give the standardised Wald statistic:</p>
+<div class="math-block">$$W=\frac{\hat\theta-\theta_0}{\widehat{\operatorname{SE}}(\hat\theta)}\xrightarrow{d}\mathcal N(0,1)\quad\text{under }H_0.$$</div>
+<p>Here $z_p=\Phi^{-1}(p)$, where $\Phi$ is the standard normal CDF. The two-sided rejection rule is $|W|&gt;z_{1-\alpha/2}$. For a one-sided upper alternative, use $W&gt;z_{1-\alpha}$; the direction must be specified in advance.</p>
+
+</section>
+
+<section><h2>p-Values &amp; Decisions</h2>
+
+<p>A $p$-value is the probability, under the null model, of a statistic at least as extreme as the observed one in the direction specified by the alternative. For the two-sided normal approximation:</p>
+<div class="math-block">$$p=2\left[1-\Phi\!\left(|W_{\mathrm{obs}}|\right)\right].$$</div>
+<p>Reject at level $\alpha$ when $p\le\alpha$. This is not the posterior probability of $H_0$, and statistical significance does not measure the size or practical importance of an effect.</p>
+<figure class="figure-card">
+            <img src="../../assets/plots/statistics-two-sided-test.svg?v=64166a2f3df4" alt="Two standard normal density plots. The top colors both tails beyond minus and plus 1.96, each with area 0.0250. The bottom colors both tails beyond minus and plus 2.15, each with area about 0.0158." loading="lazy" width="837" height="664">
+            <figcaption>Each colored region follows the normal density from its marked cutoff outward. Because $2.15 > 1.96$, the observed two-sided $p$-value is $0.0316 < 0.05$, so the test rejects $H_0$ at the 5% level.</figcaption>
+          </figure>
+</section>
+
+<section><h2>Confidence Intervals</h2>
+
+<p>Inverting the two-sided Wald test gives an asymptotic $(1-\alpha)$ confidence interval:</p>
+<div class="math-block">$$\hat\theta\pm z_{1-\alpha/2}\,\widehat{\operatorname{SE}}(\hat\theta).$$</div>
+<p>The procedure covers the fixed true parameter in a proportion approaching $1-\alpha$ of repeated samples under its assumptions. It does not assign probability $1-\alpha$ to the parameter lying in a particular realised interval. A value excluded by the interval is rejected by the corresponding two-sided test.</p>
+
+</section>
+
+<section><h2>Exact &amp; Asymptotic Inference</h2>
+
+<p>For $n\ge2$ i.i.d. normal observations with $\sigma^2&gt;0$, the standardised sample mean has an exact normal distribution when $\sigma$ is known, and an exact Student $t$ distribution when it is estimated by the sample standard deviation $S$:</p>
+<div class="math-block">$$Z=\frac{\bar X-\mu_0}{\sigma/\sqrt n}\sim\mathcal N(0,1),\qquad T=\frac{\bar X-\mu_0}{S/\sqrt n}\sim t_{n-1}\quad\text{under }H_0.$$</div>
+<p>With unknown variance, the corresponding exact normal-sample interval is $\bar X\pm t_{n-1,1-\alpha/2}S/\sqrt n$. Without normality, finite positive variance and the CLT can justify a large-sample normal approximation. There is no universal sample-size threshold that guarantees its accuracy.</p>
+<p>See <a href="parametric-inference.html">Point Estimation</a> for consistency, the CLT and Slutsky's theorem.</p>
+
+</section>
+<nav class="page-nav"><a class="page-nav-link" href="parametric-inference.html"><span class="page-nav-sub">← Previous Topic</span><span class="page-nav-title">Point Estimation</span></a>
+<a class="page-nav-link next" href="anova.html"><span class="page-nav-sub">Next Topic →</span><span class="page-nav-title">ANOVA</span></a></nav>
+</article></main>
+<footer class="shell"><p>Quant Notebook / Probability &amp; Statistics</p></footer>
+</body>
+</html>
