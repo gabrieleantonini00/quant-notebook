@@ -44,37 +44,37 @@ assert all(model['total'] > 0 and
 
 plt.rcParams.update({
     'font.family': 'Segoe UI',
-    'font.size': 10.5,
-    'axes.titlesize': 15,
-    'axes.labelsize': 10.5,
+    'font.size': 15.75,
+    'axes.titlesize': 22.5,
+    'axes.labelsize': 15.75,
     'axes.spines.top': False,
     'axes.spines.right': False,
     'axes.spines.left': False,
-    'axes.edgecolor': '#cbd5e1',
-    'axes.labelcolor': '#334155',
-    'text.color': '#0f172a',
-    'xtick.color': '#64748b',
-    'ytick.color': '#334155',
-    'figure.facecolor': 'white',
-    'axes.facecolor': 'white',
+    'axes.edgecolor': '#bcb4a5',
+    'axes.labelcolor': '#3e4e5f',
+    'text.color': '#182b42',
+    'xtick.color': '#626d77',
+    'ytick.color': '#3e4e5f',
+    'figure.facecolor': '#f6f2e9',
+    'axes.facecolor': '#f6f2e9',
     'svg.fonttype': 'none',
     'svg.hashsalt': 'nlp-llm-parameters',
 })
 
-fig, ax = plt.subplots(figsize=(9.2, 6.35), layout='constrained')
+fig, ax = plt.subplots(figsize=(9.2, 8.4), layout='constrained')
 ax.set_xscale('log')
 ax.set_xlim(1, 950)
 ax.set_ylim(-0.7, len(MODELS) - 0.3)
 ax.set_xticks([1, 10, 100])
 ax.set_xticklabels(['1B', '10B', '100B'])
-ax.grid(axis='x', color='#e2e8f0', linewidth=0.85, which='major')
+ax.grid(axis='x', color='#dcd6ca', linewidth=0.85, which='major')
 ax.tick_params(axis='y', length=0, pad=12)
 ax.set_xlabel('Parameters (billions, log scale)', labelpad=10)
-ax.set_title('How large are published language models?', loc='left', pad=30, fontweight='semibold')
+ax.set_title('Published LLM parameter counts', loc='left', pad=42, fontweight='semibold')
 
-dense_color = '#334e68'
-active_color = '#25877f'
-total_color = '#54459b'
+dense_color = '#182b42'
+active_color = '#86623f'
+total_color = '#182b42'
 ys = list(reversed(range(len(MODELS))))
 ax.set_yticks(ys)
 ax.set_yticklabels([f"{model['year']}   {model['name']}" for model in MODELS])
@@ -82,26 +82,26 @@ ax.set_yticklabels([f"{model['year']}   {model['name']}" for model in MODELS])
 for y, model in zip(ys, MODELS):
     total = model['total']
     active = model['active']
-    ax.axhline(y, color='#f1f5f9', linewidth=0.8, zorder=0)
+    ax.axhline(y, color='#e9e3d8', linewidth=0.8, zorder=0)
     if active is None:
         ax.scatter(total, y, s=105, color=dense_color, zorder=3)
         ax.annotate(f'{total:g}B', (total, y), xytext=(9, 0), textcoords='offset points',
-                    va='center', color=dense_color, fontsize=9.5)
+                    va='center', color=dense_color, fontsize=14.25)
     else:
-        ax.plot([active, total], [y, y], color='#c4bce2', linewidth=3, solid_capstyle='round', zorder=1)
+        ax.plot([active, total], [y, y], color='#bcb4a5', linewidth=3, solid_capstyle='round', zorder=1)
         ax.scatter(active, y, s=92, color=active_color, zorder=3)
-        ax.scatter(total, y, s=92, color=total_color, zorder=3)
-        ax.annotate(f'{active:g} active  /  {total:g} total', (total, y),
+        ax.scatter(total, y, s=110, marker='D', facecolors='#f6f2e9', edgecolors=total_color, linewidths=1.6, zorder=3)
+        ax.annotate(f'{active:g} / {total:g}B', (total, y),
                     xytext=(9, 0), textcoords='offset points', va='center',
-                    color='#4b5563', fontsize=9.1)
+                    color='#626d77', fontsize=13.65)
 
 legend = [
-    Line2D([0], [0], marker='o', linestyle='none', color=dense_color, label='Dense: total = active', markersize=8),
-    Line2D([0], [0], marker='o', linestyle='none', color=active_color, label='MoE: active per token', markersize=8),
-    Line2D([0], [0], marker='o', linestyle='none', color=total_color, label='MoE: total', markersize=8),
+    Line2D([0], [0], marker='o', linestyle='none', color=dense_color, label='Dense', markersize=8),
+    Line2D([0], [0], marker='o', linestyle='none', color=active_color, label='MoE active', markersize=8),
+    Line2D([0], [0], marker='D', linestyle='none', markerfacecolor='#f6f2e9', color=total_color, label='MoE total', markersize=8),
 ]
-ax.legend(handles=legend, loc='upper left', bbox_to_anchor=(0, 1.04),
-          ncol=3, frameon=False, fontsize=9.1, handletextpad=0.4, columnspacing=1.1)
+ax.legend(handles=legend, loc='upper left', bbox_to_anchor=(0, 1.06),
+          ncol=3, frameon=False, fontsize=13.65, handletextpad=0.4, columnspacing=1.1)
 
 output = Path(__file__).resolve().parent
 qa = ROOT / '.qa'
@@ -110,6 +110,9 @@ sources = '\n'.join(f"{m['year']} {m['name']}: {m['source']}" for m in MODELS)
 fig.savefig(output / 'nlp-llm-parameters.svg',
             metadata={'Date': None, 'Description': 'Official sources:\n' + sources},
             bbox_inches='tight')
+svg = output / 'nlp-llm-parameters.svg'
+svg.write_text('\n'.join(line.rstrip() for line in svg.read_text(encoding='utf-8').splitlines()) + '\n',
+               encoding='utf-8')
 fig.savefig(qa / 'nlp-llm-parameters.png', dpi=160, bbox_inches='tight')
 plt.close(fig)
 print('Generated selected LLM parameter comparison from published counts.')

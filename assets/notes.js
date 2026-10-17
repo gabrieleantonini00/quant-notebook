@@ -6,7 +6,7 @@
   progress.setAttribute('aria-hidden', 'true');
   document.body.prepend(progress);
   const headings = [...article.querySelectorAll('h2')];
-  const isFinance = document.body.classList.contains('finance-note');
+  const hasEditorialLayout = document.body.classList.contains('editorial-note');
   const contents = document.createElement('details');
   contents.className = 'article-contents';
   const summary = document.createElement('summary');
@@ -24,7 +24,7 @@
   const header = article.querySelector('.article-header');
   if (headings.length > 1 && header) {
     contents.append(summary, nav);
-    if (!isFinance) {
+    if (!hasEditorialLayout) {
       const print = document.createElement('button');
       print.className = 'contents-print';
       print.type = 'button';
@@ -33,15 +33,15 @@
       contents.append(print);
     }
     header.after(contents);
-    if (!isFinance) nav.addEventListener('click', event => {
+    if (!hasEditorialLayout) nav.addEventListener('click', event => {
       if (event.target.closest('a')) contents.open = false;
     });
   }
   let updateSections = () => {};
-  if (isFinance && headings.length > 1 && header) {
+  if (hasEditorialLayout && headings.length > 1 && header) {
     document.body.classList.add('has-section-nav');
     contents.open = true;
-    contents.classList.add('finance-contents');
+    contents.classList.add('editorial-contents');
     const dock = document.createElement('aside');
     dock.className = 'sections-dock';
     dock.hidden = true;

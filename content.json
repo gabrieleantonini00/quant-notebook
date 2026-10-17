@@ -384,13 +384,13 @@
     "description": "Text representations, topic models, and language models.",
     "sections": [
       {
-        "title": "Bag of Words (BoW)",
+        "title": "Bag of Words",
         "summary": "Bag of Words (BoW), Term-Document Matrices, TF-IDF, and Vector Space Models in Natural Language Processing.",
         "topics": [
-          "Core Concept & Formal Definition",
-          "The Term-Document Matrix ($A$)",
-          "Weighting Schemes: Raw Counts vs. TF-IDF",
-          "Fundamental Limitations of Bag of Words"
+          "Definition",
+          "Term-Document Matrix",
+          "TF-IDF Weighting",
+          "Limitations"
         ],
         "link": "notes/nlp/bag-of-words.html",
         "reading_minutes": 3,
@@ -402,10 +402,11 @@
         "summary": "Latent Semantic Analysis (LSA) via SVD and Latent Dirichlet Allocation (LDA) via Bayesian Inference and Dirichlet Priors.",
         "topics": [
           "Latent Semantic Analysis (LSA)",
-          "Latent Dirichlet Allocation (LDA)"
+          "Latent Dirichlet Allocation (LDA)",
+          "Posterior Inference"
         ],
         "link": "notes/nlp/lsa-lda.html",
-        "reading_minutes": 4,
+        "reading_minutes": 3,
         "order": 2,
         "category_path": []
       },
@@ -413,13 +414,13 @@
         "title": "Embeddings & Word2Vec",
         "summary": "Word Embeddings and Word2Vec: Continuous Bag of Words (CBOW), Skip-Gram, Weight Matrices, and Softmax Prediction.",
         "topics": [
-          "From Discrete to Distributed Representations",
-          "Continuous Bag of Words (CBOW) Architecture",
-          "CBOW vs. Skip-Gram",
-          "Semantic Geometry & Vector Arithmetic"
+          "Word Embeddings",
+          "Continuous Bag of Words (CBOW)",
+          "CBOW and Skip-Gram",
+          "Vector Geometry"
         ],
         "link": "notes/nlp/embeddings-word2vec.html",
-        "reading_minutes": 4,
+        "reading_minutes": 3,
         "order": 3,
         "category_path": []
       },
@@ -427,10 +428,11 @@
         "title": "Transformers & BERT",
         "summary": "Transformers and BERT Architecture: Self-Attention, Scaled Dot-Product, Positional Encodings, Cross-Attention, and Bidirectional Pre-training.",
         "topics": [
-          "The Transformer Architecture (Vaswani et al., 2017)",
-          "The Encoder Block",
-          "The Decoder Block & Model Head",
-          "BERT (Devlin et al., 2018)"
+          "Transformer Architecture",
+          "Encoder Blocks",
+          "Decoder Blocks",
+          "BERT",
+          "References"
         ],
         "link": "notes/nlp/transformers.html",
         "reading_minutes": 4,
@@ -438,19 +440,19 @@
         "category_path": []
       },
       {
-        "title": "Large Language Models (LLMs)",
+        "title": "Large Language Models",
         "summary": "How large language models generate tokens, how parameter counts compare across 2019–2026 models, how assistants are trained, and what agent harnesses add.",
         "topics": [
-          "From text to the next token",
-          "How many parameters do LLMs have?",
-          "How a language model becomes an assistant",
-          "Adapting a model to a task",
-          "Agents and their harnesses",
-          "Limits and checks",
-          "Reading"
+          "Tokenization and Generation",
+          "Dense and Mixture-of-Experts Models",
+          "Pretraining and Post-Training",
+          "Task Adaptation",
+          "Agents and Harnesses",
+          "Evaluation",
+          "References"
         ],
         "link": "notes/nlp/llms.html",
-        "reading_minutes": 6,
+        "reading_minutes": 5,
         "order": 5,
         "category_path": []
       }

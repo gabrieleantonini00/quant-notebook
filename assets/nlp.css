@@ -1,0 +1,37 @@
+/* NLP diagrams use the shared paper, ink, and bronze notebook palette. */
+.nlp-note h3 { font-size: 22px; }
+.nlp-note .schema-card { border-top: 0; padding: 0; margin: 28px 0; }
+.nlp-note .schema-card > h3:first-child { margin-top: 0; }
+.nlp-note .layer-step {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 24px;
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+  align-items: baseline;
+}
+.nlp-note .layer-step > div { min-width: 0; }
+.nlp-note .layer-step .math-block { margin: 18px 0 8px; }
+.nlp-note .layer-name { color: var(--editorial-accent); font-size: 13px; font-weight: 500; }
+.nlp-note .variable-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 28px;
+  margin: 20px 0 30px;
+}
+.nlp-note .variable-item { min-width: 0; border-top: 1px solid var(--line); padding: 15px 0; font-size: 15px; }
+.nlp-note .variable-symbol { color: var(--editorial-accent); }
+.nlp-note .llm-chart-scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+.nlp-note .llm-chart-scroll img { width: 100%; min-width: 820px; max-width: none; height: auto; }
+.nlp-note .execution-cycle { padding-left: 24px; }
+.nlp-note .execution-cycle li { padding: 10px 0 10px 6px; border-top: 1px solid var(--line); }
+.nlp-note .execution-cycle li::marker { color: var(--editorial-accent); font-variant-numeric: tabular-nums; }
+.nlp-note .references-list { list-style: none; padding-left: 0; font-size: 14px; }
+.nlp-note .references-list li { padding: 16px 0; border-top: 1px solid var(--line); }
+
+@media (max-width: 680px) {
+  .nlp-note .nav-back { max-width: calc(100% - 110px); font-size: 12px; line-height: 1.5; }
+  .nlp-note .nav-tag { max-width: 94px; font-size: 9px; }
+  .nlp-note .layer-step { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .nlp-note .variable-grid { grid-template-columns: minmax(0, 1fr); }
+}
