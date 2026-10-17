@@ -9,7 +9,7 @@
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
   <link rel="stylesheet" href="../../assets/editorial-notes.css?v=63d56bf18ad5">
-  <link rel="stylesheet" href="../../assets/spatial.css?v=65197e6416a5">
+  <link rel="stylesheet" href="../../assets/spatial.css?v=7f82d52d9210">
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
   <script defer src="../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
@@ -125,6 +125,40 @@
         <h3>Instrumental Variables</h3>
         <p>$WX$ and $W^2X$ can provide instruments for $Wy$ when they are exogenous, relevant and satisfy the exclusion restrictions. In SDM, included $WX$ columns are regressors, so those same columns cannot serve as excluded instruments. Higher-order spatial lags still need a defensible exclusion argument and sufficient strength.</p>
         <p>Geographical weights are not automatically exogenous. Check sensitivity to plausible neighbour definitions, normalisation and isolated locations. Residual spatial correlation can flag a misspecification, but alone does not distinguish outcome dependence from covariate spillovers or correlated shocks.</p>
+      </section>
+      <section>
+        <h2 id="choosing-a-model">Choosing a Model</h2>
+        <p>Choose the dependence channel that matches the economic mechanism. The examples use the housing-market setting of the diagrams.</p>
+        <div class="table-wrap model-comparison-wrap">
+          <table class="model-comparison" role="table" aria-label="When to consider SAR, SLX, SEM or SDM">
+            <thead role="rowgroup">
+              <tr role="row"><th scope="col" role="columnheader">Model</th><th scope="col" role="columnheader">Consider when</th><th scope="col" role="columnheader">Housing example</th></tr>
+            </thead>
+            <tbody role="rowgroup">
+              <tr role="row">
+                <th scope="row" role="rowheader"><span class="model-name">SAR</span><span class="model-channel">Outcome interaction</span></th>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Consider when</span>Outcomes interact across locations, with feedback as part of the economic mechanism.</td>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Housing example</span>House prices in B enter the price equation for A. A response in A can feed back to B.</td>
+              </tr>
+              <tr role="row">
+                <th scope="row" role="rowheader"><span class="model-name">SLX</span><span class="model-channel">Covariate spillovers</span></th>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Consider when</span>Observed characteristics of neighbours matter, without an outcome-feedback channel.</td>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Housing example</span>Better transport or parks in B affect house prices in A, without prices themselves interacting.</td>
+              </tr>
+              <tr role="row">
+                <th scope="row" role="rowheader"><span class="model-name">SEM</span><span class="model-channel">Spatial errors</span></th>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Consider when</span>Dependence lies in unobserved shocks, while the local conditional-mean specification and covariate exogeneity remain defensible.</td>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Housing example</span>Unobserved local conditions make nearby price residuals move together. No price-to-price response is specified.</td>
+              </tr>
+              <tr role="row">
+                <th scope="row" role="rowheader"><span class="model-name">SDM</span><span class="model-channel">Outcomes + covariates</span></th>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Consider when</span>Both neighbouring outcomes and neighbouring characteristics plausibly matter.</td>
+                <td role="cell"><span class="comparison-label" aria-hidden="true">Housing example</span>Prices in A respond to nearby prices and to services in B. Outcome feedback can propagate both effects.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Spatial correlation alone does not distinguish these channels. Assess the mechanism, the choice of $W$, covariate exogeneity and remaining residual dependence. SEM does not repair omitted-variable bias when the omitted factors correlate with $X$.</p>
       </section>
     </article>
   </main>

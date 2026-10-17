@@ -319,10 +319,11 @@
           "Error Dependence (SEM)",
           "Combined Dependence (SDM)",
           "Direct & Indirect Effects",
-          "Estimation"
+          "Estimation",
+          "Choosing a Model"
         ],
         "link": "notes/econometrics/spatial-econometrics.html",
-        "reading_minutes": 5,
+        "reading_minutes": 6,
         "order": 50,
         "category_path": []
       }

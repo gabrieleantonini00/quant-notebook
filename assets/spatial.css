@@ -4,6 +4,25 @@ body.spatial-note { min-width: 0; }
 .spatial-note .figure-card { margin: 30px 0; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .spatial-note .figure-card picture { display: block; }
 .spatial-note .model-diagram img { max-width: 640px; margin-inline: auto; }
+.spatial-note .model-comparison { table-layout: fixed; min-width: 0; }
+.spatial-note .model-comparison th:first-child { width: 19%; }
+.spatial-note .model-comparison :is(th, td) { vertical-align: top; }
+.spatial-note .model-name { display: block; font-family: var(--serif); font-size: 22px; font-weight: 500; }
+.spatial-note .model-channel { display: block; margin-top: 5px; font-size: 12px; line-height: 1.5; color: var(--muted); font-weight: 400; }
+.spatial-note .comparison-label { display: none; }
 @media (max-width: 680px) {
   .spatial-note .figure-card img { max-width: 420px; margin-inline: auto; }
+  .spatial-note .model-comparison-wrap { overflow: visible; border: 0; }
+  .spatial-note .model-comparison { font-size: 15px; }
+  .spatial-note .model-comparison,
+  .spatial-note .model-comparison tbody { display: block; width: 100%; }
+  .spatial-note .model-comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .spatial-note .model-comparison tbody tr { display: block; padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .spatial-note .model-comparison tbody tr:first-child { border-top: 1px solid var(--line-strong); }
+  .spatial-note .model-comparison tbody :is(th, td) { display: block; width: auto; padding: 0; border: 0; background: transparent; }
+  .spatial-note .model-comparison tbody th:first-child { width: auto; }
+  .spatial-note .model-comparison tbody td { margin-top: 14px; }
+  .spatial-note .model-channel { display: inline; margin: 0 0 0 12px; font-size: 13px; }
+  .spatial-note .model-name { display: inline; }
+  .spatial-note .comparison-label { display: block; margin-bottom: 5px; color: var(--editorial-accent); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 }
