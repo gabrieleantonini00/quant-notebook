@@ -5,23 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Explainable artificial intelligence: local and global explanations, LIME, SHAP, integrated gradients, partial dependence, ICE, ALE, and counterfactuals.">
   <meta name="order" content="5">
-  <title>Explainable AI (XAI) | Supervised Learning</title>
+  <title>Explainable AI (XAI) | Quant Notebook</title>
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/site.css?v=44a5994a4911">
+  <link rel="stylesheet" href="../../../assets/editorial-notes.css?v=63d56bf18ad5">
+  <link rel="stylesheet" href="../../../assets/learning.css?v=a1d724468f38">
   <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
   <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
-  <script src="../../../assets/notes.js" defer></script>
-  <style>
-    .xai-plus { color: #0f766e; font-weight: 650; }
-    .xai-minus { color: #a16207; font-weight: 650; }
-  </style>
+  <script src="../../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
-<body class="note-page">
+<body class="note-page editorial-note learning-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
   <header class="topbar">
     <div class="shell topbar-inner">
-      <a class="nav-back" href="../../../index.html#learning/supervised-learning">← Back to Supervised Learning</a>
+      <a class="nav-back" href="../../../index.html#learning/supervised-learning">← Supervised Learning</a>
       <span class="nav-tag">Supervised Learning</span>
     </div>
   </header>
@@ -30,105 +28,80 @@
     <article>
       <header class="article-header">
         <div class="meta-eyebrow">Supervised Learning</div>
-        <h1>Explainable Artificial Intelligence (XAI)</h1>
-        <p class="article-lead">A guide to explaining what a trained model predicts: which inputs matter for one case, how predictions vary across cases, and what changes might alter a decision.</p>
+        <h1>Explainable AI (XAI)</h1>
       </header>
 
-      <section>
-        <h2>What does an explanation answer?</h2>
-        <p><strong>Intrinsic interpretability</strong> means the fitted model itself is understandable, as with a small decision tree or a sparse linear model. <strong>Post-hoc explainability</strong> studies a model after training, often by probing its outputs. A local explanation concerns one prediction; a global explanation summarizes behavior over many observations.</p>
-        <p>These are explanations of <em>model behavior</em>. They do not, on their own, show that an input causes an outcome, that a decision is fair, or that the model predicts well on new data. Check predictive performance first; then choose an explanation method for the question and audience. In high-stakes settings, an inherently interpretable model is also worth testing against a black box before relying on a post-hoc account.</p>
-        <div class="callout">
-          <div class="callout-title">Three useful questions</div>
-          <ul>
-            <li><strong>Local:</strong> Why did this applicant receive this model score?</li>
-            <li><strong>Global:</strong> How does the model's score tend to vary as debt burden changes?</li>
-            <li><strong>Alternative decision:</strong> Which feasible changes would cross the model's decision threshold?</li>
-          </ul>
-        </div>
-      </section>
+<section><h2>Explanation Scope</h2>
+<p>Let $f(x)$ be the scalar output being explained, such as a class score, probability or log-odds. <strong>Local</strong> methods describe one prediction; <strong>global</strong> methods summarise behaviour over a reference population. An intrinsically interpretable model exposes its fitted structure, while post-hoc methods analyse an already trained model.</p>
+<p>Explanations depend on the output scale and reference distribution. They describe model behaviour; causal effects, predictive performance and fairness require their own evidence.</p>
+</section>
 
-      <section>
-        <h2>Explaining one decision</h2>
-        <p>Suppose a toy model predicts approval with probability 45%, below its 50% decision threshold. LIME, SHAP, and a counterfactual answer different questions about this one application. The numbers below are constructed examples, not output from a fitted credit model.</p>
+<section><h2>Local Surrogate Models (LIME)</h2>
+<p>LIME approximates $f$ near the observation $x$ with an interpretable surrogate $g$. It balances local fit against model complexity:</p>
+<div class="math-block">$$g_x^*\in\arg\min_{g\in\mathcal G}\left\{L(f,g,\pi_x)+\Omega(g)\right\}.$$</div>
+<p>Here $\pi_x$ weights perturbed observations by proximity to $x$, $L$ measures weighted disagreement with the original model, and $\Omega$ penalises complexity. The surrogate can use an interpretable representation of the inputs.</p>
+<p>Coefficients describe the chosen neighbourhood. Their reliability depends on local fidelity, perturbation realism, kernel width and stability across repeated fits.</p>
+</section>
 
-        <h3>LIME · imitate the model nearby</h3>
-        <p><strong>LIME</strong> stands for <em>Local Interpretable Model-agnostic Explanations</em>. It makes many slight variations of this application, asks the original model to score them, and fits a simple surrogate model to those scores. Variations closer to the applicant receive more weight. If the surrogate gives debt burden a large negative coefficient, that describes the model's behavior <em>near this applicant</em>; it is not a rule for every applicant. The surrogate should reproduce the original model's nearby predictions, and its result depends on how realistic the generated variations are.</p>
+<section><h2>Additive Feature Attributions (SHAP)</h2>
+<p>SHAP allocates the difference between a reference output and $f(x)$ across the features. For a specified coalition value function $v_x(S)$, the Shapley attribution is:</p>
+<p>$v_x(S)$ averages the model output with features in $S$ fixed to their values in $x$, using the chosen rule for the remaining features.</p>
+<div class="math-block">$$\phi_j=\sum_{S\subseteq P\setminus\{j\}}\frac{|S|!(p-|S|-1)!}{p!}\left[v_x(S\cup\{j\})-v_x(S)\right],$$</div>
+<p>where $P=\{1,\ldots,p\}$. Each contribution averages the feature's incremental value over coalitions, with weights equivalent to averaging over feature orderings. When $v_x(P)=f(x)$, local accuracy gives:</p>
+<div class="math-block">$$f(x)=\phi_0+\sum_{j=1}^{p}\phi_j,\qquad \phi_0=v_x(\varnothing).$$</div>
+<p>The definition of a missing feature matters. Conditional expectations preserve feature dependence; marginal background substitutions answer a different question and can create unsupported combinations. Attributions inherit those choices and the chosen output scale. Log-odds contributions add before applying the sigmoid.</p>
+</section>
 
-        <h3>SHAP · divide the difference from a reference</h3>
-        <p><strong>SHAP</strong> stands for <em>SHapley Additive exPlanations</em>. It starts with a reference prediction and allocates the difference between that and this prediction among the features. It averages each feature's added contribution over different groups of other features. The contributions add up on the <em>chosen output scale</em>. For this illustration, that scale is approval log-odds:</p>
-        <div class="math-block">$$f(x)=\phi_0+\sum_{j=1}^{p}\phi_j$$</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th scope="col">Part of the explanation</th><th scope="col">Contribution to approval log-odds</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">Reference score $\phi_0$</th><td>0.00</td></tr>
-              <tr><th scope="row">Income</th><td class="xai-plus">+0.60</td></tr>
-              <tr><th scope="row">Employment history</th><td class="xai-plus">+0.40</td></tr>
-              <tr><th scope="row">Debt burden</th><td class="xai-minus">−0.70</td></tr>
-              <tr><th scope="row">Missed payment</th><td class="xai-minus">−0.50</td></tr>
-              <tr><th scope="row">Final model score</th><td><strong>−0.20</strong></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="math-block">$$0+0.60+0.40-0.70-0.50=-0.20,\qquad \operatorname{sigmoid}(-0.20)\approx 0.450$$</div>
-        <p>Income and employment push the score above the reference; debt burden and a missed payment pull it down. The final log-odds of −0.20 convert to an approval probability of about 45%. These are illustrative contributions, not SHAP values computed from a real model. The reference data and treatment of related features affect actual SHAP values; a contribution is not a causal effect.</p>
+<section><h2>Path Attributions (Integrated Gradients)</h2>
+<p>For a differentiable $f$ and baseline $x'$, integrated gradients accumulate input derivatives along the straight path from $x'$ to $x$:</p>
+<div class="math-block">$$\operatorname{IG}_j(x;x')=(x_j-x'_j)\int_0^1\frac{\partial f(x'+\alpha(x-x'))}{\partial x_j}\,d\alpha.$$</div>
+<p>Under the regularity conditions for integrating the gradient along this path, completeness gives:</p>
+<div class="math-block">$$\sum_j\operatorname{IG}_j(x;x')=f(x)-f(x').$$</div>
+<p>The baseline determines the reference question. A finite numerical approximation can leave a completeness residual; intermediate inputs on the path may also lie outside the data distribution.</p>
+</section>
 
-        <h3>Counterfactual · find a feasible alternative</h3>
-        <p>A counterfactual asks which small, plausible changes to this application would move the model's approval probability from 45% to at least 50%. It searches for an alternative $x'$ that crosses the threshold while staying close to the original $x$:</p>
-        <div class="math-block">$$\min_{x'} d(x,x')\quad\text{subject to}\quad \hat p(x')\geq 0.50\quad\text{and }x'\text{ is feasible}.$$</div>
-        <p>The result might say “a lower debt burden would change this model's decision.” The search must exclude immutable traits and implausible combinations of inputs. It describes the model's boundary, not a guaranteed route to approval or proof that lowering debt alone would cause approval.</p>
-      </section>
+<section><h2>Counterfactual Explanations</h2>
+<p>A counterfactual searches for a nearby feasible input that achieves a target model decision. For a binary probability output:</p>
+<div class="math-block">$$x^*\in\arg\min_{x'\in\mathcal F}d(x,x')\quad\text{subject to}\quad\hat p(x')\ge\theta.$$</div>
+<p>The feasible set $\mathcal F$ encodes immutable features and admissible combinations. The distance $d$ can reflect the number, size or cost of changes. Several distinct solutions may exist, or none may be feasible. Crossing the model's boundary does not by itself establish the real-world effect of an intervention.</p>
+</section>
 
-      <section>
-        <h2>How a feature changes model predictions</h2>
-        <p>Consider the model's predicted default risk as debt-to-income ratio changes. A partial dependence plot (PDP) and individual conditional expectation (ICE) curves use the same prediction sweep but summarize it differently. Accumulated local effects (ALE) instead uses short changes near observed applicants.</p>
-
-        <h3>PDP · average over applicants</h3>
-        <p>Set the debt ratio to 40% for <em>every</em> applicant, leaving their other recorded features as they are. Average the model's resulting risk predictions; then repeat at 20%, 30%, and other ratios. The purple PDP curve shows that average at each ratio, even if no real applicant has exactly that combination of inputs.</p>
-
-        <h3>ICE · keep each applicant's curve</h3>
-        <p>ICE performs the same sweep but draws a separate curve for each applicant instead of averaging immediately. In the plot, five teal lines reveal that risk rises much faster for some applicants than for others. The purple PDP is their pointwise average, so it can hide those differences.</p>
-        <div class="math-block">$$\operatorname{ICE}_i(z)=f(z,x_{i,-j}),\qquad \operatorname{PDP}_j(z)=\frac{1}{n}\sum_{i=1}^{n}\operatorname{ICE}_i(z).$$</div>
-        <figure class="figure-card">
-          <img src="../../../assets/plots/learning-xai-pdp-ice.svg" alt="Two plots of synthetic predicted default risk versus debt-to-income ratio. The upper plot shows one average PDP curve. The lower plot shows five individual ICE curves with different levels and slopes, plus their same average in purple." loading="lazy" width="850" height="570">
-          <figcaption>Constructed predictions for five hypothetical applicants, not fitted credit data. The purple PDP is exactly the mean of the five teal ICE curves at each debt-to-income value. The average hides how much the individual predictions differ.</figcaption>
+<section><h2>Partial Dependence &amp; ICE</h2>
+<p>For feature $j$, replace its value by $z$ while keeping each observation's remaining features $x_{i,-j}$. ICE retains the individual prediction curves; PDP averages them:</p>
+<div class="math-block">$$\operatorname{ICE}_i(z)=f(z,x_{i,-j}),$$</div>
+<div class="math-block">$$\operatorname{PDP}_j(z)=\frac{1}{n}\sum_{i=1}^{n}\operatorname{ICE}_i(z).$$</div>
+<p>PDP averages over the empirical marginal distribution of the remaining features. It is generally different from $E[f(X)\mid X_j=z]$. ICE reveals heterogeneous responses that their average can hide.</p>
+<figure class="figure-card">
+          <picture><source media="(max-width: 680px)" srcset="../../../assets/plots/learning-xai-pdp-ice-mobile.svg?v=f4217e6fa02d" width="414" height="760"><img src="../../../assets/plots/learning-xai-pdp-ice.svg?v=211d3d299295" alt="Two plots of synthetic predicted default risk versus debt-to-income ratio. The upper plot shows one average PDP curve. The lower plot shows five individual ICE curves with different levels and slopes, plus their same average in bronze." loading="lazy" width="827" height="654"></picture>
+          <figcaption>Constructed predictions for five observations. The bronze PDP is their pointwise average; the blue-grey ICE curves retain individual differences.</figcaption>
         </figure>
-        <p>PDP and ICE may create unrealistic applications when related inputs are changed independently. For example, fixing debt ratio across its full range while holding income and other debt measures constant may produce combinations absent from the data.</p>
+<p>When inputs are dependent, the sweep can evaluate combinations absent from the data. Centre ICE curves at a common reference value to compare changes rather than differences in baseline levels.</p>
+</section>
 
-        <h3>ALE · accumulate local changes</h3>
-        <p><strong>ALE</strong> means <em>Accumulated Local Effects</em>. First, divide debt ratio into short intervals. In the 40–45% interval, use only applicants whose <em>observed</em> ratio falls there. For each one, score the same applicant twice: once at 40% and once at 45%, with other inputs unchanged. Average the differences. If the mean change in predicted default risk is +3 percentage points, that is this interval's local effect.</p>
-        <p>Repeat in each interval, then add the local effects from left to right. Finally, shift the whole curve vertically so its average effect is zero. Thus an ALE value is a <em>change relative to the average prediction effect</em>, not an applicant's predicted risk. Unlike PDP, the model is only probed near combinations represented in the data; intervals with few applicants still need caution.</p>
-        <figure class="figure-card">
-          <img src="../../../assets/plots/learning-xai-ale.svg" alt="Schematic ALE construction. The upper panel shows average local increases in predicted default risk in five debt-to-income intervals, highlighting a 3 percentage point increase in the 40–45% interval. The lower panel adds those increases and centers the resulting curve around zero." loading="lazy" width="850" height="580">
-          <figcaption>Illustrative values, not fitted credit data. Bars show changes within observed intervals; the curve accumulates those changes and is centered at zero. Its height is an effect on the model output, not a predicted probability.</figcaption>
+<section><h2>Accumulated Local Effects (ALE)</h2>
+<p>ALE averages local prediction changes within the observed feature distribution, then accumulates and centres them. For a continuous feature and differentiable model, a first-order effect can be written as:</p>
+<div class="math-block">$$g_j(z)=\int_{z_0}^{z}E\!\left[\frac{\partial f(u,X_{-j})}{\partial u}\,\middle|\,X_j=u\right]du,$$</div>
+<div class="math-block">$$\operatorname{ALE}_j(z)=g_j(z)-E[g_j(X_j)].$$</div>
+<p>In practice, divide the feature into intervals and average finite prediction differences between each interval's endpoints, using observations belonging to that interval. Accumulate those differences and centre with respect to the observed feature distribution.</p>
+<figure class="figure-card">
+          <picture><source media="(max-width: 680px)" srcset="../../../assets/plots/learning-xai-ale-mobile.svg?v=f5a66ea8fc89" width="414" height="760"><img src="../../../assets/plots/learning-xai-ale.svg?v=e6bcb2a926aa" alt="Schematic ALE construction. The upper panel shows average local increases in predicted default risk in five debt-to-income intervals, highlighting a 3 percentage point increase in the 40–45% interval. The lower panel adds those increases and centers the resulting curve around zero." loading="lazy" width="827" height="654"></picture>
+          <figcaption>Schematic ALE construction. Local differences are accumulated and centred. The vertical axis shows a model-output effect in percentage points, rather than a predicted probability.</figcaption>
         </figure>
-        <p>ALE describes how this model behaves where data were observed. It does not show that changing debt ratio would <em>cause</em> the same change in real-world default risk.</p>
-      </section>
+<p>ALE reduces the long-range extrapolation of a PDP sweep. Interval width, sparse regions and dependence still affect the estimate. Its centred level is a model-output effect, not the model's prediction for an individual.</p>
+</section>
 
-      <section>
-        <h2>Neural networks and robustness</h2>
-        <h3>Integrated gradients (IG) · trace a path from a baseline</h3>
-        <p>For a differentiable neural network, start with a chosen baseline $x'$ and move toward the actual input $x$ in small steps. At each step, measure how sensitive the model's score is to each feature, then add those sensitivities along the path. The resulting attributions divide the score difference between input and baseline:</p>
-        <div class="math-block">$$\operatorname{IG}_j(x;x')=(x_j-x'_j)\int_0^1\frac{\partial f(x'+\alpha(x-x'))}{\partial x_j}\,d\alpha.$$</div>
-        <p>For an image classifier, move from a blank image to a handwritten “8”; pixels in the digit's strokes may receive strong attribution for the “8” score. A blank image can be a useful baseline for some images, but a zero-valued credit record may be meaningless. The baseline and intermediate inputs need scrutiny.</p>
+<section><h2>Explanation Quality &amp; Robustness</h2>
+<p><strong>Fidelity</strong> measures agreement with the original model over the domain an explanation claims to describe. <strong>Stability</strong> concerns sensitivity to sampling, background data, baselines and reasonable method settings. A stable explanation can still be unfaithful, and a faithful local explanation need not describe the model globally.</p>
+<p>An adversarial perturbation changes an input to induce a model error under a specified constraint. This probes predictive robustness; the attack itself is not a feature attribution or a feasible recourse plan.</p>
+</section>
 
-        <h3>Adversarial examples · test a fragile boundary</h3>
-        <p>An adversarial example is an input deliberately changed to make the model err. Imagine changing a few stop-sign pixels so subtly that a person still sees a stop sign, while a classifier predicts another sign. The perturbation exposes a fragile decision boundary. It tests robustness; unlike a feasible credit counterfactual, it is not advice for changing a real-world decision, and the attack alone does not explain the model's reasoning.</p>
-        <div class="callout">
-          <div class="callout-title">Before trusting an explanation</div>
-          <ul>
-            <li>State whether it is local or global, and whether it explains a score, probability, or class decision.</li>
-            <li>Test whether a surrogate reproduces the original model nearby and whether results are stable under reasonable choices.</li>
-            <li>Check the reference data, baseline, correlated inputs, and feasibility of suggested changes.</li>
-            <li>Keep predictive performance and fairness audits separate from explanation quality.</li>
-          </ul>
-        </div>
-      </section>
-
+      <nav class="page-nav" aria-label="Notebook navigation">
+        <a class="page-nav-link" href="../../../index.html#learning/supervised-learning"><span class="page-nav-sub">← Back</span><span class="page-nav-title">Supervised Learning</span></a>
+        <a class="page-nav-link next" href="../classification/model-evaluation.html"><span class="page-nav-sub">Related Note →</span><span class="page-nav-title">Model Evaluation</span></a>
+      </nav>
     </article>
   </main>
 
-  <footer class="shell"><p>Statistical Learning Notes</p></footer>
+  <footer class="shell"><p>Quant Notebook / Statistical Learning / Supervised Learning</p></footer>
 </body>
 </html>

@@ -1,0 +1,21 @@
+/* Statistical learning notes follow the shared NLP editorial layout. */
+body.learning-note { min-width: 0; }
+.learning-note h3 { font-size: 22px; }
+.learning-note .schema-card { border-top: 0; padding: 0; margin: 28px 0; }
+.learning-note .schema-card > h3:first-child { margin-top: 0; }
+/* Keep KaTeX's absolute MathML layer inside its formula on narrow screens. */
+.learning-note .katex { position: relative; }
+.learning-note .ratio-card > .ratio-tag { display: block; }
+.learning-note .ratio-card p:last-child { margin-bottom: 0; }
+.learning-note .confusion-matrix { min-width: 0; }
+.learning-note .confusion-matrix td { width: 35%; vertical-align: top; }
+.learning-note .figure-card { margin: 30px 0; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.learning-note .figure-card picture { display: block; }
+
+@media (max-width: 680px) {
+  .learning-note .nav-back { max-width: calc(100% - 110px); font-size: 12px; line-height: 1.5; }
+  .learning-note .nav-tag { max-width: 94px; font-size: 9px; }
+  .learning-note .confusion-matrix { font-size: 14px; }
+  .learning-note .confusion-matrix :is(th, td) { padding: 10px 8px; }
+  .learning-note .figure-card img { max-width: 420px; margin-inline: auto; }
+}

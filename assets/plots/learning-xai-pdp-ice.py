@@ -12,20 +12,23 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+MOBILE = '--mobile' in sys.argv
+SUFFIX = '-mobile' if MOBILE else ''
+
 plt.rcParams.update({
-    'font.family': 'Segoe UI',
-    'font.size': 10.5,
-    'axes.titlesize': 12,
-    'axes.labelsize': 10.5,
+    'font.family': ['DejaVu Sans', 'Arial', 'sans-serif'],
+    'font.size': 14 if MOBILE else 15.75,
+    'axes.titlesize': 15 if MOBILE else 18,
+    'axes.labelsize': 14 if MOBILE else 15.75,
     'axes.spines.top': False,
     'axes.spines.right': False,
-    'axes.edgecolor': '#cbd5e1',
-    'axes.labelcolor': '#334155',
-    'text.color': '#0f172a',
-    'xtick.color': '#64748b',
-    'ytick.color': '#64748b',
-    'figure.facecolor': 'white',
-    'axes.facecolor': 'white',
+    'axes.edgecolor': '#bcb4a5',
+    'axes.labelcolor': '#3e4e5f',
+    'text.color': '#182b42',
+    'xtick.color': '#626d77',
+    'ytick.color': '#626d77',
+    'figure.facecolor': '#f6f2e9',
+    'axes.facecolor': '#f6f2e9',
     'svg.fonttype': 'none',
     'svg.hashsalt': 'learning-xai-pdp-ice',
 })
@@ -44,28 +47,32 @@ assert ice.shape == (5, len(x))
 assert np.allclose(pdp, ice.mean(axis=0))
 assert np.all((ice >= 0) & (ice <= 1))
 
-fig, (ax_avg, ax_ind) = plt.subplots(2, 1, figsize=(8.5, 5.7), sharex=True, sharey=True, layout='constrained')
+fig, (ax_avg, ax_ind) = plt.subplots(2, 1, figsize=(4.2, 7.8) if MOBILE else (8.5, 6.7), sharex=True, sharey=True, layout='constrained')
 
 for ax in (ax_avg, ax_ind):
-    ax.set(xlim=(20, 60), ylim=(0, 1), yticks=[0, 0.25, 0.5, 0.75, 1], ylabel='Predicted default risk')
-    ax.grid(axis='y', color='#e2e8f0', linewidth=0.8)
-    ax.plot(x, pdp, color='#51459b', linewidth=2.8, label='PDP · average')
+    ax.set(xlim=(20, 60), ylim=(0, 1), yticks=[0, 0.25, 0.5, 0.75, 1], ylabel='Predicted risk')
+    ax.grid(axis='y', color='#dcd6ca', linewidth=0.8)
+    ax.plot(x, pdp, color='#86623f', linewidth=2.8, label='PDP · average')
 
-ax_avg.set_title('PDP  ·  one average curve', loc='left', pad=10)
-ax_avg.text(59, 0.07, 'Mean across five hypothetical applicants', ha='right', color='#64748b', fontsize=9.5)
+ax_avg.set_title('PDP · average response', loc='left', pad=10)
 
-for row in ice:
-    ax_ind.plot(x, row, color='#60a5a0', linewidth=1.5, alpha=0.78, zorder=1)
-ax_ind.plot(x, pdp, color='#51459b', linewidth=2.8, zorder=3)
-ax_ind.set_title('ICE  ·  the five individual curves behind that average', loc='left', pad=10)
+
+for index, row in enumerate(ice):
+    ax_ind.plot(x, row, color='#9ba9b5', linewidth=1.8, alpha=0.9, zorder=1, label='ICE' if index == 0 else None)
+ax_ind.plot(x, pdp, color='#86623f', linewidth=2.8, zorder=3)
+ax_ind.set_title('ICE · individual responses', loc='left', pad=10)
+ax_avg.legend(frameon=False, loc='upper left', fontsize=12 if MOBILE else 14)
+ax_ind.legend(frameon=False, loc='upper left', ncol=2, fontsize=12 if MOBILE else 14)
 ax_ind.set_xlabel('Debt-to-income ratio (%)')
 ax_ind.set_xticks([20, 30, 40, 50, 60])
-ax_ind.text(59, 0.07, 'Teal: individuals     Purple: PDP mean', ha='right', color='#64748b', fontsize=9.5)
+
 
 output = Path(__file__).resolve().parent
 qa = ROOT / '.qa'
 qa.mkdir(exist_ok=True)
-fig.savefig(output / 'learning-xai-pdp-ice.svg', metadata={'Date': None}, bbox_inches='tight')
-fig.savefig(qa / 'learning-xai-pdp-ice.png', dpi=160, bbox_inches='tight')
+fig.savefig(output / ('learning-xai-pdp-ice' + SUFFIX + '.svg'), metadata={'Date': None}, bbox_inches='tight')
+svg = output / ('learning-xai-pdp-ice' + SUFFIX + '.svg')
+svg.write_text('\n'.join(line.rstrip() for line in svg.read_text(encoding='utf-8').splitlines()) + '\n', encoding='utf-8')
+fig.savefig(qa / ('learning-xai-pdp-ice' + SUFFIX + '.png'), dpi=160, bbox_inches='tight')
 plt.close(fig)
 print('Generated PDP/ICE figure from five synthetic individual curves.')

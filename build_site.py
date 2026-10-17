@@ -114,9 +114,11 @@ def style_note(path):
     # The pinned local KaTeX assets also work without an internet connection.
     if (BASE_DIR/'assets/vendor/katex/katex.min.js').exists():
         text = text.replace('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',prefix+'assets/vendor/katex/')
-    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp', 'statistics'):
+    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp', 'statistics', 'statistical-learning'):
         # Version shared notebook assets so published pages pick up editorial changes.
-        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/notes.js',
+        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/learning.css', 'assets/notes.js',
+                      'assets/plots/learning-xai-pdp-ice.svg', 'assets/plots/learning-xai-ale.svg',
+                      'assets/plots/learning-xai-pdp-ice-mobile.svg', 'assets/plots/learning-xai-ale-mobile.svg',
                       'assets/plots/statistics-discrete-cdf.svg', 'assets/plots/statistics-continuous-cdf.svg',
                       'assets/plots/statistics-clt-standardized.svg', 'assets/plots/statistics-clt-standardized-mobile.svg',
                       'assets/plots/statistics-two-sided-test.svg', 'assets/plots/statistics-anova-variation.svg',

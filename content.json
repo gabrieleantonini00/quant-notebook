@@ -342,19 +342,18 @@
     "description": "Learning from data and evaluating predictions.",
     "sections": [
       {
-        "title": "Model Evaluation & Performance Metrics",
-        "summary": "Evaluating classification models: Confusion Matrix, Accuracy, Precision, Recall, F1-Score, the class imbalance paradox, and trade-off optimization.",
+        "title": "Model Evaluation",
+        "summary": "Classification evaluation: decision thresholds, confusion matrices, accuracy, precision, recall, F-scores, and multiclass averaging.",
         "topics": [
-          "The Confusion Matrix",
-          "Accuracy & The Class Imbalance Paradox",
-          "Precision vs. Recall: The Asymmetric Error Trade-Off",
-          "The F1-Score & Harmonic Optimization",
-          "Multi-Class Extensions & Averaging Strategies",
-          "Why 94% accuracy needs more context",
-          "A reliable evaluation workflow"
+          "Decision Thresholds",
+          "Confusion Matrix",
+          "Accuracy & Class Imbalance",
+          "Precision & Recall",
+          "F-Scores",
+          "Multiclass Averaging"
         ],
         "link": "notes/statistical-learning/classification/model-evaluation.html",
-        "reading_minutes": 7,
+        "reading_minutes": 3,
         "order": 4,
         "category_path": [
           "Supervised Learning",
@@ -362,16 +361,20 @@
         ]
       },
       {
-        "title": "Explainable Artificial Intelligence (XAI)",
+        "title": "Explainable AI (XAI)",
         "summary": "Explainable artificial intelligence: local and global explanations, LIME, SHAP, integrated gradients, partial dependence, ICE, ALE, and counterfactuals.",
         "topics": [
-          "What does an explanation answer?",
-          "Explaining one decision",
-          "How a feature changes model predictions",
-          "Neural networks and robustness"
+          "Explanation Scope",
+          "Local Surrogate Models (LIME)",
+          "Additive Feature Attributions (SHAP)",
+          "Path Attributions (Integrated Gradients)",
+          "Counterfactual Explanations",
+          "Partial Dependence & ICE",
+          "Accumulated Local Effects (ALE)",
+          "Explanation Quality & Robustness"
         ],
         "link": "notes/statistical-learning/supervised-learning/explainable-ai.html",
-        "reading_minutes": 7,
+        "reading_minutes": 4,
         "order": 5,
         "category_path": [
           "Supervised Learning"
