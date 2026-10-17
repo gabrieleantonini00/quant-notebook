@@ -12,7 +12,7 @@
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
   <link rel="stylesheet" href="../../assets/editorial-notes.css?v=077c1ace277a">
-  <link rel="stylesheet" href="../../assets/nlp.css?v=c66fe96d630e">
+  <link rel="stylesheet" href="../../assets/nlp.css?v=60035a40c842">
   <script src="../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
 <body class="note-page editorial-note nlp-note">
@@ -36,6 +36,14 @@
         <p>
           The Transformer architecture (<a class="paper-link" href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">Vaswani et al., 2017 ↗</a>) replaces recurrence and convolutions with <strong>attention</strong> and position-wise feed-forward layers. Token positions can be processed in parallel during training. Self-attention connects any two positions within one layer, but this constant path length is not constant computational cost: dense attention over $L$ tokens costs $\mathcal{O}(L^2d)$ for hidden dimension $d$.
         </p>
+
+        <figure class="figure-card transformer-network" id="transformer-network">
+          <picture>
+            <source media="(max-width: 680px)" srcset="../../assets/plots/nlp-transformer-architecture-mobile.svg?v=73aa2c146589" width="360" height="1176">
+            <img src="../../assets/plots/nlp-transformer-architecture.svg?v=32052a249e8f" width="840" height="740" alt="Original Transformer encoder and decoder, with positional encodings, repeated attention and feed-forward blocks, residual connections, decoder causal masking, encoder-to-decoder cross-attention, and a linear-softmax output head." loading="lazy">
+          </picture>
+          <figcaption>Original post-norm Transformer, adapted from <a href="https://arxiv.org/abs/1706.03762">Vaswani et al. (2017)</a>. Each stack repeats its illustrated block $N$ times. Encoder memory supplies $K,V$ to every decoder cross-attention layer; $Q$ comes from the decoder. Bypasses show the residual connections into Add & Norm.</figcaption>
+        </figure>
 
         <h3>Input & Positional Encoding</h3>
         <p>
