@@ -121,6 +121,11 @@
 <div class="math-block">$$\begin{aligned}\mathrm{TSS}&amp;=\sum_i(y_i-\bar y)^2,\\\mathrm{ESS}&amp;=\sum_i(\widehat y_i-\bar y)^2,\\\mathrm{RSS}&amp;=\sum_i\widehat u_i^2,\\\mathrm{TSS}&amp;=\mathrm{ESS}+\mathrm{RSS}.\end{aligned}$$</div>
 <div class="math-block">$$R^2=1-\frac{\mathrm{RSS}}{\mathrm{TSS}},\qquad\mathrm{TSS}&gt;0.$$</div>
 <p>The centred identity and usual $0\le R^2\le1$ bound rely on the intercept. Adding regressors cannot reduce in-sample $R^2$ on the same sample, but can increase uncertainty or overfitting.</p>
+<h3>Adjusted R²</h3>
+<p>Adjusted $R^2$ accounts for the number of estimated coefficients by comparing residual and total mean squares. With an intercept, $K$ coefficients in total and $n&gt;K$,</p>
+<div class="math-block">$$\begin{aligned}\bar R^2&amp;=1-\frac{\mathrm{RSS}/(n-K)}{\mathrm{TSS}/(n-1)}\\&amp;=1-(1-R^2)\frac{n-1}{n-K}.\end{aligned}$$</div>
+<p>Unlike $R^2$, adjusted $R^2$ can fall when regressors are added: the reduction in RSS must compensate for the lost residual degrees of freedom. It can be negative when the residual mean square exceeds the sample variance of $y$. Compare models using the same outcome and observations; a higher adjusted $R^2$ does not establish causality or guarantee better out-of-sample prediction.</p>
+<h3>Coefficient Interpretation</h3>
 <p>In a level-level model, a coefficient measures outcome units per regressor unit, holding other included regressors fixed. A log-log coefficient is an elasticity. With $\log y$ and a level regressor $x_k$, a one-unit increase changes the fitted log outcome by $\beta_k$, giving a multiplicative change of $e^{\beta_k}$ and an approximate $100\beta_k\%$ change.</p>
 <p>Exponentiating a fitted log mean does not generally give the arithmetic conditional mean of $y$ without a retransformation adjustment. Causal interpretation and control selection depend on the estimand and research design; $R^2$ does not supply that identification.</p>
 </section>
