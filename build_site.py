@@ -113,9 +113,16 @@ def style_note(path):
     # The pinned local KaTeX assets also work without an internet connection.
     if (BASE_DIR/'assets/vendor/katex/katex.min.js').exists():
         text = text.replace('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/',prefix+'assets/vendor/katex/')
-    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp', 'statistics', 'statistical-learning') or path.name == 'spatial-econometrics.html':
+    if path.relative_to(NOTES_DIR).parts[0] in ('finance', 'nlp', 'statistics', 'statistical-learning') or path.name == 'spatial-econometrics.html' or path.parent.name == 'time-series':
         # Version shared notebook assets so published pages pick up editorial changes.
-        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/learning.css', 'assets/spatial.css', 'assets/notes.js',
+        for asset in ('assets/site.css', 'assets/editorial-notes.css', 'assets/nlp.css', 'assets/statistics.css', 'assets/learning.css', 'assets/spatial.css', 'assets/time-series.css', 'assets/notes.js',
+                      'assets/plots/econometrics-timeseries-trends.svg', 'assets/plots/econometrics-timeseries-trends-mobile.svg',
+                      'assets/plots/econometrics-timeseries-acf.svg', 'assets/plots/econometrics-timeseries-acf-mobile.svg',
+                      'assets/plots/econometrics-ar1-forecast.svg', 'assets/plots/econometrics-ar1-forecast-mobile.svg',
+                      'assets/plots/econometrics-garch-forecast.svg', 'assets/plots/econometrics-garch-forecast-mobile.svg',
+                      'assets/plots/econometrics-timeseries-volatility.svg', 'assets/plots/econometrics-timeseries-volatility-mobile.svg',
+                      'assets/plots/econometrics-timeseries-cointegration.svg', 'assets/plots/econometrics-timeseries-cointegration-mobile.svg',
+                      'assets/plots/econometrics-timeseries-var-links.svg', 'assets/plots/econometrics-timeseries-error-correction.svg',
                       'assets/plots/econometrics-spatial-weights.svg', 'assets/plots/econometrics-spatial-weights-mobile.svg',
                       'assets/plots/econometrics-spatial-spillovers.svg', 'assets/plots/econometrics-spatial-spillovers-mobile.svg',
                       'assets/plots/econometrics-spatial-sar-channels.svg', 'assets/plots/econometrics-spatial-slx-channels.svg',

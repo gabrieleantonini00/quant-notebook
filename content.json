@@ -237,36 +237,34 @@
         ]
       },
       {
-        "title": "Stationarity, trends, and unit roots",
+        "title": "Stationarity & Unit Roots",
         "summary": "Weak and strict stationarity, white noise, ACF, deterministic and stochastic trends, random walks, ADF and KPSS tests, and spurious regression.",
         "topics": [
-          "A process is not the same thing as one realized path",
-          "Weak versus strict stationarity",
-          "Deterministic trends and random walks need different treatment",
-          "ACF plots describe dependence, with sampling uncertainty",
-          "ADF and KPSS begin with opposing nulls",
-          "Spurious regression and the cointegration exception",
-          "Study sources and further reading",
-          "Related notes"
+          "Processes & Transformations",
+          "Stationarity",
+          "White Noise & Autocorrelation",
+          "Trends & Unit Roots",
+          "Unit-Root & Stationarity Tests",
+          "Spurious Regression"
         ],
         "link": "notes/econometrics/time-series/stationarity-unit-roots.html",
-        "reading_minutes": 4,
+        "reading_minutes": 3,
         "order": 40,
         "category_path": [
           "Time Series"
         ]
       },
       {
-        "title": "ARMA dynamics and forecasting",
+        "title": "ARMA & Forecasting",
         "summary": "AR, MA, ARMA and ARIMA models, lag polynomials, root conventions, ACF and PACF, information criteria, forecast recursions, and evaluation.",
         "topics": [
-          "AR and MA describe different kinds of memory",
-          "Root conventions: outside versus inside",
-          "Identify, estimate, and check",
-          "Forecast recursively and quantify uncertainty",
-          "Evaluate using the information available at the time",
-          "Study sources and further reading",
-          "Related notes"
+          "AR, MA & ARMA Models",
+          "Stationarity & Invertibility",
+          "ACF & PACF",
+          "Estimation & Diagnostics",
+          "Forecasting",
+          "ARIMA Models",
+          "Forecast Evaluation"
         ],
         "link": "notes/econometrics/time-series/arma-forecasting.html",
         "reading_minutes": 4,
@@ -276,17 +274,15 @@
         ]
       },
       {
-        "title": "VAR, cointegration, and error correction",
+        "title": "VAR, Cointegration & VECM",
         "summary": "Multivariate autoregressions, stability, reduced-form shocks, Granger prediction, cointegration, VECM algebra, rank, and adjustment.",
         "topics": [
-          "A VAR models several outcomes together",
-          "Predictive relationships are not automatically structural effects",
-          "Cointegration preserves a long-run combination",
-          "Derive the VECM from the VAR",
-          "Rank guides the model under the maintained integration assumptions",
-          "Read an adjustment coefficient with its normalization",
-          "Study sources and further reading",
-          "Related notes"
+          "Vector Autoregression",
+          "Granger Predictability",
+          "Impulse Responses",
+          "Cointegration",
+          "Error Correction (VECM)",
+          "Cointegration Rank & Testing"
         ],
         "link": "notes/econometrics/time-series/var-cointegration.html",
         "reading_minutes": 4,
@@ -296,20 +292,18 @@
         ]
       },
       {
-        "title": "ARCH, GARCH, and conditional volatility",
-        "summary": "Conditional mean and variance, ARCH tests, GARCH persistence, variance forecasts, asymmetric volatility, heavy-tailed innovations, and links to VaR and ES.",
+        "title": "ARCH & GARCH",
+        "summary": "Conditional mean and variance, ARCH diagnostics, GARCH persistence and forecasts, GJR-GARCH, EGARCH, heavy-tailed innovations, and tail risk.",
         "topics": [
-          "Separate the mean from the scale",
-          "ARCH models yesterday's squared surprises",
-          "GARCH adds persistence in the variance itself",
-          "Worked variance forecast",
-          "Asymmetry and heavy tails are distinct choices",
-          "Check standardized residuals and connect to risk",
-          "Study sources and further reading",
-          "Related notes"
+          "Conditional Mean & Variance",
+          "ARCH Models",
+          "GARCH Models",
+          "Variance Forecasts",
+          "Asymmetric Models",
+          "Estimation & Diagnostics"
         ],
         "link": "notes/econometrics/time-series/conditional-volatility.html",
-        "reading_minutes": 4,
+        "reading_minutes": 3,
         "order": 43,
         "category_path": [
           "Time Series"

@@ -5,73 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Weak and strict stationarity, white noise, ACF, deterministic and stochastic trends, random walks, ADF and KPSS tests, and spurious regression.">
   <meta name="order" content="40">
-  <title>Stationarity, trends, and unit roots | Econometrics</title>
+  <title>Stationarity &amp; Unit Roots | Econometrics</title>
   <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../../../assets/site.css">
+  <link rel="stylesheet" href="../../../assets/site.css?v=44a5994a4911">
+  <link rel="stylesheet" href="../../../assets/editorial-notes.css?v=63d56bf18ad5">
+  <link rel="stylesheet" href="../../../assets/time-series.css?v=46fae8973f59">
   <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
   <script defer src="../../../assets/vendor/katex/katex.min.js"></script>
   <script defer src="../../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
-  <script src="../../../assets/notes.js" defer></script>
+  <script src="../../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
-<body class="note-page">
+<body class="note-page editorial-note time-series-note">
   <a class="skip-link" href="#note-content">Skip to article</a>
   <header class="topbar"><div class="shell topbar-inner">
-    <a class="nav-back" href="../../../index.html#econometrics/time-series">← Back to Time Series</a>
+    <a class="nav-back" href="../../../index.html#econometrics/time-series">← Time Series</a>
     <span class="nav-tag">Econometrics</span>
   </div></header>
   <main class="shell" id="note-content"><article>
     <header class="article-header">
       <div class="meta-eyebrow">Econometrics / Time Series</div>
-      <h1>Stationarity, trends, and unit roots</h1>
-      <p class="article-lead">Time order makes observations informative about one another. Before fitting a dynamic model, distinguish stable dependence from a changing level, a deterministic trend, or a stochastic trend.</p>
+      <h1>Stationarity &amp; Unit Roots</h1>
     </header>
 
-    <section><h2>A process is not the same thing as one realized path</h2>
-      <p>A stochastic process $\{y_t\}$ is a collection of random variables indexed by time. The observed series is one realization. A smooth-looking sample does not establish stationarity, and a volatile sample does not necessarily contradict it. Record the sampling frequency, missing dates, seasonal pattern, and transformations before modeling.</p>
-      <p>For positive prices, a simple return is $R_t=P_t/P_{t-1}-1$, while a log return is $r_t=\log P_t-\log P_{t-1}=\log(1+R_t)$. Log returns add over time; simple portfolio returns aggregate across assets using weights. Returns can be more stable than price levels, but their stationarity still needs assessment.</p>
-    </section>
-    <section><h2>Weak versus strict stationarity</h2>
-      <p>A covariance-stationary process has finite, time-invariant first and second moments:</p>
-      <div class="math-block">$$E[y_t]=\mu,\quad \operatorname{Var}(y_t)=\gamma(0)&lt;\infty,\quad \operatorname{Cov}(y_t,y_{t-k})=\gamma(k).$$</div>
-      <p>The autocovariance depends on the lag $k$, not the calendar date. The autocorrelation function is $\rho(k)=\gamma(k)/\gamma(0)$ for a nondegenerate process. Strict stationarity requires the entire joint distribution to be invariant under time shifts. Strict stationarity implies covariance stationarity only when the needed second moments exist; covariance stationarity alone does not imply strict stationarity.</p>
-      <p>White noise has zero mean, constant finite variance, and zero autocovariance at nonzero lags. This is weaker than independence. A martingale-difference sequence satisfies a conditional-mean restriction and can have predictable conditional variance: lack of return autocorrelation does not imply lack of volatility dynamics.</p>
-    </section>
-    <section><h2>Deterministic trends and random walks need different treatment</h2>
-      <div class="table-wrap"><table><thead><tr><th scope="col">Example</th><th scope="col">What changes over time?</th><th scope="col">Typical transformation</th></tr></thead><tbody>
-        <tr><th scope="row">$y_t=a+bt+v_t$, stationary $v_t$</th><td>Deterministic mean</td><td>Model or remove the deterministic trend</td></tr>
-        <tr><th scope="row">$y_t=y_{t-1}+d+\varepsilon_t$</th><td>Accumulated random shocks</td><td>Difference, if the resulting process is stationary</td></tr>
-        <tr><th scope="row">Stationary AR(1)</th><td>Fluctuations around a fixed mean</td><td>Model persistence in levels</td></tr>
-      </tbody></table></div>
-      <p>A deterministic trend has unknown parameters in practice, so its future is not known without estimation uncertainty. A random walk with fixed $y_0$ and independent innovations of variance $\sigma^2$ has $E[y_t]=y_0+dt$ and $\operatorname{Var}(y_t)=t\sigma^2$. Its shocks permanently shift the level, whereas a stable AR shock gradually decays.</p>
-      <p>A series is $I(1)$ when first differences are $I(0)$ under the relevant integration convention. Differencing an already stationary series can add unnecessary moving-average structure. Detrending does not remove a genuine stochastic trend. Seasonal roots and structural breaks may require other specifications.</p>
-    </section>
-    <section><h2>ACF plots describe dependence, with sampling uncertainty</h2>
-      <p>A common sample autocorrelation divides $\sum_{t=k+1}^T(y_t-\bar y)(y_{t-k}-\bar y)$ by $\sum_{t=1}^T(y_t-\bar y)^2$. The familiar bands near $\pm1.96/\sqrt T$ are approximate pointwise white-noise guides, not simultaneous confidence guarantees across many lags or every heteroskedastic process.</p>
-      <p>A slowly decaying ACF can signal persistence, an unremoved trend, or a unit root; it does not distinguish those explanations by itself. Inspect the series, its transformations, and residuals rather than selecting a model from a single plotted spike.</p>
-    </section>
-    <section><h2>ADF and KPSS begin with opposing nulls</h2>
-      <p>An augmented Dickey-Fuller regression may include an intercept and trend:</p>
-      <div class="math-block">$$\Delta y_t=a+bt+\gamma y_{t-1}+\sum_{j=1}^p\delta_j\Delta y_{t-j}+e_t.$$</div>
-      <p>ADF tests $H_0:\gamma=0$, a unit root, against a stationary alternative appropriate to the included deterministic terms. Its statistic uses Dickey-Fuller reference values rather than an ordinary regression $t$ distribution. Lag selection should leave adequately behaved residuals without exhausting the sample.</p>
-      <p>KPSS instead tests a level- or trend-stationary null, depending on its specification. Its long-run variance estimate depends on bandwidth choices. Use matching deterministic terms when comparing conclusions.</p>
-      <div class="table-wrap"><table><thead><tr><th scope="col">ADF</th><th scope="col">KPSS</th><th scope="col">Interpretation</th></tr></thead><tbody>
-        <tr><td>Reject unit-root null</td><td>Do not reject stationarity null</td><td>Evidence compatible with stationarity under these specifications</td></tr>
-        <tr><td>Do not reject unit-root null</td><td>Reject stationarity null</td><td>Evidence compatible with nonstationarity; assess integration order</td></tr>
-        <tr><td>Reject unit-root null</td><td>Reject stationarity null</td><td>Investigate breaks, deterministic terms, and misspecification</td></tr>
-        <tr><td>Do not reject unit-root null</td><td>Do not reject stationarity null</td><td>Data may be insufficient to distinguish persistent alternatives</td></tr>
-      </tbody></table></div>
-      <p>Non-rejection of ADF does not prove $I(1)$ and does not mandate differencing mechanically. Small samples, near-unit roots, low power, and breaks can leave the answer uncertain.</p>
-    </section>
-    <section><h2>Spurious regression and the cointegration exception</h2>
-      <p>Independent random walks can produce apparently impressive regression fits and conventional $t$ statistics. Usual stationary-regression inference is then inappropriate. This is not a universal prohibition on using OLS with any trend: a correctly modeled deterministic trend can be handled within a suitable regression framework.</p>
-      <p>If nonstationary series have a stationary linear combination, they may be cointegrated. Differencing each series and discarding that relationship can lose long-run information. Investigate the integration and cointegration structure before choosing between a levels model, a differenced model, and an error-correction model.</p>
-    </section>
+<section><h2>Processes &amp; Transformations</h2>
+<p>A stochastic process $\{y_t\}$ is a collection of time-indexed random variables; the observed series is one realised path. Its appearance alone cannot establish stationarity. Sampling frequency, missing dates, seasonality and structural breaks affect the specification.</p>
+<p>For positive prices, the simple and log returns are</p>
+<div class="math-block">$$\begin{aligned}R_t&amp;=P_t/P_{t-1}-1,\\r_t&amp;=\log P_t-\log P_{t-1}=\log(1+R_t).\end{aligned}$$</div>
+<p>Log returns add over time. Simple portfolio returns aggregate across assets using portfolio weights. Returns can be more stable than price levels, but stationarity still needs assessment.</p>
+</section>
 
-    <section><h2>Study sources and further reading</h2>
-      <p>Study basis: personal <cite>Time Series</cite> notes, PDF pp. 3–11; Mehdi Hosseinkouchack, <cite>Econometrics</cite>, Sections 3–4; Andrea Ugolini, <cite>Advanced Econometrics</cite>, Lectures 01, 02, and 05. ADF specification details are documented in <a href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.adfuller.html">statsmodels</a>.</p>
-      <p>The explanations and numerical examples here are a rewritten study synthesis. Examples use illustrative inputs unless stated otherwise; the original study PDFs are not redistributed.</p>
-    </section>
-    <section><h2>Related notes</h2><ul><li><a href="arma-forecasting.html">ARMA dynamics and forecasting</a></li><li><a href="var-cointegration.html">VAR, cointegration, and VECM</a></li><li><a href="conditional-volatility.html">Conditional volatility without return autocorrelation</a></li></ul></section>
+<section><h2>Stationarity</h2>
+<p><strong>Weak stationarity</strong>, or covariance stationarity, requires finite, time-invariant first and second moments:</p>
+<div class="math-block">$$\begin{aligned}E[y_t]&amp;=\mu,\\\operatorname{Var}(y_t)&amp;=\gamma(0)&lt;\infty,\\\operatorname{Cov}(y_t,y_{t-k})&amp;=\gamma(k).\end{aligned}$$</div>
+<p>The autocovariance depends on lag $k$, not the calendar date. <strong>Strict stationarity</strong> requires every finite-dimensional joint distribution to be invariant under time shifts. It implies weak stationarity when second moments exist; weak stationarity alone does not imply strict stationarity. For Gaussian processes, weak stationarity also implies strict stationarity.</p>
+</section>
+
+<section><h2>White Noise &amp; Autocorrelation</h2>
+<p>White noise has zero mean, constant finite variance and zero autocovariance at nonzero lags. This does not require independence. A martingale difference satisfies $E[\varepsilon_t\mid\mathcal F_{t-1}]=0$ and can have predictable conditional variance.</p>
+<p>For a nondegenerate covariance-stationary process, the population autocorrelation function is $\rho(k)=\gamma(k)/\gamma(0)$. A common sample estimator is</p>
+<div class="math-block">$$\widehat\rho(k)=\frac{\sum_{t=k+1}^{T}(y_t-\bar y)(y_{t-k}-\bar y)}{\sum_{t=1}^{T}(y_t-\bar y)^2}.$$</div>
+<p>Bands near $\pm1.96/\sqrt T$ are approximate pointwise white-noise guides, not simultaneous bounds across lags or valid bands for every heteroskedastic process. Slow ACF decay can reflect persistence, an unremoved trend or a unit root. Small return autocorrelations do not rule out dependence in squared returns.</p>
+</section>
+
+<section><h2>Trends &amp; Unit Roots</h2>
+<h3>Trend Stationarity</h3>
+<div class="math-block">$$y_t=a+bt+v_t,\qquad v_t\sim I(0).$$</div>
+<p>Removing the deterministic trend leaves a stationary process. Shocks to $v_t$ do not permanently shift the trend when its impulse responses decay. The trend parameters are estimated, so their uncertainty also affects forecasts.</p>
+<h3>Difference Stationarity</h3>
+<div class="math-block">$$\begin{aligned}y_t&amp;=y_{t-1}+d+\varepsilon_t,\\\Delta y_t&amp;=d+\varepsilon_t.\end{aligned}$$</div>
+<p>A random walk accumulates shocks. With fixed $y_0$ and independent innovations of variance $\sigma^2$, $E[y_t]=y_0+dt$ and $\operatorname{Var}(y_t)=t\sigma^2$. A shock permanently shifts its level.</p>
+<figure class="figure-card"><picture>
+<source media="(max-width: 680px)" srcset="../../../assets/plots/econometrics-timeseries-trends-mobile.svg?v=38397215ba80" width="419" height="649">
+<img src="../../../assets/plots/econometrics-timeseries-trends.svg?v=bb77b2c24f42" alt="Three simulated time series: fluctuations around a constant mean, fluctuations around a rising deterministic trend, and a random walk driven by accumulated shocks." loading="lazy" width="707" height="599">
+</picture><figcaption>Simulated paths with the same innovation sequence: a stationary AR(1), that process plus a deterministic trend, and a random walk. The dashed lines in the first two panels show their means. These paths illustrate specified processes; appearance alone is not a stationarity test.</figcaption></figure>
+<p>A series is $I(1)$ when first differencing gives an $I(0)$ process. Detrending does not remove a stochastic trend; differencing an already stationary process can add unnecessary MA structure. Seasonal roots and structural breaks require their own specification.</p>
+</section>
+
+<section><h2>Unit-Root &amp; Stationarity Tests</h2>
+<h3>Augmented Dickey–Fuller (ADF)</h3>
+<div class="math-block">$$\begin{aligned}\Delta y_t&amp;=a+bt+\gamma y_{t-1}\\&amp;\quad+\sum_{j=1}^{p}\delta_j\Delta y_{t-j}+e_t.\end{aligned}$$</div>
+<p>ADF tests $H_0:\gamma=0$, a unit root. The stationary alternative depends on the included intercept and trend. Its statistic uses Dickey–Fuller critical values, rather than ordinary regression $t$ critical values. Choose enough lagged differences to control residual serial correlation without exhausting the sample.</p>
+<h3>KPSS</h3>
+<p>KPSS reverses the null: the series is level-stationary or trend-stationary, depending on its specification. The long-run variance estimate depends on the bandwidth. Match deterministic terms when comparing ADF and KPSS.</p>
+<table><thead><tr><th scope="col">ADF unit-root null</th><th scope="col">KPSS stationarity null</th><th scope="col">Reading</th></tr></thead><tbody>
+<tr><td>Reject</td><td>Do not reject</td><td>Compatible with stationarity</td></tr>
+<tr><td>Do not reject</td><td>Reject</td><td>Compatible with nonstationarity</td></tr>
+<tr><td>Reject</td><td>Reject</td><td>Check breaks and specification</td></tr>
+<tr><td>Do not reject</td><td>Do not reject</td><td>Insufficient discrimination</td></tr>
+</tbody></table>
+<p>Non-rejection does not establish a null. Near-unit roots, small samples, low power and breaks can leave integration order uncertain.</p>
+</section>
+
+<section><h2>Spurious Regression</h2>
+<p>Independent random walks can produce high levels-regression $R^2$ and apparently significant conventional $t$ statistics. Stationary-regression inference is then inappropriate. Correctly specified deterministic trends are a different case and can be included in a regression.</p>
+<p>If $I(1)$ variables have a stationary linear combination, they are cointegrated. Differencing all series and discarding that combination loses long-run information. Integration and cointegration determine whether a levels, differenced or error-correction representation is appropriate.</p>
+</section>
+
   </article></main>
   <footer class="shell"><p>Quant Notebook / Econometrics</p></footer>
 </body>

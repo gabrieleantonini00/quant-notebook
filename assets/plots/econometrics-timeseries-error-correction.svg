@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="580" viewBox="0 0 560 580" role="img" aria-labelledby="title desc">
+<title id="title">Consumption–income error correction</title><desc id="desc">A positive gap between past consumption and 0.8 times past income contributes negatively to consumption growth and positively to income growth under the illustrated adjustment signs.</desc><defs>
+<marker id="ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#182b42" stroke-width="1.4"/></marker>
+<marker id="accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#86623f" stroke-width="1.4"/></marker>
+</defs>
+<rect width="560" height="580" fill="#f6f2e9"/>
+<g font-family="Inter, Arial, sans-serif">
+<path d="M130 138 L210 194" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#ink)"/>
+<path d="M430 138 L350 194" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#ink)"/>
+<path d="M220 306 L130 369" fill="none" stroke="#86623f" stroke-width="2" marker-end="url(#accent)"/>
+<path d="M340 306 L430 369" fill="none" stroke="#86623f" stroke-width="2" marker-end="url(#accent)"/>
+<rect x="40.0" y="48.0" width="180" height="84" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="130" y="80" text-anchor="middle" font-size="19" fill="#182b42">Consumption</text><text x="130" y="113" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">C</tspan><tspan baseline-shift="sub" font-size="65%">t−1</tspan></text>
+<rect x="340.0" y="48.0" width="180" height="84" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="430" y="80" text-anchor="middle" font-size="19" fill="#182b42">Disposable income</text><text x="430" y="113" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">Y</tspan><tspan baseline-shift="sub" font-size="65%">t−1</tspan></text>
+<rect x="95" y="200" width="370" height="100" rx="9" fill="#f6f2e9" stroke="#86623f" stroke-width="1.5"/>
+<text x="280" y="231" text-anchor="middle" font-size="20" fill="#86623f">Positive long-run gap</text>
+<text x="280" y="273" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="65%">t−1</tspan> = <tspan font-style="italic">C</tspan><tspan baseline-shift="sub" font-size="65%">t−1</tspan> − 0.8<tspan font-style="italic">Y</tspan><tspan baseline-shift="sub" font-size="65%">t−1</tspan> &gt; 0</text>
+<rect x="20.0" y="375.0" width="220" height="90" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="130" y="410" text-anchor="middle" font-size="19" fill="#182b42">Consumption growth</text><text x="130" y="443" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">α</tspan><tspan baseline-shift="sub" font-size="65%">C</tspan> <tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="65%">t−1</tspan> &lt; 0</text>
+<rect x="320.0" y="375.0" width="220" height="90" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="430" y="410" text-anchor="middle" font-size="19" fill="#182b42">Income growth</text><text x="430" y="443" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">α</tspan><tspan baseline-shift="sub" font-size="65%">Y</tspan> <tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="65%">t−1</tspan> &gt; 0</text>
+<text x="130" y="495" text-anchor="middle" font-size="18" fill="#86623f">Negative contribution</text>
+<text x="430" y="495" text-anchor="middle" font-size="18" fill="#86623f">Positive contribution</text>
+<text x="280" y="540" text-anchor="middle" font-size="20" fill="#626d77">Both contributions push the gap down</text>
+<text x="280" y="570" text-anchor="middle" font-size="17" fill="#626d77">Other short-run terms and shocks omitted</text>
+</g>
+</svg>

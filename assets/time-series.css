@@ -1,0 +1,11 @@
+/* Time-series notes use the shared editorial layout. */
+body.time-series-note { min-width: 0; }
+.time-series-note .katex { position: relative; }
+.time-series-note .figure-card { margin: 30px 0; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.time-series-note .figure-card picture { display: block; }
+.time-series-note .model-diagram img { max-width: 640px; margin-inline: auto; }
+@media (max-width: 680px) {
+  .time-series-note .figure-card img { max-width: 420px; margin-inline: auto; }
+  .time-series-note .math-block { padding-inline: 10px; }
+  .time-series-note .nav-back { font-size: 12px; }
+}
