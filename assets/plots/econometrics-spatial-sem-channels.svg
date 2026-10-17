@@ -1,27 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="435" viewBox="0 0 600 435" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="535" viewBox="0 0 560 535" role="img" aria-labelledby="title desc">
 <title id="title">SEM dependence channels</title>
-<desc id="desc">Innovations enter errors, errors interact across locations, and errors enter local outcomes. Other neighbouring locations are omitted.</desc>
+<desc id="desc">Local innovations enter unobserved price components, which interact across areas and enter house prices. Other neighbouring locations are omitted.</desc>
 <defs>
 <marker id="local" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#182b42" stroke-width="1.4"/></marker>
 <marker id="spatial" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#86623f" stroke-width="1.4"/></marker>
 </defs>
-<rect width="600" height="435" fill="#f6f2e9"/>
+<rect width="560" height="535" fill="#f6f2e9"/>
 <g font-family="Inter, Arial, sans-serif">
-<text x="110" y="30" text-anchor="middle" font-size="19" fill="#626d77">Location A</text>
-<text x="490" y="30" text-anchor="middle" font-size="19" fill="#626d77">Location B</text>
-<path d="M300 55 V370" stroke="#dcd6ca" stroke-width="1"/>
-<path d="M146 270 L454 270" fill="none" stroke="#86623f" stroke-width="2" marker-start="url(#spatial)" marker-end="url(#spatial)"/>
-<rect x="270" y="227" width="60" height="29" fill="#f6f2e9"/><text x="300" y="247" text-anchor="middle" font-size="20" fill="#86623f">λw</text>
-<path d="M110 234 L110 146" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
-<circle cx="110" cy="110" r="30" fill="#f6f2e9" stroke="#182b42" stroke-width="1.5"/><text x="110" y="117" text-anchor="middle" font-size="25" fill="#182b42"><tspan font-style="italic">y</tspan><tspan baseline-shift="sub" font-size="65%">A</tspan></text>
-<circle cx="110" cy="270" r="30" fill="#f6f2e9" stroke="#182b42" stroke-width="1.5"/><text x="110" y="277" text-anchor="middle" font-size="25" fill="#182b42"><tspan font-style="italic">u</tspan><tspan baseline-shift="sub" font-size="65%">A</tspan></text>
-<path d="M110 354 L110 306" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
-<text x="110" y="389" text-anchor="middle" font-size="25" fill="#182b42"><tspan font-style="italic">ε</tspan><tspan baseline-shift="sub" font-size="65%">A</tspan></text>
-<path d="M490 234 L490 146" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
-<circle cx="490" cy="110" r="30" fill="#f6f2e9" stroke="#182b42" stroke-width="1.5"/><text x="490" y="117" text-anchor="middle" font-size="25" fill="#182b42"><tspan font-style="italic">y</tspan><tspan baseline-shift="sub" font-size="65%">B</tspan></text>
-<circle cx="490" cy="270" r="30" fill="#f6f2e9" stroke="#182b42" stroke-width="1.5"/><text x="490" y="277" text-anchor="middle" font-size="25" fill="#182b42"><tspan font-style="italic">u</tspan><tspan baseline-shift="sub" font-size="65%">B</tspan></text>
-<path d="M490 354 L490 306" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
-<text x="490" y="389" text-anchor="middle" font-size="25" fill="#182b42"><tspan font-style="italic">ε</tspan><tspan baseline-shift="sub" font-size="65%">B</tspan></text>
-<text x="300" y="426" text-anchor="middle" font-size="18" fill="#626d77">Spatial dependence acts through u</text>
+<text x="110" y="30" text-anchor="middle" font-size="19" fill="#626d77">Neighbourhood A</text>
+<text x="450" y="30" text-anchor="middle" font-size="19" fill="#626d77">Neighbourhood B</text>
+<path d="M206 330 L354 330" fill="none" stroke="#86623f" stroke-width="2" marker-start="url(#spatial)" marker-end="url(#spatial)"/>
+<rect x="250" y="286" width="60" height="29" fill="#f6f2e9"/><text x="280" y="306" text-anchor="middle" font-size="20" fill="#86623f">λw</text>
+<path d="M110 281 L110 169" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
+<rect x="20" y="77" width="180" height="86" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="110" y="109" text-anchor="middle" font-size="20" fill="#182b42">House prices</text><text x="110" y="143" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">y</tspan><tspan baseline-shift="sub" font-size="65%">A</tspan></text>
+<rect x="20" y="287" width="180" height="86" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="110" y="309" text-anchor="middle" font-size="18" fill="#182b42">Unobserved</text><text x="110" y="329" text-anchor="middle" font-size="18" fill="#182b42">price component</text><text x="110" y="353" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">u</tspan><tspan baseline-shift="sub" font-size="65%">A</tspan></text>
+<path d="M110 426 L110 379" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
+<text x="110" y="454" text-anchor="middle" font-size="18" fill="#182b42">Local innovation</text>
+<text x="110" y="483" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">ε</tspan><tspan baseline-shift="sub" font-size="65%">A</tspan></text>
+<path d="M450 281 L450 169" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
+<rect x="360" y="77" width="180" height="86" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="450" y="109" text-anchor="middle" font-size="20" fill="#182b42">House prices</text><text x="450" y="143" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">y</tspan><tspan baseline-shift="sub" font-size="65%">B</tspan></text>
+<rect x="360" y="287" width="180" height="86" rx="9" fill="#f6f2e9" stroke="#182b42" stroke-width="1.3"/><text x="450" y="309" text-anchor="middle" font-size="18" fill="#182b42">Unobserved</text><text x="450" y="329" text-anchor="middle" font-size="18" fill="#182b42">price component</text><text x="450" y="353" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">u</tspan><tspan baseline-shift="sub" font-size="65%">B</tspan></text>
+<path d="M450 426 L450 379" fill="none" stroke="#182b42" stroke-width="2" marker-end="url(#local)"/>
+<text x="450" y="454" text-anchor="middle" font-size="18" fill="#182b42">Local innovation</text>
+<text x="450" y="483" text-anchor="middle" font-size="24" fill="#182b42"><tspan font-style="italic">ε</tspan><tspan baseline-shift="sub" font-size="65%">B</tspan></text>
+<text x="280" y="526" text-anchor="middle" font-size="18" fill="#626d77">Unobserved components are spatially linked</text>
 </g>
 </svg>
