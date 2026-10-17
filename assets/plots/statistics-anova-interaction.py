@@ -13,7 +13,8 @@ import matplotlib.pyplot as plt
 OUT = Path(__file__).resolve().parent
 THEME = runpy.run_path(str(OUT / 'statistics-plot-style.py'))
 THEME['apply'](plt)
-plt.rcParams.update({'axes.spines.top': False, 'axes.spines.right': False,
+plt.rcParams.update({'font.family': ['DejaVu Sans', 'Arial', 'sans-serif'],
+                     'axes.spines.top': False, 'axes.spines.right': False,
                      'svg.hashsalt': 'statistics-anova-interaction'})
 
 BASE = np.array([2., 3., 4.])
