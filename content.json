@@ -117,20 +117,20 @@
     "description": "Cross-sectional regression, pooled samples, panel data, time series, and spatial dependence.",
     "sections": [
       {
-        "title": "OLS: estimation and interpretation",
-        "summary": "Data structures, the linear regression model, OLS geometry, exogeneity, finite-sample properties, and a worked regression example.",
+        "title": "OLS Estimation",
+        "summary": "OLS through derivatives, geometric projection, method of moments and Gaussian maximum likelihood, with partial regression, assumptions and coefficient interpretation.",
         "topics": [
-          "Start with the observational unit",
-          "The model and its dimensions",
-          "Derive the OLS estimator",
-          "Which assumptions deliver which properties?",
-          "A small worked example",
-          "Interpret the scale before interpreting the coefficient",
-          "Study sources and further reading",
-          "Related notes"
+          "Linear Regression",
+          "Least Squares & Derivatives",
+          "Geometric Projection & Orthogonality",
+          "Method of Moments",
+          "Gaussian Maximum Likelihood",
+          "Simple Regression & Partialling Out",
+          "Assumptions & Properties",
+          "Fit & Interpretation"
         ],
         "link": "notes/econometrics/cross-sectional/ols-estimation.html",
-        "reading_minutes": 5,
+        "reading_minutes": 6,
         "order": 10,
         "category_path": [
           "Cross-Sectional"
