@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="order" content="6">
-  <meta name="description" content="One-way ANOVA, variance decomposition, the F test, assumptions, and follow-up comparisons.">
+  <meta name="description" content="One-way, two-way and three-way ANOVA: factorial designs, main effects, interactions, F tests, degrees of freedom, and replication.">
   <title>ANOVA | Quant Notebook</title>
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
@@ -12,7 +12,7 @@
   <script defer src="../../assets/vendor/katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
   <link rel="stylesheet" href="../../assets/site.css?v=44a5994a4911">
   <link rel="stylesheet" href="../../assets/editorial-notes.css?v=63d56bf18ad5">
-  <link rel="stylesheet" href="../../assets/statistics.css?v=e29a8da9caf1">
+  <link rel="stylesheet" href="../../assets/statistics.css?v=d6e7f5ffe020">
   <script src="../../assets/notes.js?v=17d1a6aa5d18" defer></script>
 </head>
 <body class="note-page editorial-note statistics-note">
@@ -26,15 +26,26 @@
       <div class="meta-eyebrow">Probability &amp; Statistics</div>
       <h1>ANOVA</h1>
     </header>
-<section><h2>Model &amp; Hypotheses</h2>
+<section><h2>Factors, Levels &amp; Factorial Designs</h2>
+<p>A factor is a grouping variable; its categories or settings are its levels. The number of factors determines whether ANOVA is one-way, two-way or three-way. In a fully crossed factorial design, every combination of levels is represented by a cell.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th scope="col">Design</th><th scope="col">Factors and levels</th><th scope="col">Cells</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">One-way</th><td>One factor with $a$ levels</td><td>$a$</td></tr>
+    <tr><th scope="row">$2\times3$</th><td>Two factors with 2 and 3 levels</td><td>6</td></tr>
+    <tr><th scope="row">$2\times2\times3$</th><td>Three factors with 2, 2 and 3 levels</td><td>12</td></tr>
+  </tbody>
+</table></div>
+<p>A $2\times3$ design is therefore two-way ANOVA. With $r$ independent observations per cell, $N=6r$; the six cells are not the sample size. This notation specifies level counts, while independence or repeated measurement must be specified separately.</p>
+</section>
+
+<section><h2>One-Way ANOVA</h2>
 
 <p>One-way ANOVA compares the population means of $k$ groups. For observation $j$ in group $i$, the model is $Y_{ij}=\mu_i+\varepsilon_{ij}$:</p>
 <div class="math-block">$$H_0:\mu_1=\cdots=\mu_k,\qquad H_1:\text{at least one mean differs}.$$</div>
 <p>This is an omnibus test: rejection identifies an overall difference, without identifying which pairs differ.</p>
 
-</section>
-
-<section><h2>Variance Decomposition</h2>
+<h3>Variance Decomposition</h3>
 
 <p>Let $n_i$ be the size of group $i$, $\bar y_i$ its sample mean, $N=\sum_i n_i$ and $\bar y$ the grand mean. The total squared variation separates into between-group and within-group components:</p>
 <div class="math-block">$$SS_{\mathrm{between}}=\sum_{i=1}^{k}n_i(\bar y_i-\bar y)^2,$$</div>
@@ -44,9 +55,7 @@
           <img src="../../assets/plots/statistics-anova-variation.svg?v=d07b402578c2" alt="Dot plot of three hypothetical groups with observations 4, 5, 6; 6, 7, 8; and 8, 9, 10. Colored horizontal marks show group means 5, 7, and 9. A dashed line shows the grand mean 7. Arrows distinguish within-group from between-group variation." loading="lazy" width="856" height="501">
           <figcaption>Constructed data for illustration. The distance between a group mean and the grand mean contributes to between-group variation; distances from observations to their own group mean contribute to within-group variation.</figcaption>
         </figure>
-</section>
-
-<section><h2>F Test</h2>
+<h3>F Test</h3>
 
 <p>Divide each sum of squares by its degrees of freedom, then compare the two mean squares:</p>
 <div class="math-block">$$F=\frac{SS_{\mathrm{between}}/(k-1)}{SS_{\mathrm{within}}/(N-k)}=\frac{MS_{\mathrm{between}}}{MS_{\mathrm{within}}}.$$</div>
@@ -54,15 +63,87 @@
 
 </section>
 
+<section><h2>Two-Way ANOVA</h2>
+<p>For fixed factors $A$ and $B$ with $a$ and $b$ levels and $r$ observations per cell, the full model is:</p>
+<div class="math-block">$$Y_{ij\ell}=\mu+\alpha_i+\beta_j+(\alpha\beta)_{ij}+\varepsilon_{ij\ell}.$$</div>
+<p>Here $i=1,\ldots,a$, $j=1,\ldots,b$, and $\ell=1,\ldots,r$. The terms $\alpha_i$ and $\beta_j$ are main effects; $(\alpha\beta)_{ij}$ is an interaction coefficient, not a product. Sum-to-zero constraints on each index identify the effects.</p>
+
+<h3>Main Effects &amp; Interaction</h3>
+<p>Main effects compare marginal means, averaging over the other factor's levels. An interaction means that a contrast between levels of one factor changes with the level of the other. For a $2\times3$ design, let $\mu_{ij}=E[Y\mid A=i,B=j]$:</p>
+<div class="math-block">$$\Delta_j=\mu_{2j}-\mu_{1j},\qquad H_{0,AB}:\Delta_1=\Delta_2=\Delta_3.$$</div>
+<p>A constant gap gives an additive mean structure. Changing gaps indicate interaction; crossing lines are not required.</p>
+<figure class="figure-card anova-interaction">
+  <picture>
+    <source media="(max-width: 680px)" srcset="../../assets/plots/statistics-anova-interaction-mobile.svg?v=cf09c8f5d299" width="414" height="741">
+    <img src="../../assets/plots/statistics-anova-interaction.svg?v=a99da1f51424" alt="Two constructed two-by-three designs. Parallel lines have a constant difference between A levels across B levels. Nonparallel lines have a changing difference, illustrating an interaction." loading="lazy" width="875" height="405">
+  </picture>
+  <figcaption>Constructed cell means for two $2\times3$ designs. Each line is a level of $A$; the horizontal positions are levels of $B$. The interaction test evaluates departures from additivity relative to residual variation.</figcaption>
+</figure>
+
+<h3>Hypotheses &amp; F Tests</h3>
+<p>For a balanced design with $N=abr$, the variation partitions into:</p>
+<div class="math-block">$$SS_{\mathrm{total}}=SS_A+SS_B+SS_{AB}+SS_{\mathrm{error}}.$$</div>
+<p>A dot in a sample-mean subscript denotes averaging over that index. The corresponding sums of squares are:</p>
+<div class="math-block">$$\begin{aligned}
+SS_A&=br\sum_i(\bar y_{i\cdot\cdot}-\bar y_{\cdot\cdot\cdot})^2,\\
+SS_B&=ar\sum_j(\bar y_{\cdot j\cdot}-\bar y_{\cdot\cdot\cdot})^2,\\
+SS_{AB}&=r\sum_{i,j}(\bar y_{ij\cdot}-\bar y_{i\cdot\cdot}-\bar y_{\cdot j\cdot}+\bar y_{\cdot\cdot\cdot})^2,\\
+SS_{\mathrm{error}}&=\sum_{i,j,\ell}(y_{ij\ell}-\bar y_{ij\cdot})^2.
+\end{aligned}$$</div>
+<div class="table-wrap"><table>
+  <thead><tr><th scope="col">Source</th><th scope="col">Null hypothesis</th><th scope="col">Degrees of freedom</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">$A$</th><td>$\alpha_i=0$ for all $i$</td><td>$a-1$</td></tr>
+    <tr><th scope="row">$B$</th><td>$\beta_j=0$ for all $j$</td><td>$b-1$</td></tr>
+    <tr><th scope="row">$AB$</th><td>$(\alpha\beta)_{ij}=0$ for all $i,j$</td><td>$(a-1)(b-1)$</td></tr>
+    <tr><th scope="row">Error</th><td>Within-cell variation</td><td>$ab(r-1)=N-ab$</td></tr>
+  </tbody>
+</table></div>
+<p>For each source $Q\in\{A,B,AB\}$, form a separate test:</p>
+<div class="math-block">$$F_Q=\frac{SS_Q/\nu_Q}{SS_{\mathrm{error}}/\nu_{\mathrm{error}}}\sim F_{\nu_Q,\nu_{\mathrm{error}}}\quad\text{under }H_{0,Q}.$$</div>
+<p>Here $\nu$ denotes degrees of freedom. In a $2\times3$ design, the numerator degrees of freedom are 1, 2 and 2 for $A$, $B$ and $AB$, respectively; the residual has $6(r-1)$.</p>
+</section>
+
+<section><h2>Three-Way ANOVA</h2>
+<p>Adding a third fixed factor $C$ with $c$ levels gives three main effects, three two-way interactions and one three-way interaction:</p>
+<div class="math-block">$$\begin{aligned}
+Y_{ijk\ell}={}&\mu+\alpha_i+\beta_j+\gamma_k\\
+&+(\alpha\beta)_{ij}+(\alpha\gamma)_{ik}+(\beta\gamma)_{jk}\\
+&+(\alpha\beta\gamma)_{ijk}+\varepsilon_{ijk\ell}.
+\end{aligned}$$</div>
+<p>The $ABC$ interaction means that an $AB$ interaction changes across levels of $C$, equivalently that an $AC$ interaction changes across $B$ or a $BC$ interaction across $A$. A nonzero three-way interaction does not require every lower-order effect averaged over other factors to be nonzero.</p>
+<p>For a balanced, fully crossed design with $N=abcr$ and sum-to-zero constraints along each index:</p>
+<div class="math-block">$$\begin{aligned}
+SS_{\mathrm{total}}={}&SS_A+SS_B+SS_C\\
+&+SS_{AB}+SS_{AC}+SS_{BC}\\
+&+SS_{ABC}+SS_{\mathrm{error}}.
+\end{aligned}$$</div>
+<div class="table-wrap"><table>
+  <thead><tr><th scope="col">Source</th><th scope="col">Degrees of freedom</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">$A$, $B$, $C$</th><td>$a-1$, $b-1$, $c-1$, respectively</td></tr>
+    <tr><th scope="row">$AB$</th><td>$(a-1)(b-1)$</td></tr>
+    <tr><th scope="row">$AC$</th><td>$(a-1)(c-1)$</td></tr>
+    <tr><th scope="row">$BC$</th><td>$(b-1)(c-1)$</td></tr>
+    <tr><th scope="row">$ABC$</th><td>$(a-1)(b-1)(c-1)$</td></tr>
+    <tr><th scope="row">Error</th><td>$abc(r-1)=N-abc$</td></tr>
+  </tbody>
+</table></div>
+<p>Each source tests that all its coefficients are zero, using its mean square divided by the residual mean square. A $2\times2\times3$ design has 12 cells and residual degrees of freedom $12(r-1)$.</p>
+</section>
+
 <section><h2>Assumptions</h2>
 
-<p>The exact F test assumes independent observations, normal errors within groups and a common error variance. Welch's ANOVA relaxes the common-variance assumption. Repeated observations on the same unit require a model that accounts for their dependence.</p>
+<p>The F ratios above assume fixed factors and independent errors $\varepsilon\sim\mathcal N(0,\sigma^2)$ with a common variance across cells. Welch's one-way ANOVA relaxes the common-variance assumption for a single factor. Repeated observations on the same unit, nested factors or random factors require a model and error structure appropriate to that design.</p>
+<p><strong>Replication:</strong> With one observation per cell, a full factorial model including all interactions has zero residual degrees of freedom. Testing all those terms against within-cell error requires replication; omitting interactions to obtain residual degrees of freedom imposes additional assumptions.</p>
+<p><strong>Unequal cell sizes:</strong> The factorial sums-of-squares decompositions given above assume equal cell sizes. With unequal counts, specify the contrasts and averaging weights being tested; sequential sums of squares depend on the order in which terms enter the model.</p>
 
 </section>
 
 <section><h2>Interpretation &amp; Follow-up Comparisons</h2>
 
-<p>Rejection does not identify the differing pairs or quantify practical importance. For all pairwise comparisons under the classical model, Tukey's method accounts for the family of comparisons; planned contrasts can use an appropriate multiple-testing adjustment.</p>
+<p>When interactions are present, marginal main effects can conceal conditional differences. Examine simple effects, such as contrasts of $A$ within a fixed level of $B$. With a three-way interaction, examine the relevant two-way interactions within levels of the third factor. Retain the associated lower-order terms when interpreting a higher-order interaction.</p>
+<p>Rejection does not identify every differing pair or quantify practical importance. Report the relevant contrasts and their uncertainty, using a multiplicity adjustment for the chosen family. Tukey's method is appropriate for all pairwise comparisons of one-way group means under the classical model.</p>
 <p>ANOVA alone does not establish causality; causal interpretation requires an appropriate design or identification strategy.</p>
 
 </section>

@@ -120,6 +120,7 @@ def style_note(path):
                       'assets/plots/statistics-discrete-cdf.svg', 'assets/plots/statistics-continuous-cdf.svg',
                       'assets/plots/statistics-clt-standardized.svg', 'assets/plots/statistics-clt-standardized-mobile.svg',
                       'assets/plots/statistics-two-sided-test.svg', 'assets/plots/statistics-anova-variation.svg',
+                      'assets/plots/statistics-anova-interaction.svg', 'assets/plots/statistics-anova-interaction-mobile.svg',
                       'assets/plots/statistics-multiple-testing-thresholds.svg',
                       'assets/plots/finance-var-es-tail.svg', 'assets/plots/nlp-llm-parameters.svg',
                       'assets/plots/nlp-cbow-network.svg', 'assets/plots/nlp-cbow-network-mobile.svg',

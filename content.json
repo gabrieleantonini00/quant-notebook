@@ -78,16 +78,17 @@
       },
       {
         "title": "ANOVA",
-        "summary": "One-way ANOVA, variance decomposition, the F test, assumptions, and follow-up comparisons.",
+        "summary": "One-way, two-way and three-way ANOVA: factorial designs, main effects, interactions, F tests, degrees of freedom, and replication.",
         "topics": [
-          "Model & Hypotheses",
-          "Variance Decomposition",
-          "F Test",
+          "Factors, Levels & Factorial Designs",
+          "One-Way ANOVA",
+          "Two-Way ANOVA",
+          "Three-Way ANOVA",
           "Assumptions",
           "Interpretation & Follow-up Comparisons"
         ],
         "link": "notes/statistics/anova.html",
-        "reading_minutes": 2,
+        "reading_minutes": 5,
         "order": 6,
         "category_path": []
       },

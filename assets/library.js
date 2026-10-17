@@ -44,7 +44,7 @@
     'statistical-operators': 'Expectation, variance, covariance, dependence, conditional expectation, total variance, and portfolio moments.',
     'parametric-inference':  'Estimator properties, method of moments, maximum likelihood, consistency, and asymptotic distributions.',
     'hypothesis-testing':    'Hypotheses, power, Wald tests, p-values, confidence intervals, and exact versus asymptotic inference.',
-    'anova':                 'Compare several group means using between- and within-group variation and the F test.',
+    'anova':                 'One-way, two-way and three-way ANOVA: factorial designs, main effects, interactions, and F tests.',
     'multiple-hypothesis-testing': 'Control false discoveries across many tests with FWER, FDP, and FDR procedures.',
     'model-evaluation':      'Confusion matrices, precision-recall asymmetric trade-offs, F1-score, and the class imbalance paradox.',
     'explainable-ai':        'Local and global explanations: LIME, SHAP, PDP, ICE, ALE, counterfactuals, and their limits.',

@@ -37,5 +37,5 @@
   .statistics-note .nav-tag { display: none; }
   .statistics-note .nav-back { font-size: 12px; }
   .statistics-note :is(.dist-name, .inference-title) { font-size: 20px; }
-  .statistics-note .clt-figure img { max-width: 420px; margin-inline: auto; }
+  .statistics-note :is(.clt-figure, .anova-interaction) img { max-width: 420px; margin-inline: auto; }
 }
